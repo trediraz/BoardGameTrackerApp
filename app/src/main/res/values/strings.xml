@@ -5,5 +5,9 @@
     <string name="players">Gracze</string>
     <string name="history">Rozgrywki</string>
     <string name="stats_fragment">Stats</string>
+    <string name="add">Add</string>
+    <string name="new_game">Nowa gra</string>
+    <string name="next">Dalej</string>
+    <string name="back">Wróc</string>
 
 </resources>
