@@ -79,10 +79,10 @@ public class GameDialog extends DialogFragment {
                     case 2:
                         LinearLayout layout = getDialog().findViewById(R.id.scenarios);
                         AddScenarioLayout addScenarioLayout = (AddScenarioLayout) layout.getChildAt(0);
-                        if(layout.getChildCount() == 1 && addScenarioLayout.getScenarioName().equals("")){
+                        if(layout.getChildCount() == 1 && addScenarioLayout.getScenarioName().equals("") && requiresScenario){
                             isDataValid = false;
                             Toast.makeText(getContext(), R.string.no_scenario, Toast.LENGTH_SHORT).show();
-                        }
+                        }break;
                 }
                 if(isDataValid)
                     handleNextAction();
