@@ -9,5 +9,11 @@
     <string name="new_game">Nowa gra</string>
     <string name="next">Dalej</string>
     <string name="back">Wróc</string>
+    <string name="game_name">Nazwa gry</string>
+    <string name="requires_scenario">Wymaga scenariusza</string>
+    <string name="scenario_name">Nazwa scenarusza</string>
+    <string name="expansion_name">Nazwa dodatku</string>
+    <string name="min_player_number">Minimalna liczba graczy:</string>
+    <string name="max_game_number">Maksymalna liczba graczy:</string>
 
 </resources>

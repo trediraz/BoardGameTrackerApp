@@ -3,6 +3,7 @@ package com.trediraz.myapplication.Game;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -24,7 +25,7 @@ public class GameFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_game, container, false);
     }
@@ -37,8 +38,10 @@ public class GameFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DialogFragment dialogName = new GameDialog();
-                dialogName.show(getFragmentManager(),"dialog");
+                dialogName.setCancelable(false);
+                dialogName.show(Objects.requireNonNull(getFragmentManager()),"dialog");
             }
         });
     }
+
 }
