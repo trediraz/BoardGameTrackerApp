@@ -5,10 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,8 +49,6 @@ public class GameDialog extends DialogFragment {
         mViewFlipper = getDialog().findViewById(R.id.create_game_flipper);
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
-        Button addExpansionButton = getDialog().findViewById(R.id.add_expansion_button);
-        LinearLayout expansionsLayout = getDialog().findViewById(R.id.expansions);
 
         CheckBox requiresScenarioCheckBox = getDialog().findViewById(R.id.requires_scenario_checkbox);
         requiresScenarioCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -80,8 +76,13 @@ public class GameDialog extends DialogFragment {
                             isDataValid = false;
                             Toast.makeText(getContext(), R.string.no_name_toast, Toast.LENGTH_SHORT).show();
                         }break;
-                    case 1:
-                        Toast.makeText(getContext(),"OPTIONAL",Toast.LENGTH_SHORT).show();
+                    case 2:
+                        LinearLayout layout = getDialog().findViewById(R.id.scenarios);
+                        AddScenarioLayout addScenarioLayout = (AddScenarioLayout) layout.getChildAt(0);
+                        if(layout.getChildCount() == 1 && addScenarioLayout.getScenarioName().equals("")){
+                            isDataValid = false;
+                            Toast.makeText(getContext(), R.string.no_scenario, Toast.LENGTH_SHORT).show();
+                        }
                 }
                 if(isDataValid)
                     handleNextAction();
@@ -109,14 +110,45 @@ public class GameDialog extends DialogFragment {
             }
         });
 
+        final LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
+        createNewScenarioView();
+
+        Button addScenarioButton = getDialog().findViewById(R.id.add_scenario_button);
+        addScenarioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addNewScenario(scenarioLayout);
+            }
+        });
+
+        final LinearLayout expansionsLayout = getDialog().findViewById(R.id.expansions);
         createNewExpansionView(expansionsLayout);
 
+        final Button addExpansionButton = getDialog().findViewById(R.id.add_expansion_button);
         addExpansionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addNewExpansionView();
             }
         });
+    }
+
+    private void addNewScenario(LinearLayout scenarioLayout) {
+        AddScenarioLayout last = (AddScenarioLayout) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
+        ScrollView scrollView = getDialog().findViewById(R.id.scenarios_scroll_view);
+        if(!last.getScenarioName().equals("")){
+            createNewScenarioView();
+            if(scenarioLayout.getChildCount() == 2){
+                scrollView.setLayoutParams(new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,500));
+            }
+        }
+    }
+
+    private void createNewScenarioView() {
+        LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
+        AddScenarioLayout addScenarioLayout = new AddScenarioLayout(getContext());
+        addScenarioLayout.requestFocus();
+        scenarioLayout.addView(addScenarioLayout,scenarioLayout.getChildCount());
     }
 
     private void createNewExpansionView(final LinearLayout layout) {

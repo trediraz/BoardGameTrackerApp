@@ -5,7 +5,7 @@
     <string name="players">Gracze</string>
     <string name="history">Rozgrywki</string>
     <string name="stats_fragment">Stats</string>
-    <string name="add">Add</string>
+    <string name="add">Dodaj</string>
     <string name="new_game">Nowa gra</string>
     <string name="next">Dalej</string>
     <string name="back">Wróc</string>
@@ -16,6 +16,7 @@
     <string name="min_player_number">Minimalna liczba graczy:</string>
     <string name="max_game_number">Maksymalna liczba graczy:</string>
     <string name="no_name_toast">Pole nazwy nie może być puste</string>
+    <string name="no_scenario">Ta gra musi posidac przynajmniej jeden scenariusz</string>
 
     <string-array name="game_types">
         <item>Versus</item>
