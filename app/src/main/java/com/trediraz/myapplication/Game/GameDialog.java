@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,7 +16,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -49,6 +52,7 @@ public class GameDialog extends DialogFragment {
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
         Button addExpansionButton = getDialog().findViewById(R.id.add_expansion_button);
+        LinearLayout expansionsLayout = getDialog().findViewById(R.id.expansions);
 
         CheckBox requiresScenarioCheckBox = getDialog().findViewById(R.id.requires_scenario_checkbox);
         requiresScenarioCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -105,20 +109,51 @@ public class GameDialog extends DialogFragment {
             }
         });
 
+        createNewExpansionView(expansionsLayout);
+
         addExpansionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LinearLayout linearLayout = getDialog().findViewById(R.id.expansions);
-                EditText lastEditText = (EditText) linearLayout.getChildAt(linearLayout.getChildCount()-1);
-                if(!lastEditText.getText().toString().equals("")) {
-                    EditText editText = new EditText(getContext());
-                    editText.setHint(R.string.expansion_name);
-                    editText.setTextAlignment(EditText.TEXT_ALIGNMENT_CENTER);
-                    linearLayout.addView(editText,linearLayout.getChildCount());
-                    editText.requestFocus();
-                }
+                addNewExpansionView();
             }
         });
+    }
+
+    private void createNewExpansionView(final LinearLayout layout) {
+        final EditText editText = new EditText(getContext());
+        editText.setHint(R.string.expansion_name);
+        editText.setTextAlignment(EditText.TEXT_ALIGNMENT_CENTER);
+        editText.setSingleLine(true);
+        editText.setEms(10);
+        layout.addView(editText,layout.getChildCount());
+        editText.requestFocus();
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(textView == layout.getChildAt(layout.getChildCount()-1)) {
+                    addNewExpansionView();
+                    return true;
+                }
+                else if(textView.getText().toString().equals("")){
+                    layout.removeView(textView);
+                    layout.getChildAt(layout.getChildCount()-1).requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void addNewExpansionView() {
+        LinearLayout linearLayout = getDialog().findViewById(R.id.expansions);
+        ScrollView scrollView = getDialog().findViewById(R.id.expansions_scroll_view);
+        EditText lastEditText = (EditText) linearLayout.getChildAt(linearLayout.getChildCount()-1);
+        if(!lastEditText.getText().toString().equals("")) {
+            createNewExpansionView(linearLayout);
+            if(linearLayout.getChildCount() == 5){
+                scrollView.setLayoutParams(new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,500));
+            }
+        }
     }
 
     private void handlePreviousAction(){

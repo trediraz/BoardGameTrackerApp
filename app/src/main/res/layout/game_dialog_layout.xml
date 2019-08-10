@@ -64,6 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:textAlignment="center"
                 android:inputType="text"
                 android:hint="@string/scenario_name"
                 android:autofillHints="@string/scenario_name" />
@@ -76,23 +77,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <ScrollView
+                android:id="@+id/expansions_scroll_view"
                 android:fillViewport="true"
                 android:layout_width="wrap_content"
-                android:layout_height="200dp">
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/expansions"
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:ems="10"
-                        android:inputType="text"
-                        android:autofillHints="@string/expansion_name"
-                        android:hint="@string/expansion_name"/>
                 </LinearLayout>
             </ScrollView>
             <Button
