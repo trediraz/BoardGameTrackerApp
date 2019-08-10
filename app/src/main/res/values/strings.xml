@@ -15,5 +15,12 @@
     <string name="expansion_name">Nazwa dodatku</string>
     <string name="min_player_number">Minimalna liczba graczy:</string>
     <string name="max_game_number">Maksymalna liczba graczy:</string>
+    <string name="no_name_toast">Pole nazwy nie może być puste</string>
+
+    <string-array name="game_types">
+        <item>Versus</item>
+        <item>Coop</item>
+        <item>Overlord</item>
+    </string-array>
 
 </resources>

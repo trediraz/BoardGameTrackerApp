@@ -20,6 +20,7 @@
             android:layout_gravity="center" >
 
             <EditText
+                android:id="@+id/game_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="text"
@@ -29,9 +30,10 @@
                 android:autofillHints="@string/game_name" />
 
             <CheckBox
+                android:id="@+id/requires_scenario_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/requires_scenario"/>
+                android:text="@string/requires_scenario" />
 
         </LinearLayout>
 
@@ -43,6 +45,7 @@
             android:layout_gravity="center" >
 
             <Spinner
+                android:id="@+id/game_type_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
@@ -64,46 +67,39 @@
                 android:inputType="text"
                 android:hint="@string/scenario_name"
                 android:autofillHints="@string/scenario_name" />
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="@string/scenario_name"
-                android:autofillHints="@string/scenario_name" />
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="@string/scenario_name"
-                android:autofillHints="@string/scenario_name" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/expansions"
-            android:orientation="vertical"
+            android:id="@+id/expansions_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" >
+            android:orientation="vertical">
+            <ScrollView
+                android:fillViewport="true"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp">
+                <LinearLayout
+                    android:id="@+id/expansions"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-            <EditText
-                android:layout_width="wrap_content"
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:autofillHints="@string/expansion_name"
+                        android:hint="@string/expansion_name"/>
+                </LinearLayout>
+            </ScrollView>
+            <Button
+                android:id="@+id/add_expansion_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/expansion_name"/>
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/expansion_name"/>
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/expansion_name"/>
-
+                android:text="@string/add"/>
         </LinearLayout>
 
         <LinearLayout
@@ -149,7 +145,8 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="end">
         <Button
             style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/previous_button"
@@ -158,14 +155,14 @@
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/back" />
+
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/next_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/next"
-            />
+            android:text="@string/next"/>
     </LinearLayout>
 </LinearLayout>
