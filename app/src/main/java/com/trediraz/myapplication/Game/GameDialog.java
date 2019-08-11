@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,8 +25,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.trediraz.myapplication.Database.Expansion;
+import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GameDialog extends DialogFragment {
@@ -258,6 +262,7 @@ public class GameDialog extends DialogFragment {
         final int OPTIONAL_VIEW = 1;
 
         if (currentView == mViewFlipper.getChildCount() - 1) {
+            createNewGame();
             dismiss();
         } else if(currentView == (OPTIONAL_VIEW - 1) && skipOptionalView){
             mViewFlipper.setDisplayedChild(OPTIONAL_VIEW + 1);
@@ -265,6 +270,32 @@ public class GameDialog extends DialogFragment {
             mViewFlipper.showNext();
         }
         setTitle();
+    }
+
+    private void createNewGame() {
+
+        Game game = new Game();
+        EditText editText = getDialog().findViewById(R.id.name);
+        EditText min = getDialog().findViewById(R.id.min_number_of_players);
+        EditText max = getDialog().findViewById(R.id.max_number_of_players);
+        game.id = 1;
+        game.name = editText.getText().toString();
+        game.min_number_of_players = Integer.parseInt(min.getText().toString());
+        game.max_number_of_players = Integer.parseInt(max.getText().toString());
+        game.requireScenario = requiresScenario;
+
+        List<Expansion> expansions = new ArrayList<>();
+        LinearLayout expansionLayout = getDialog().findViewById(R.id.expansions);
+        for(int i = 0; i < expansionLayout.getChildCount();i++){
+            String expansionName = ((EditText) expansionLayout.getChildAt(i)).getText().toString();
+            if(!expansionName.equals("")){
+                Expansion expansion = new Expansion();
+                expansion.name = expansionName;
+                expansion.game_id = game.id;
+                expansions.add(expansion);
+            }
+        }
+
     }
 
     private void setTitle() {

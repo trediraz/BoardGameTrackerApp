@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="20sp">
+    android:padding="20sp"
+    android:paddingBottom="10dp">
 
     <ViewFlipper
         android:id="@+id/create_game_flipper"
