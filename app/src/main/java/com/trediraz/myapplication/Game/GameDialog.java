@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,6 +27,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
+import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.R;
 
 import java.util.ArrayList;
@@ -37,7 +38,9 @@ public class GameDialog extends DialogFragment {
 
     private ViewFlipper mViewFlipper;
     private boolean requiresScenario = false;
-    private String gameName;
+    private Game mGame = new Game();
+    private List<Scenario> mScenarios = new ArrayList<>();
+    private List<Expansion> mExpansions = new ArrayList<>();
 
     @NonNull
     @Override
@@ -71,51 +74,7 @@ public class GameDialog extends DialogFragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int currentView =  mViewFlipper.getDisplayedChild();
-                boolean isDataValid = true;
-                int errorToastMessage = 0;
-                switch (currentView){
-                    case 0:
-                        EditText gameNameText = getDialog().findViewById(R.id.game_name);
-                        gameName = gameNameText.getText().toString();
-                        if (gameName.equals("")){
-                            isDataValid = false;
-                            errorToastMessage = R.string.no_name_toast;
-                        }
-                        break;
-                    case 2:
-                        LinearLayout layout = getDialog().findViewById(R.id.scenarios);
-                        if (layout.getChildCount() == 0 && requiresScenario) {
-                            isDataValid = false;
-                            errorToastMessage = R.string.no_scenario;
-                        } else if (containsEmptyNameScenario(layout)) {
-                            isDataValid = false;
-                            errorToastMessage = R.string.empty_scenario_name;
-                        }
-                        break;
-                    case 4:
-                        EditText minView = getDialog().findViewById(R.id.min_number_of_players);
-                        EditText maxView = getDialog().findViewById(R.id.max_number_of_players);
-                        String minText = minView.getText().toString();
-                        String maxText = maxView.getText().toString();
-
-                        if(minText.equals("") || maxText.equals("")){
-                            isDataValid = false;
-                            errorToastMessage = R.string.no_number_of_players;
-                        }else {
-                            int min = Integer.parseInt(minText);
-                            int max = Integer.parseInt(maxText);
-                            if(min > max){
-                                isDataValid = false;
-                                errorToastMessage = R.string.min_grater_then_max;
-                            }
-                        }
-                        break;
-                }
-                if(isDataValid)
-                    handleNextAction();
-                else
-                    Toast.makeText(getContext(),errorToastMessage,Toast.LENGTH_SHORT).show();
+                handleNextAction();
             }
         });
         previousButton.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +125,7 @@ public class GameDialog extends DialogFragment {
     private boolean containsEmptyNameScenario(LinearLayout layout) {
         for(int i = 0; i < layout.getChildCount();i++){
             AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(i);
-            if(scenarioLayout.getScenarioName().equals("")){
+            if(scenarioLayout.isEmpty()){
                 return true;
             }
         }
@@ -259,43 +218,121 @@ public class GameDialog extends DialogFragment {
         hideKeyboard();
         int currentView = mViewFlipper.getDisplayedChild();
         boolean skipOptionalView = requiresScenario;
+        boolean isDataValid = true;
         final int OPTIONAL_VIEW = 1;
 
-        if (currentView == mViewFlipper.getChildCount() - 1) {
-            createNewGame();
-            dismiss();
-        } else if(currentView == (OPTIONAL_VIEW - 1) && skipOptionalView){
-            mViewFlipper.setDisplayedChild(OPTIONAL_VIEW + 1);
-        } else{
-            mViewFlipper.showNext();
+        int errorToastMessage = 0;
+        switch (currentView){
+            case 0:
+                EditText gameNameText = getDialog().findViewById(R.id.game_name);
+                String gameName = gameNameText.getText().toString();
+                if (gameName.equals("")){
+                    isDataValid = false;
+                    errorToastMessage = R.string.no_name_toast;
+                } else {
+                    mViewFlipper.setDisplayedChild((skipOptionalView) ? (OPTIONAL_VIEW+1) : OPTIONAL_VIEW);
+                }
+                break;
+            case 1:
+                mViewFlipper.showNext();
+                break;
+            case 2:
+                LinearLayout layout = getDialog().findViewById(R.id.scenarios);
+                if (layout.getChildCount() == 0 && requiresScenario) {
+                    isDataValid = false;
+                    errorToastMessage = R.string.no_scenario;
+                } else if (containsEmptyNameScenario(layout)) {
+                    isDataValid = false;
+                    errorToastMessage = R.string.empty_scenario_name;
+                } else {
+                    mViewFlipper.showNext();
+                }
+                break;
+            case 3:
+                mViewFlipper.showNext();
+                break;
+            case 4:
+                EditText minView = getDialog().findViewById(R.id.min_number_of_players);
+                EditText maxView = getDialog().findViewById(R.id.max_number_of_players);
+                String minText = minView.getText().toString();
+                String maxText = maxView.getText().toString();
+
+                if(minText.equals("") || maxText.equals("")){
+                    isDataValid = false;
+                    errorToastMessage = R.string.no_number_of_players;
+                }else {
+                    int min = Integer.parseInt(minText);
+                    int max = Integer.parseInt(maxText);
+                    if(min > max){
+                        isDataValid = false;
+                        errorToastMessage = R.string.min_grater_then_max;
+                        break;
+                    }
+                    else {
+                        createNewGame();
+                        dismiss();
+                    }
+                }
+                break;
         }
-        setTitle();
+        if(isDataValid){
+            setTitle();
+        }
+        else
+            Toast.makeText(getContext(),errorToastMessage,Toast.LENGTH_SHORT).show();
     }
 
     private void createNewGame() {
 
-        Game game = new Game();
-        EditText editText = getDialog().findViewById(R.id.name);
-        EditText min = getDialog().findViewById(R.id.min_number_of_players);
-        EditText max = getDialog().findViewById(R.id.max_number_of_players);
-        game.id = 1;
-        game.name = editText.getText().toString();
-        game.min_number_of_players = Integer.parseInt(min.getText().toString());
-        game.max_number_of_players = Integer.parseInt(max.getText().toString());
-        game.requireScenario = requiresScenario;
+        EditText gameNameText = getDialog().findViewById(R.id.game_name);
+        EditText min_number_of_players = getDialog().findViewById(R.id.min_number_of_players);
+        EditText max_number_of_players = getDialog().findViewById(R.id.max_number_of_players);
 
-        List<Expansion> expansions = new ArrayList<>();
+        mGame.name = gameNameText.getText().toString();
+        mGame.min_number_of_players = Integer.parseInt(min_number_of_players.getText().toString());
+        mGame.max_number_of_players = Integer.parseInt(max_number_of_players.getText().toString());
+        mGame.requireScenario = requiresScenario;
+
+        Scenario defaultScenario = new Scenario();
+        defaultScenario.name = "__default_scenario__";
+        defaultScenario.type = "type";
+        mScenarios.add(defaultScenario);
+
+        LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
+        for(int i = 0; i < scenarioLayout.getChildCount();i++){
+            mScenarios.add(((AddScenarioLayout)scenarioLayout.getChildAt(i)).getScenario());
+        }
+
         LinearLayout expansionLayout = getDialog().findViewById(R.id.expansions);
         for(int i = 0; i < expansionLayout.getChildCount();i++){
             String expansionName = ((EditText) expansionLayout.getChildAt(i)).getText().toString();
             if(!expansionName.equals("")){
                 Expansion expansion = new Expansion();
                 expansion.name = expansionName;
-                expansion.game_id = game.id;
-                expansions.add(expansion);
+                expansion.game_id = 1;
+                mExpansions.add(expansion);
             }
         }
 
+        logEverything();
+
+    }
+
+    private void logEverything() {
+        Log.d("BGr",mGame.name);
+        Log.d("BGr", String.valueOf(mGame.requireScenario));
+        Log.d("BGr", String.valueOf(mGame.min_number_of_players));
+        Log.d("BGr", String.valueOf(mGame.max_number_of_players));
+
+        for(Scenario scenario : mScenarios) {
+            Log.d("BGr","Scenario: ");
+            Log.d("BGr",scenario.name);
+            Log.d("BGr",scenario.type);
+        }
+
+        for(Expansion expansion : mExpansions){
+            Log.d("BGr",expansion.name);
+        }
     }
 
     private void setTitle() {

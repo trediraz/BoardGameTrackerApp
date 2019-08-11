@@ -16,6 +16,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.R;
 
 import java.util.Objects;
@@ -66,8 +67,19 @@ public class AddScenarioLayout extends LinearLayout {
         });
     }
 
-    public String getScenarioName(){
+    private String getScenarioName(){
         return editText.getText().toString();
+    }
+
+    public boolean isEmpty(){
+        return getScenarioName().equals("");
+    }
+
+    public Scenario getScenario(){
+        Scenario scenario = new Scenario();
+        scenario.name = getScenarioName();
+        scenario.type = spinner.getSelectedItem().toString();
+        return scenario;
     }
 
     private void remove() {
