@@ -77,15 +77,34 @@ public class GameDialog extends DialogFragment {
                         if (gameName.equals("")){
                             isDataValid = false;
                             errorToastMessage = R.string.no_name_toast;
-                        }break;
+                        }
+                        break;
                     case 2:
                         LinearLayout layout = getDialog().findViewById(R.id.scenarios);
-                        if(layout.getChildCount() == 0 && requiresScenario){
+                        if (layout.getChildCount() == 0 && requiresScenario) {
                             isDataValid = false;
                             errorToastMessage = R.string.no_scenario;
-                        } else if(containsEmptyNameScenario(layout)){
+                        } else if (containsEmptyNameScenario(layout)) {
                             isDataValid = false;
                             errorToastMessage = R.string.empty_scenario_name;
+                        }
+                        break;
+                    case 4:
+                        EditText minView = getDialog().findViewById(R.id.min_number_of_players);
+                        EditText maxView = getDialog().findViewById(R.id.max_number_of_players);
+                        String minText = minView.getText().toString();
+                        String maxText = maxView.getText().toString();
+
+                        if(minText.equals("") || maxText.equals("")){
+                            isDataValid = false;
+                            errorToastMessage = R.string.no_number_of_players;
+                        }else {
+                            int min = Integer.parseInt(minText);
+                            int max = Integer.parseInt(maxText);
+                            if(min > max){
+                                isDataValid = false;
+                                errorToastMessage = R.string.min_grater_then_max;
+                            }
                         }
                         break;
                 }
@@ -226,9 +245,10 @@ public class GameDialog extends DialogFragment {
         } else if(currentView == OPTIONAL_VIEW + 1 && skipOptionalView){
             mViewFlipper.setDisplayedChild(OPTIONAL_VIEW - 1);
         }
-        else{
+        else {
             mViewFlipper.showPrevious();
         }
+
     }
 
     private void handleNextAction() {
