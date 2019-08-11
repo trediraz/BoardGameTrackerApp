@@ -248,7 +248,7 @@ public class GameDialog extends DialogFragment {
         else {
             mViewFlipper.showPrevious();
         }
-
+        setTitle();
     }
 
     private void handleNextAction() {
@@ -264,6 +264,29 @@ public class GameDialog extends DialogFragment {
         } else{
             mViewFlipper.showNext();
         }
+        setTitle();
+    }
+
+    private void setTitle() {
+        String newTitle = "";
+        switch (mViewFlipper.getDisplayedChild()){
+            case 0:
+                newTitle = getString(R.string.new_game);
+                break;
+            case 1:
+                newTitle = getString(R.string.title_game_type);
+                break;
+            case 2:
+                newTitle = getString(R.string.title_scenarios);
+                break;
+            case 3:
+                newTitle = getString(R.string.title_expansions);
+                break;
+            case 4:
+                newTitle = getString(R.string.title_number_of_players);
+                break;
+        }
+        getDialog().setTitle(newTitle);
     }
 
     private void hideKeyboard() {
