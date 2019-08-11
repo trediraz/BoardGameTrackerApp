@@ -17,6 +17,9 @@
     <string name="max_game_number">Maksymalna liczba graczy:</string>
     <string name="no_name_toast">Pole nazwy nie może być puste</string>
     <string name="no_scenario">Ta gra musi posidac przynajmniej jeden scenariusz</string>
+    <string name="empty_scenario_name">Nazwa scenariusza nie może być pusta</string>
+    <string name="error_message">Wystąpił problem</string>
+    <string name="delete_scenario_description">Usuwa scenariusz</string>
 
     <string-array name="game_types">
         <item>Versus</item>

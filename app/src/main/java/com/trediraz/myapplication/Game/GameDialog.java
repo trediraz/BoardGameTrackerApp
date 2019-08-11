@@ -68,24 +68,30 @@ public class GameDialog extends DialogFragment {
             public void onClick(View view) {
                 int currentView =  mViewFlipper.getDisplayedChild();
                 boolean isDataValid = true;
+                int errorToastMessage = 0;
                 switch (currentView){
                     case 0:
                         EditText gameNameText = getDialog().findViewById(R.id.game_name);
                         gameName = gameNameText.getText().toString();
                         if (gameName.equals("")){
                             isDataValid = false;
-                            Toast.makeText(getContext(), R.string.no_name_toast, Toast.LENGTH_SHORT).show();
+                            errorToastMessage = R.string.no_name_toast;
                         }break;
                     case 2:
                         LinearLayout layout = getDialog().findViewById(R.id.scenarios);
-                        AddScenarioLayout addScenarioLayout = (AddScenarioLayout) layout.getChildAt(0);
-                        if(layout.getChildCount() == 1 && addScenarioLayout.getScenarioName().equals("") && requiresScenario){
+                        if(layout.getChildCount() == 0 && requiresScenario){
                             isDataValid = false;
-                            Toast.makeText(getContext(), R.string.no_scenario, Toast.LENGTH_SHORT).show();
-                        }break;
+                            errorToastMessage = R.string.no_scenario;
+                        } else if(containsEmptyNameScenario(layout)){
+                            isDataValid = false;
+                            errorToastMessage = R.string.empty_scenario_name;
+                        }
+                        break;
                 }
                 if(isDataValid)
                     handleNextAction();
+                else
+                    Toast.makeText(getContext(),errorToastMessage,Toast.LENGTH_SHORT).show();
             }
         });
         previousButton.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +117,7 @@ public class GameDialog extends DialogFragment {
         });
 
         final LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
-        createNewScenarioView();
+        if(requiresScenario) createNewScenarioView();
 
         Button addScenarioButton = getDialog().findViewById(R.id.add_scenario_button);
         addScenarioButton.setOnClickListener(new View.OnClickListener() {
@@ -133,14 +139,30 @@ public class GameDialog extends DialogFragment {
         });
     }
 
+    private boolean containsEmptyNameScenario(LinearLayout layout) {
+        for(int i = 0; i < layout.getChildCount();i++){
+            AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(i);
+            if(scenarioLayout.getScenarioName().equals("")){
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void addNewScenario(LinearLayout scenarioLayout) {
         AddScenarioLayout last = (AddScenarioLayout) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
-        ScrollView scrollView = getDialog().findViewById(R.id.scenarios_scroll_view);
-        if(!last.getScenarioName().equals("")){
+        LinearLayout linearLayout = getDialog().findViewById(R.id.scenarios);
+        if(last == null) {
+            createNewScenarioView();
+        }
+        else if(!containsEmptyNameScenario(linearLayout)){
             createNewScenarioView();
             if(scenarioLayout.getChildCount() == 2){
+                ScrollView scrollView = getDialog().findViewById(R.id.scenarios_scroll_view);
                 scrollView.setLayoutParams(new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,500));
             }
+        } else {
+            Toast.makeText(getContext(), R.string.empty_scenario_name,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -151,12 +173,20 @@ public class GameDialog extends DialogFragment {
         scenarioLayout.addView(addScenarioLayout,scenarioLayout.getChildCount());
     }
 
+    private void addNewExpansionView() {
+        LinearLayout linearLayout = getDialog().findViewById(R.id.expansions);
+        ScrollView scrollView = getDialog().findViewById(R.id.expansions_scroll_view);
+        EditText lastEditText = (EditText) linearLayout.getChildAt(linearLayout.getChildCount()-1);
+        if(!lastEditText.getText().toString().equals("")) {
+            createNewExpansionView(linearLayout);
+            if(linearLayout.getChildCount() == 5){
+                scrollView.setLayoutParams(new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,500));
+            }
+        }
+    }
+
     private void createNewExpansionView(final LinearLayout layout) {
-        final EditText editText = new EditText(getContext());
-        editText.setHint(R.string.expansion_name);
-        editText.setTextAlignment(EditText.TEXT_ALIGNMENT_CENTER);
-        editText.setSingleLine(true);
-        editText.setEms(10);
+        final EditText editText = createExpansionEditText();
         layout.addView(editText,layout.getChildCount());
         editText.requestFocus();
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -176,16 +206,13 @@ public class GameDialog extends DialogFragment {
         });
     }
 
-    private void addNewExpansionView() {
-        LinearLayout linearLayout = getDialog().findViewById(R.id.expansions);
-        ScrollView scrollView = getDialog().findViewById(R.id.expansions_scroll_view);
-        EditText lastEditText = (EditText) linearLayout.getChildAt(linearLayout.getChildCount()-1);
-        if(!lastEditText.getText().toString().equals("")) {
-            createNewExpansionView(linearLayout);
-            if(linearLayout.getChildCount() == 5){
-                scrollView.setLayoutParams(new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,500));
-            }
-        }
+    private EditText createExpansionEditText() {
+        EditText editText = new EditText(getContext());
+        editText.setHint(R.string.expansion_name);
+        editText.setTextAlignment(EditText.TEXT_ALIGNMENT_CENTER);
+        editText.setSingleLine(true);
+        editText.setEms(10);
+        return  editText;
     }
 
     private void handlePreviousAction(){
