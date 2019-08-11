@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -169,7 +170,6 @@ public class GameDialog extends DialogFragment {
     private void createNewScenarioView() {
         LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
         AddScenarioLayout addScenarioLayout = new AddScenarioLayout(getContext());
-        addScenarioLayout.requestFocus();
         scenarioLayout.addView(addScenarioLayout,scenarioLayout.getChildCount());
     }
 

@@ -20,6 +20,7 @@
     <string name="empty_scenario_name">Nazwa scenariusza nie może być pusta</string>
     <string name="error_message">Wystąpił problem</string>
     <string name="delete_scenario_description">Usuwa scenariusz</string>
+    <string name="scenarios">Scenariusze:</string>
 
     <string-array name="game_types">
         <item>Versus</item>
