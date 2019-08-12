@@ -38,9 +38,6 @@ public class GameDialog extends DialogFragment {
 
     private ViewFlipper mViewFlipper;
     private boolean requiresScenario = false;
-    private Game mGame = new Game();
-    private List<Scenario> mScenarios = new ArrayList<>();
-    private List<Expansion> mExpansions = new ArrayList<>();
 
     @NonNull
     @Override
@@ -284,24 +281,34 @@ public class GameDialog extends DialogFragment {
 
     private void createNewGame() {
 
+        Game newGame = new Game();
+
         EditText gameNameText = getDialog().findViewById(R.id.game_name);
         EditText min_number_of_players = getDialog().findViewById(R.id.min_number_of_players);
         EditText max_number_of_players = getDialog().findViewById(R.id.max_number_of_players);
 
-        mGame.name = gameNameText.getText().toString();
-        mGame.min_number_of_players = Integer.parseInt(min_number_of_players.getText().toString());
-        mGame.max_number_of_players = Integer.parseInt(max_number_of_players.getText().toString());
-        mGame.requireScenario = requiresScenario;
+        newGame.name = gameNameText.getText().toString();
+        newGame.min_number_of_players = Integer.parseInt(min_number_of_players.getText().toString());
+        newGame.max_number_of_players = Integer.parseInt(max_number_of_players.getText().toString());
+        newGame.requireScenario = requiresScenario;
 
-        Scenario defaultScenario = new Scenario();
-        defaultScenario.name = "__default_scenario__";
-        defaultScenario.type = "type";
-        mScenarios.add(defaultScenario);
+        List<Scenario> scenarios = new ArrayList<>();
+
+        if(!requiresScenario) {
+            Spinner spinner = getDialog().findViewById(R.id.game_type_spinner);
+            Scenario defaultScenario = new Scenario();
+            defaultScenario.name = "__default_scenario__";
+            defaultScenario.type = spinner.getSelectedItem().toString();
+            scenarios.add(defaultScenario);
+        }
 
         LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
+
         for(int i = 0; i < scenarioLayout.getChildCount();i++){
-            mScenarios.add(((AddScenarioLayout)scenarioLayout.getChildAt(i)).getScenario());
+            scenarios.add(((AddScenarioLayout)scenarioLayout.getChildAt(i)).getScenario());
         }
+
+        List<Expansion> expansions = new ArrayList<>();
 
         LinearLayout expansionLayout = getDialog().findViewById(R.id.expansions);
         for(int i = 0; i < expansionLayout.getChildCount();i++){
@@ -310,30 +317,11 @@ public class GameDialog extends DialogFragment {
                 Expansion expansion = new Expansion();
                 expansion.name = expansionName;
                 expansion.game_id = 1;
-                mExpansions.add(expansion);
+                expansions.add(expansion);
             }
         }
-
-        logEverything();
-
     }
 
-    private void logEverything() {
-        Log.d("BGr",mGame.name);
-        Log.d("BGr", String.valueOf(mGame.requireScenario));
-        Log.d("BGr", String.valueOf(mGame.min_number_of_players));
-        Log.d("BGr", String.valueOf(mGame.max_number_of_players));
-
-        for(Scenario scenario : mScenarios) {
-            Log.d("BGr","Scenario: ");
-            Log.d("BGr",scenario.name);
-            Log.d("BGr",scenario.type);
-        }
-
-        for(Expansion expansion : mExpansions){
-            Log.d("BGr",expansion.name);
-        }
-    }
 
     private void setTitle() {
         String newTitle = "";
