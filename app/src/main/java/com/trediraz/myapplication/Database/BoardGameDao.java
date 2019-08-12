@@ -14,6 +14,9 @@ public interface BoardGameDao {
     @Query("SELECT * FROM game")
     List<Game> getAllGames();
 
+    @Query("SELECT name FROM game")
+    List<String> getAllGameNames();
+
     @Query("SELECT id FROM game WHERE name = :name")
     int getGameIdByName(String name);
 

@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.trediraz.myapplication.Database.BoardGameDao;
 import com.trediraz.myapplication.Database.Expansion;
@@ -21,7 +23,7 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameFragment extends Fragment {
@@ -42,7 +44,10 @@ public class GameFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Button addGameButton = Objects.requireNonNull(getView()).findViewById(R.id.add_game_button);
 
-        LogAll();
+        ListView game_list = getView().findViewById(R.id.game_list_view);
+        ArrayList<String> gameNames = (ArrayList<String>) MainActivity.mBoardGameDao.getAllGameNames();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,gameNames);
+        game_list.setAdapter(adapter);
 
         addGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,20 +59,5 @@ public class GameFragment extends Fragment {
         });
     }
 
-    private void LogAll() {
-        List<Game> gamesNames = MainActivity.mBoardGameDao.getAllGames();
-        for(Game game: gamesNames){
-            Log.d("Database",game.name + " Id: " + game.id + " Min: " + game.min_number_of_players
-                    + " Max: " + game.max_number_of_players +" bool: " + game.requireScenario);
-        }
-        List<Expansion> expansions = MainActivity.mBoardGameDao.getAllExpansion();
-        for(Expansion expansion: expansions){
-            Log.d("Database",expansion.game_id + " " + expansion.name);
-        }
-        List<Scenario> scenarios = MainActivity.mBoardGameDao.getAllScenarios();
-        for(Scenario scenario: scenarios){
-            Log.d("Database", scenario.game_id + " " + scenario.name +" "+ scenario.type);
-        }
-    }
 
 }
