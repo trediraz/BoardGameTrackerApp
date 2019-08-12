@@ -67,7 +67,7 @@ public class AddScenarioLayout extends LinearLayout {
         });
     }
 
-    private String getScenarioName(){
+    public String getScenarioName(){
         return editText.getText().toString();
     }
 
@@ -86,7 +86,7 @@ public class AddScenarioLayout extends LinearLayout {
         ViewParent layout = getParent();
         if (layout instanceof LinearLayout) {
             ((LinearLayout) layout).removeView(this);
-            if (((LinearLayout) layout).getChildCount() == 2) {
+            if (((LinearLayout) layout).getChildCount() == 1) {
                 if (layout.getParent() instanceof ScrollView) {
                     ScrollView scrollView = (ScrollView) layout.getParent();
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT, ScrollView.LayoutParams.WRAP_CONTENT);

@@ -119,16 +119,6 @@ public class GameDialog extends DialogFragment {
         });
     }
 
-    private boolean containsEmptyNameScenario(LinearLayout layout) {
-        for(int i = 0; i < layout.getChildCount();i++){
-            AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(i);
-            if(scenarioLayout.isEmpty()){
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void addNewScenario(LinearLayout scenarioLayout) {
         AddScenarioLayout last = (AddScenarioLayout) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
         LinearLayout linearLayout = getDialog().findViewById(R.id.scenarios);
@@ -241,12 +231,22 @@ public class GameDialog extends DialogFragment {
                 } else if (containsEmptyNameScenario(layout)) {
                     isDataValid = false;
                     errorToastMessage = R.string.empty_scenario_name;
+                } else if(!isScenarioNameUnique(layout)){
+                    isDataValid = false;
+                    errorToastMessage = R.string.duplicate_scenrio_name;
+
                 } else {
                     mViewFlipper.showNext();
                 }
                 break;
             case 3:
+                if(!isExpansionNameUnique()){
+                    isDataValid = false;
+                    errorToastMessage = R.string.duplicate_expansion_name;
+                }
+                else {
                 mViewFlipper.showNext();
+                }
                 break;
             case 4:
                 EditText minView = getDialog().findViewById(R.id.min_number_of_players);
@@ -279,6 +279,50 @@ public class GameDialog extends DialogFragment {
             Toast.makeText(getContext(),errorToastMessage,Toast.LENGTH_SHORT).show();
     }
 
+    private boolean isExpansionNameUnique() {
+        LinearLayout layout = getDialog().findViewById(R.id.expansions);
+        EditText comperedNameText,nameText;
+        String compereName, name;
+
+        for(int i = 0; i < layout.getChildCount();i++){
+            comperedNameText = (EditText) layout.getChildAt(i);
+            compereName = comperedNameText.getText().toString();
+            for(int j = i+1; j < layout.getChildCount();j++){
+                nameText = (EditText) layout.getChildAt(j);
+                name = nameText.getText().toString();
+                if(compereName.equals(name)){
+                    nameText.requestFocus();
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean containsEmptyNameScenario(LinearLayout layout) {
+        for(int i = 0; i < layout.getChildCount();i++){
+            AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(i);
+            if(scenarioLayout.isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isScenarioNameUnique(LinearLayout layout) {
+        for(int i = 0; i < layout.getChildCount();i++){
+            AddScenarioLayout comperedLayout = (AddScenarioLayout) layout.getChildAt(i);
+            for(int j = i+1; j < layout.getChildCount();j++){
+                AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(j);
+                if(comperedLayout.getScenarioName().equals(scenarioLayout.getScenarioName())){
+                    scenarioLayout.requestFocus();
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void createNewGame() {
 
         Game newGame = new Game();
@@ -305,7 +349,9 @@ public class GameDialog extends DialogFragment {
         LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
 
         for(int i = 0; i < scenarioLayout.getChildCount();i++){
-            scenarios.add(((AddScenarioLayout)scenarioLayout.getChildAt(i)).getScenario());
+            AddScenarioLayout addScenarioLayout = (AddScenarioLayout) scenarioLayout.getChildAt(i);
+            Scenario scenario = addScenarioLayout.getScenario();
+            scenarios.add(scenario);
         }
 
         List<Expansion> expansions = new ArrayList<>();

@@ -22,12 +22,14 @@
     <string name="delete_scenario_description">Usuwa scenariusz</string>
     <string name="scenarios">Scenariusze:</string>
     <string name="sadasdsadsa">5</string>
-    <string name="no_number_of_players">Pola liczy graczy nie mogą być puste</string>
+    <string name="no_number_of_players">Pola liczby graczy nie mogą być puste</string>
     <string name="min_grater_then_max">Minimalna liczba graczy nie może być większa od makslymalnej</string>
     <string name="title_game_type">Typ rozgrywki</string>
     <string name="title_scenarios">Scenariusze</string>
     <string name="title_expansions">Dodatki</string>
     <string name="title_number_of_players">Liczba graczy</string>
+    <string name="duplicate_scenrio_name">Nazwa scenariusza nie może się powtarzac</string>
+    <string name="duplicate_expansion_name">Nazwa dodatku nie może się powtarzać</string>
 
     <string-array name="game_types">
         <item>Versus</item>
