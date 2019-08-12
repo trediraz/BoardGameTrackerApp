@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -32,16 +31,12 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class GameDialog extends DialogFragment {
 
     private ViewFlipper mViewFlipper;
     private boolean requiresScenario = false;
-    private BoardGameDao mBoardGameDao;
-
 
     @NonNull
     @Override
@@ -107,7 +102,7 @@ public class GameDialog extends DialogFragment {
         addScenarioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addNewScenario(scenarioLayout);
+                addNewScenarioView(scenarioLayout);
             }
         });
 
@@ -123,7 +118,7 @@ public class GameDialog extends DialogFragment {
         });
     }
 
-    private void addNewScenario(LinearLayout scenarioLayout) {
+    private void addNewScenarioView(LinearLayout scenarioLayout) {
         AddScenarioLayout last = (AddScenarioLayout) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
         LinearLayout linearLayout = getDialog().findViewById(R.id.scenarios);
         if(last == null) {

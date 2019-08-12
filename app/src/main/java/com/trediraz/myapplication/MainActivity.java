@@ -16,6 +16,7 @@ import com.trediraz.myapplication.Database.BoardGameDao;
 public class MainActivity extends AppCompatActivity {
 
     public static BoardGameDao mBoardGameDao;
+    private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this,R.id.fragment);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.games_fragment, R.id.match_frament, R.id.players_fragment, R.id.stats_fragment)
+        appBarConfiguration = new AppBarConfiguration.Builder(R.id.games_fragment, R.id.match_frament, R.id.players_fragment, R.id.stats_fragment)
                 .build();
 
         NavigationUI.setupWithNavController(bottomNavigationView,navController);
@@ -33,5 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
         AppDatabase db = Room.databaseBuilder(this,AppDatabase.class,"board-games").allowMainThreadQueries().build();
         mBoardGameDao = db.boardGameDao();
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this,R.id.fragment);
+        return NavigationUI.navigateUp(navController,appBarConfiguration) || super.onSupportNavigateUp();
     }
 }
