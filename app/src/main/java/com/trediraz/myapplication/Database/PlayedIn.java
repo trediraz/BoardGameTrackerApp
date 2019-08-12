@@ -1,7 +1,21 @@
 package com.trediraz.myapplication.Database;
 
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+
+@Entity(primaryKeys = {"player_id","match_id"},
+        foreignKeys = {
+                @ForeignKey(entity = Player.class,
+                        parentColumns = "id",
+                        childColumns = "player_id"),
+                @ForeignKey(entity = Match.class,
+                        parentColumns = "id",
+                        childColumns = "match_id"),},
+        indices = {@Index("player_id"),@Index("match_id")})
 public class PlayedIn {
-    private int player_id;
-    private int match_id;
-    private int place;
+
+    public int player_id;
+    public int match_id;
+    public int place;
 }
