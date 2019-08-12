@@ -25,9 +25,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.trediraz.myapplication.Database.BoardGameDao;
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Scenario;
+import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ public class GameDialog extends DialogFragment {
 
     private ViewFlipper mViewFlipper;
     private boolean requiresScenario = false;
+    private BoardGameDao mBoardGameDao;
+
 
     @NonNull
     @Override
@@ -336,14 +340,17 @@ public class GameDialog extends DialogFragment {
         newGame.max_number_of_players = Integer.parseInt(max_number_of_players.getText().toString());
         newGame.requireScenario = requiresScenario;
 
-        List<Scenario> scenarios = new ArrayList<>();
+        MainActivity.mBoardGameDao.insertGame(newGame);
+
+        int game_id = MainActivity.mBoardGameDao.getGameIdByName(newGame.name);
 
         if(!requiresScenario) {
             Spinner spinner = getDialog().findViewById(R.id.game_type_spinner);
             Scenario defaultScenario = new Scenario();
             defaultScenario.name = "__default_scenario__";
             defaultScenario.type = spinner.getSelectedItem().toString();
-            scenarios.add(defaultScenario);
+            defaultScenario.game_id = game_id;
+            MainActivity.mBoardGameDao.insertScenario(defaultScenario);
         }
 
         LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
@@ -351,10 +358,9 @@ public class GameDialog extends DialogFragment {
         for(int i = 0; i < scenarioLayout.getChildCount();i++){
             AddScenarioLayout addScenarioLayout = (AddScenarioLayout) scenarioLayout.getChildAt(i);
             Scenario scenario = addScenarioLayout.getScenario();
-            scenarios.add(scenario);
+            scenario.game_id = game_id;
+            MainActivity.mBoardGameDao.insertScenario(scenario);
         }
-
-        List<Expansion> expansions = new ArrayList<>();
 
         LinearLayout expansionLayout = getDialog().findViewById(R.id.expansions);
         for(int i = 0; i < expansionLayout.getChildCount();i++){
@@ -362,8 +368,8 @@ public class GameDialog extends DialogFragment {
             if(!expansionName.equals("")){
                 Expansion expansion = new Expansion();
                 expansion.name = expansionName;
-                expansion.game_id = 1;
-                expansions.add(expansion);
+                expansion.game_id = game_id;
+                MainActivity.mBoardGameDao.insertExpansion(expansion);
             }
         }
     }
