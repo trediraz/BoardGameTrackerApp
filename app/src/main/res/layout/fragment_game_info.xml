@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".GameInfoFragment">
+        tools:context=".Game.GameInfoFragment">
 
         <TextView
             android:id="@+id/info_game_name"

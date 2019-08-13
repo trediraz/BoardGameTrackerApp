@@ -24,7 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.trediraz.myapplication.Database.BoardGameDao;
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Scenario;

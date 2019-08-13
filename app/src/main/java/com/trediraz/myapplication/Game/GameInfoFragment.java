@@ -1,4 +1,4 @@
-package com.trediraz.myapplication;
+package com.trediraz.myapplication.Game;
 
 import android.os.Bundle;
 
@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Scenario;
+import com.trediraz.myapplication.MainActivity;
+import com.trediraz.myapplication.R;
 
 import java.util.List;
 import java.util.Objects;

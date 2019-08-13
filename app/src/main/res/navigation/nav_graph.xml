@@ -30,7 +30,7 @@
         tools:layout="@layout/fragment_stats" />
     <fragment
         android:id="@+id/gameInfoFragment"
-        android:name="com.trediraz.myapplication.GameInfoFragment"
+        android:name="com.trediraz.myapplication.Game.GameInfoFragment"
         android:label="Info"
         tools:layout="@layout/fragment_game_info" >
         <argument
