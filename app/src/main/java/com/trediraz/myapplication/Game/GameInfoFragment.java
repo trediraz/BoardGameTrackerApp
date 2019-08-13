@@ -36,44 +36,43 @@ public class GameInfoFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         View view = getView();
-        if(view != null) {
-            LinearLayout scenariosNameView = view.findViewById(R.id.info_scenario_name);
-            LinearLayout scenarioTypeView = view.findViewById(R.id.info_scenario_type);
-            LinearLayout expansionsView = view.findViewById(R.id.expansions_info);
-            TextView gameNameView = view.findViewById(R.id.info_game_name);
-            TextView min = view.findViewById(R.id.min_number);
-            TextView max = view.findViewById(R.id.max_number);
+        LinearLayout scenariosNameView = Objects.requireNonNull(view).findViewById(R.id.info_scenario_name);
+        LinearLayout scenarioTypeView = view.findViewById(R.id.info_scenario_type);
+        LinearLayout expansionsView = view.findViewById(R.id.expansions_info);
+        TextView gameNameView = view.findViewById(R.id.info_game_name);
+        TextView min = view.findViewById(R.id.min_number);
+        TextView max = view.findViewById(R.id.max_number);
 
-            String gameName = GameInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
-            gameNameView.setText(gameName);
+        String gameName = GameInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
+        gameNameView.setText(gameName);
 
-            List<Expansion> expansions =  MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
-            for(Expansion expansion : expansions){
-                TextView textView = new TextView(getContext());
-                textView.setText(expansion.name);
-                textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                expansionsView.addView(textView);
-            }
-            List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
-            for(Scenario scenario : scenarios){
-                if(!scenario.name.equals("__default_scenario__")){
-                    TextView name = new TextView(getContext());
-                    TextView type = new TextView(getContext());
-                    name.setText(scenario.name);
-                    name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                    type.setText(scenario.type);
-                    type.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                    scenariosNameView.addView(name);
-                    scenarioTypeView.addView(type);
-                }
-            }
-
-            String minNumber = String.valueOf(MainActivity.mBoardGameDao.getMinNumberOfPlayersByGameName(gameName));
-            String maxNumber = String.valueOf(MainActivity.mBoardGameDao.getMaxNumberOfPlayersByGameName(gameName));
-
-            min.setText(minNumber);
-            max.setText(maxNumber);
-
+        List<Expansion> expansions =  MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
+        for(Expansion expansion : expansions){
+            TextView textView = new TextView(getContext());
+            textView.setText(expansion.name);
+            textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            expansionsView.addView(textView);
         }
+        List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
+        for(Scenario scenario : scenarios){
+            if(!scenario.name.equals("__default_scenario__")){
+                TextView name = new TextView(getContext());
+                TextView type = new TextView(getContext());
+                name.setText(scenario.name);
+                name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                type.setText(scenario.type);
+                type.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                scenariosNameView.addView(name);
+                scenarioTypeView.addView(type);
+            }
+        }
+
+        String minNumber = String.valueOf(MainActivity.mBoardGameDao.getMinNumberOfPlayersByGameName(gameName));
+        String maxNumber = String.valueOf(MainActivity.mBoardGameDao.getMaxNumberOfPlayersByGameName(gameName));
+
+        min.setText(minNumber);
+        max.setText(maxNumber);
+
+
     }
 }

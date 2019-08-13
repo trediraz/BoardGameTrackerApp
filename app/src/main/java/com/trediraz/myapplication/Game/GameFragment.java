@@ -17,18 +17,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements GameDialog.GameDialogInterface {
+
+    private ArrayList<String> mGameNames;
 
     public GameFragment() {
 
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -42,8 +44,8 @@ public class GameFragment extends Fragment {
         Button addGameButton = Objects.requireNonNull(getView()).findViewById(R.id.add_game_button);
 
         ListView gameList = getView().findViewById(R.id.game_list_view);
-        ArrayList<String> gameNames = (ArrayList<String>) MainActivity.mBoardGameDao.getAllGameNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,gameNames);
+        mGameNames = (ArrayList<String>) MainActivity.mBoardGameDao.getAllGameNames();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout, mGameNames);
         gameList.setAdapter(adapter);
         gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -59,10 +61,14 @@ public class GameFragment extends Fragment {
             public void onClick(View view) {
                 DialogFragment dialogName = new GameDialog();
                 dialogName.setCancelable(false);
-                dialogName.show(Objects.requireNonNull(getFragmentManager()),"dialog");
+                dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
             }
         });
     }
 
 
+    @Override
+    public void onGameAdded(Game game) {
+        mGameNames.add(game.name);
+    }
 }

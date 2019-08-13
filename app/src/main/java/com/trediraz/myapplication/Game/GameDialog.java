@@ -34,8 +34,14 @@ import java.util.Objects;
 
 public class GameDialog extends DialogFragment {
 
+    public interface GameDialogInterface{
+        void onGameAdded(Game game);
+    }
+
     private ViewFlipper mViewFlipper;
     private boolean requiresScenario = false;
+
+    private GameDialogInterface mListener;
 
     @NonNull
     @Override
@@ -44,6 +50,16 @@ public class GameDialog extends DialogFragment {
         builder.setTitle(R.string.new_game)
                 .setView(R.layout.game_dialog_layout);
         return builder.create();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (GameDialogInterface) getParentFragment();
+        }catch ( ClassCastException e){
+            throw new ClassCastException(context.toString() + " must implement");
+        }
     }
 
     @Override
@@ -335,15 +351,16 @@ public class GameDialog extends DialogFragment {
         newGame.requireScenario = requiresScenario;
 
         MainActivity.mBoardGameDao.insertGame(newGame);
+        newGame.id = MainActivity.mBoardGameDao.getGameIdByName(newGame.name);
 
-        int game_id = MainActivity.mBoardGameDao.getGameIdByName(newGame.name);
+        mListener.onGameAdded(newGame);
 
         if(!requiresScenario) {
             Spinner spinner = getDialog().findViewById(R.id.game_type_spinner);
             Scenario defaultScenario = new Scenario();
             defaultScenario.name = "__default_scenario__";
             defaultScenario.type = spinner.getSelectedItem().toString();
-            defaultScenario.game_id = game_id;
+            defaultScenario.game_id = newGame.id;
             MainActivity.mBoardGameDao.insertScenario(defaultScenario);
         }
 
@@ -352,7 +369,7 @@ public class GameDialog extends DialogFragment {
         for(int i = 0; i < scenarioLayout.getChildCount();i++){
             AddScenarioLayout addScenarioLayout = (AddScenarioLayout) scenarioLayout.getChildAt(i);
             Scenario scenario = addScenarioLayout.getScenario();
-            scenario.game_id = game_id;
+            scenario.game_id = newGame.id;
             MainActivity.mBoardGameDao.insertScenario(scenario);
         }
 
@@ -362,7 +379,7 @@ public class GameDialog extends DialogFragment {
             if(!expansionName.equals("")){
                 Expansion expansion = new Expansion();
                 expansion.name = expansionName;
-                expansion.game_id = game_id;
+                expansion.game_id = newGame.id;
                 MainActivity.mBoardGameDao.insertExpansion(expansion);
             }
         }

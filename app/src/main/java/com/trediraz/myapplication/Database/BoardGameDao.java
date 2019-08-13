@@ -36,8 +36,14 @@ public interface BoardGameDao {
     @Query("SELECT max_number_of_players FROM game WHERE name = :name LIMIT 1")
     int getMaxNumberOfPlayersByGameName(String name);
 
+    @Query("SELECT name FROM player")
+    List<String> getAllPlayerNames();
+
     @Insert
     void insertGame(Game game);
+
+    @Insert
+    void insertPlayer(Player player);
 
     @Insert
     void insertScenario(Scenario scenario);
