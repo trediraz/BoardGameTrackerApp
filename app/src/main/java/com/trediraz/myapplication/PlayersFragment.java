@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.trediraz.myapplication.Database.Player;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class PlayersFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,players);
         listView.setAdapter(adapter);
 
-        Button addPlayerButton = view.findViewById(R.id.add_players_button);
+        FloatingActionButton addPlayerButton = view.findViewById(R.id.add_players_button);
         addPlayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
@@ -41,7 +42,7 @@ public class GameFragment extends Fragment implements GameDialog.GameDialogInter
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Button addGameButton = Objects.requireNonNull(getView()).findViewById(R.id.add_game_button);
+        FloatingActionButton addGameButton = Objects.requireNonNull(getView()).findViewById(R.id.add_game_button);
 
         ListView gameList = getView().findViewById(R.id.game_list_view);
         mGameNames = (ArrayList<String>) MainActivity.mBoardGameDao.getAllGameNames();

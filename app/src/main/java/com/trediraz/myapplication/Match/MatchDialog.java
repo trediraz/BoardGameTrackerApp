@@ -4,11 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
@@ -32,7 +33,8 @@ public class MatchDialog extends DialogFragment {
     private ViewFlipper mViewFlipper;
     private RadioGroup mRadioGameButtons;
     private Game mGame;
-    private List<Scenario> scenarios;
+    private List<Scenario> mScenarios;
+    private List<Expansion> mExpansions;
 
     @NonNull
     @Override
@@ -100,9 +102,17 @@ public class MatchDialog extends DialogFragment {
                 dismiss();
                 break;
             case 2:
-                if(scenarios.size() == 1 && !mGame.requireScenario){
+                if(mScenarios.size() == 1 && !mGame.requireScenario){
                     mViewFlipper.setDisplayedChild(0);
                 } else
+                    mViewFlipper.showPrevious();
+                break;
+            case 3:
+                if(mExpansions.size() == 0 && mScenarios.size() == 1 && !mGame.requireScenario)
+                    mViewFlipper.setDisplayedChild(0);
+                else if(mExpansions.size() == 0)
+                    mViewFlipper.setDisplayedChild(1);
+                else
                     mViewFlipper.showPrevious();
                 break;
             default:
@@ -118,6 +128,7 @@ public class MatchDialog extends DialogFragment {
                     break;
                 case 1:
                     handleScenarioChoiceNextAction();
+                    break;
                 default:
                     mViewFlipper.showNext();
             }
@@ -154,11 +165,12 @@ public class MatchDialog extends DialogFragment {
     private void setUpScenarioView() {
         RadioGroup scenarioLayout = getDialog().findViewById(R.id.scenarios_view);
         scenarioLayout.removeAllViews();
-        scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
-        if(scenarios.size() == 1 && !mGame.requireScenario){
+        mScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
+        if(mScenarios.size() == 1 && !mGame.requireScenario){
             mViewFlipper.showNext();
+            setUpExpansionView();
         } else {
-            for(Scenario scenario : scenarios){
+            for(Scenario scenario : mScenarios){
                 RadioButton button = createRadioButton( (scenario.name.equals(Scenario.DEFAULT_NAME)) ? "Brak" : scenario.name);
                 scenarioLayout.addView(button);
             }
@@ -167,6 +179,17 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setUpExpansionView() {
+        mExpansions = MainActivity.mBoardGameDao.getExpansionsByGameName(mGame.name);
+        if(mExpansions.size() == 0)
+            mViewFlipper.showNext();
+        else {
+            LinearLayout expansionsView = getDialog().findViewById(R.id.expansions_view);
+            for(Expansion expansion : mExpansions){
+                CheckBox checkBox = new CheckBox(getContext());
+                checkBox.setText(expansion.name);
+                expansionsView.addView(checkBox);
+            }
+        }
 
     }
 

@@ -38,14 +38,17 @@
 
         </ScrollView>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/expansions_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wybór Dodatków"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Wybór Graczy"/>
+            android:text="Wybór graczy"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
