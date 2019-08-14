@@ -4,11 +4,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -39,7 +41,7 @@ public class MatchDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),android.R.style.Theme_Material_Light_Dialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         builder.setTitle(R.string.new_match)
                 .setView(R.layout.match_dialog_layout);
         return builder.create();
@@ -89,10 +91,11 @@ public class MatchDialog extends DialogFragment {
         if(mRadioGameButtons.getChildCount() == 0){
             List<String> gameNames = MainActivity.mBoardGameDao.getAllGameNames();
             for(String name : gameNames){
-                RadioButton button = createRadioButton(name);
+                RadioButton button = new RadioButton(getContext());
+                setButtonAttributes(button,name);
                 mRadioGameButtons.addView(button);
             }
-            setScrollViewSize( mRadioGameButtons);
+            setScrollViewSize(mRadioGameButtons);
         }
     }
 
@@ -171,7 +174,8 @@ public class MatchDialog extends DialogFragment {
             setUpExpansionView();
         } else {
             for(Scenario scenario : mScenarios){
-                RadioButton button = createRadioButton( (scenario.name.equals(Scenario.DEFAULT_NAME)) ? "Brak" : scenario.name);
+                RadioButton button = new RadioButton(getContext());
+                setButtonAttributes(button ,(scenario.name.equals(Scenario.DEFAULT_NAME)) ? "Brak" : scenario.name);
                 scenarioLayout.addView(button);
             }
             setScrollViewSize(scenarioLayout);
@@ -184,31 +188,37 @@ public class MatchDialog extends DialogFragment {
             mViewFlipper.showNext();
         else {
             LinearLayout expansionsView = getDialog().findViewById(R.id.expansions_view);
+            expansionsView.removeAllViews();
             for(Expansion expansion : mExpansions){
                 CheckBox checkBox = new CheckBox(getContext());
-                checkBox.setText(expansion.name);
+                setButtonAttributes(checkBox,expansion.name);
                 expansionsView.addView(checkBox);
             }
+            setScrollViewSize(expansionsView);
         }
 
     }
 
-    private RadioButton createRadioButton(String text){
-        RadioButton button = new RadioButton(getContext());
+    private void setButtonAttributes(Button button, String text){
         button.setText(text);
         button.setTextSize(20);
         button.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         button.setLayoutParams(new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        return button;
     }
 
-    private void setScrollViewSize(RadioGroup radioGroup){
+    private void setScrollViewSize(ViewGroup viewGroup){
         final int MAX_HEIGHT = 800;
-        ScrollView scrollView = (ScrollView) radioGroup.getParent();
-        if(radioGroup.getChildCount() > 9){
-            scrollView.setLayoutParams(new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT, MAX_HEIGHT));
+        ScrollView scrollView = (ScrollView) viewGroup.getParent();
+        if(viewGroup.getChildCount() > 9){
+            if(scrollView.getParent() instanceof LinearLayout)
+                scrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, MAX_HEIGHT));
+            else
+                scrollView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, MAX_HEIGHT));
         }else {
-            scrollView.setLayoutParams(new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT, ScrollView.LayoutParams.WRAP_CONTENT));
+            if(scrollView.getParent() instanceof LinearLayout)
+                scrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            else
+                scrollView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         }
     }
 }
