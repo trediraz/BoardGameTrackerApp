@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -53,6 +54,7 @@ public class MatchDialog extends DialogFragment {
         mViewFlipper = getDialog().findViewById(R.id.new_match_view_flipper);
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
+        CheckBox toggleAllExpansions = getDialog().findViewById(R.id.toggle_all_expansions);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +82,17 @@ public class MatchDialog extends DialogFragment {
                 }
                 else
                     return false;
+            }
+        });
+
+        final LinearLayout expansionView = getDialog().findViewById(R.id.expansions_view);
+        toggleAllExpansions.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                for(int i = 0; i < expansionView.getChildCount(); i++){
+                    CheckBox checkBox = (CheckBox) expansionView.getChildAt(i);
+                    checkBox.setChecked(b);
+                }
             }
         });
 
