@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/match_frament"
-        android:name="com.trediraz.myapplication.MatchFragment"
+        android:name="com.trediraz.myapplication.Match.MatchFragment"
         android:label="Rozgrywki"
         tools:layout="@layout/fragment_match" />
     <fragment

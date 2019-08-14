@@ -33,6 +33,8 @@
     <string name="add_player">Dodaj gracza</string>
     <string name="player_name">Nazwa gracza</string>
     <string name="cancel">Anuluj</string>
+    <string name="new_match">Nowa rozgrywka</string>
+    <string name="no_game_chosen">Wybierz gre</string>
 
     <string-array name="game_types">
         <item>Versus</item>

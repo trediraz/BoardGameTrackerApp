@@ -122,7 +122,7 @@ public class GameDialog extends DialogFragment {
         });
 
         final LinearLayout expansionsLayout = getDialog().findViewById(R.id.expansions);
-        createNewExpansionView(expansionsLayout);
+        if(expansionsLayout.getChildCount() == 0) createNewExpansionView(expansionsLayout);
 
         final Button addExpansionButton = getDialog().findViewById(R.id.add_expansion_button);
         addExpansionButton.setOnClickListener(new View.OnClickListener() {
@@ -358,7 +358,7 @@ public class GameDialog extends DialogFragment {
         if(!requiresScenario) {
             Spinner spinner = getDialog().findViewById(R.id.game_type_spinner);
             Scenario defaultScenario = new Scenario();
-            defaultScenario.name = "__default_scenario__";
+            defaultScenario.name = Scenario.DEFAULT_NAME;
             defaultScenario.type = spinner.getSelectedItem().toString();
             defaultScenario.game_id = newGame.id;
             MainActivity.mBoardGameDao.insertScenario(defaultScenario);
