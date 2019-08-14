@@ -116,6 +116,8 @@ public class MatchDialog extends DialogFragment {
                 case 0:
                     handleGameChoiceNextAction();
                     break;
+                case 1:
+                    handleScenarioChoiceNextAction();
                 default:
                     mViewFlipper.showNext();
             }
@@ -132,9 +134,21 @@ public class MatchDialog extends DialogFragment {
             RadioButton checkedGameButton = mRadioGameButtons.findViewById(checkedGameId);
             String gameName = checkedGameButton.getText().toString();
             mGame = MainActivity.mBoardGameDao.getGameByName(gameName);
-            mViewFlipper.showNext();
             setUpScenarioView();
+            mViewFlipper.showNext();
         }
+    }
+
+    private void handleScenarioChoiceNextAction() {
+        RadioGroup scenariosRadio = getDialog().findViewById(R.id.scenarios_view);
+        int checkScenarioId = scenariosRadio.getCheckedRadioButtonId();
+        if(checkScenarioId == RadioGroup.NO_ID){
+            Toast.makeText(getContext(),"Wybierz scenariusz",Toast.LENGTH_SHORT).show();
+        } else{
+            setUpExpansionView();
+            mViewFlipper.showNext();
+        }
+
     }
 
     private void setUpScenarioView() {
@@ -150,6 +164,10 @@ public class MatchDialog extends DialogFragment {
             }
             setScrollViewSize(scenarioLayout);
         }
+    }
+
+    private void setUpExpansionView() {
+
     }
 
     private RadioButton createRadioButton(String text){
