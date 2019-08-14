@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -24,8 +24,6 @@ import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -92,6 +90,7 @@ public class MatchDialog extends DialogFragment {
                 RadioButton button = createRadioButton(name);
                 mRadioGameButtons.addView(button);
             }
+            setScrollViewSize( mRadioGameButtons);
         }
     }
 
@@ -133,8 +132,8 @@ public class MatchDialog extends DialogFragment {
             RadioButton checkedGameButton = mRadioGameButtons.findViewById(checkedGameId);
             String gameName = checkedGameButton.getText().toString();
             mGame = MainActivity.mBoardGameDao.getGameByName(gameName);
-            setUpScenarioView();
             mViewFlipper.showNext();
+            setUpScenarioView();
         }
     }
 
@@ -149,6 +148,7 @@ public class MatchDialog extends DialogFragment {
                 RadioButton button = createRadioButton( (scenario.name.equals(Scenario.DEFAULT_NAME)) ? "Brak" : scenario.name);
                 scenarioLayout.addView(button);
             }
+            setScrollViewSize(scenarioLayout);
         }
     }
 
@@ -159,5 +159,15 @@ public class MatchDialog extends DialogFragment {
         button.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         button.setLayoutParams(new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return button;
+    }
+
+    private void setScrollViewSize(RadioGroup radioGroup){
+        final int MAX_HEIGHT = 800;
+        ScrollView scrollView = (ScrollView) radioGroup.getParent();
+        if(radioGroup.getChildCount() > 9){
+            scrollView.setLayoutParams(new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT, MAX_HEIGHT));
+        }else {
+            scrollView.setLayoutParams(new ScrollView.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT, ScrollView.LayoutParams.WRAP_CONTENT));
+        }
     }
 }
