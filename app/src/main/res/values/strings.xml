@@ -18,10 +18,7 @@
     <string name="no_name_toast">Pole nazwy nie może być puste</string>
     <string name="no_scenario">Ta gra musi posidac przynajmniej jeden scenariusz</string>
     <string name="empty_scenario_name">Nazwa scenariusza nie może być pusta</string>
-    <string name="error_message">Wystąpił problem</string>
     <string name="delete_scenario_description">Usuwa scenariusz</string>
-    <string name="scenarios">Scenariusze:</string>
-    <string name="sadasdsadsa">5</string>
     <string name="no_number_of_players">Pola liczby graczy nie mogą być puste</string>
     <string name="min_grater_then_max">Minimalna liczba graczy nie może być większa od makslymalnej</string>
     <string name="title_game_type">Typ rozgrywki</string>
@@ -36,6 +33,10 @@
     <string name="new_match">Nowa rozgrywka</string>
     <string name="no_game_chosen">Wybierz gre</string>
     <string name="all">Wszystkie</string>
+    <string name="no_scenario_chosen">Wybierz scenariusz</string>
+    <string name="default_scenario">Brak</string>
+    <string name="wrong_number_of_players">Zaznacz liczbę graczy między %1d a %1d</string>
+    <string name="max_eql_min">Liczba zaznaczonych graczy musi wynosić </string>
 
     <string-array name="game_types">
         <item>Versus</item>

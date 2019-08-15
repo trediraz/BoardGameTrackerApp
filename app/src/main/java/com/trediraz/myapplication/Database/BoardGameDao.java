@@ -39,6 +39,9 @@ public interface BoardGameDao {
     @Query("SELECT max_number_of_players FROM game WHERE name = :name LIMIT 1")
     int getMaxNumberOfPlayersByGameName(String name);
 
+    @Query("SELECT * FROM player")
+    List<Player> getAllPlayers();
+
     @Query("SELECT name FROM player")
     List<String> getAllPlayerNames();
 
@@ -53,4 +56,5 @@ public interface BoardGameDao {
 
     @Insert
     void insertExpansion(Expansion expansion);
+
 }

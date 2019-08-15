@@ -25,6 +25,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
+import com.trediraz.myapplication.Database.Player;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
@@ -35,9 +36,11 @@ public class MatchDialog extends DialogFragment {
 
     private ViewFlipper mViewFlipper;
     private RadioGroup mRadioGameButtons;
+    private RadioGroup mScenariosRadio;
+
+    private List<Scenario> mAllScenarios;
+    private List<Expansion> mAllExpansions;
     private Game mGame;
-    private List<Scenario> mScenarios;
-    private List<Expansion> mExpansions;
 
     @NonNull
     @Override
@@ -55,6 +58,8 @@ public class MatchDialog extends DialogFragment {
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
         CheckBox toggleAllExpansions = getDialog().findViewById(R.id.toggle_all_expansions);
+
+        mScenariosRadio = getDialog().findViewById(R.id.scenarios_view);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +102,7 @@ public class MatchDialog extends DialogFragment {
         });
 
         setUpGameChoiceView();
+        setUpPlayersView();
     }
 
     private void setUpGameChoiceView() {
@@ -104,12 +110,20 @@ public class MatchDialog extends DialogFragment {
         if(mRadioGameButtons.getChildCount() == 0){
             List<String> gameNames = MainActivity.mBoardGameDao.getAllGameNames();
             for(String name : gameNames){
-                RadioButton button = new RadioButton(getContext());
-                setButtonAttributes(button,name);
-                mRadioGameButtons.addView(button);
+                addRadioButtonToLinearLayout(mRadioGameButtons,name);
             }
             setScrollViewSize(mRadioGameButtons);
         }
+    }
+
+    private void setUpPlayersView() {
+        List<Player> players = MainActivity.mBoardGameDao.getAllPlayers();
+        LinearLayout playersView = getDialog().findViewById(R.id.players_view);
+        playersView.removeAllViews();
+        for(Player player : players){
+            addCheckboxButtonToLinearLayout(playersView,player.name);
+        }
+        setScrollViewSize(playersView);
     }
 
     private void handlePreviousAction() {
@@ -117,16 +131,21 @@ public class MatchDialog extends DialogFragment {
             case 0:
                 dismiss();
                 break;
+            case 1:
+                mScenariosRadio.clearCheck();
+                mViewFlipper.showPrevious();
+                break;
             case 2:
-                if(mScenarios.size() == 1 && !mGame.requireScenario){
+                if(mAllScenarios.size() == 1 && !mGame.requireScenario){
                     mViewFlipper.setDisplayedChild(0);
-                } else
+                } else {
                     mViewFlipper.showPrevious();
+                }
                 break;
             case 3:
-                if(mExpansions.size() == 0 && mScenarios.size() == 1 && !mGame.requireScenario)
+                if(mAllExpansions.size() == 0 && mAllScenarios.size() == 1 && !mGame.requireScenario)
                     mViewFlipper.setDisplayedChild(0);
-                else if(mExpansions.size() == 0)
+                else if(mAllExpansions.size() == 0)
                     mViewFlipper.setDisplayedChild(1);
                 else
                     mViewFlipper.showPrevious();
@@ -145,6 +164,9 @@ public class MatchDialog extends DialogFragment {
                 case 1:
                     handleScenarioChoiceNextAction();
                     break;
+                case 3:
+                    handlePlayerChoiceNextAction();
+                    break;
                 default:
                     mViewFlipper.showNext();
             }
@@ -152,6 +174,7 @@ public class MatchDialog extends DialogFragment {
         }else
             dismiss();
     }
+
 
     private void handleGameChoiceNextAction() {
         int checkedGameId = mRadioGameButtons.getCheckedRadioButtonId();
@@ -167,10 +190,9 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void handleScenarioChoiceNextAction() {
-        RadioGroup scenariosRadio = getDialog().findViewById(R.id.scenarios_view);
-        int checkScenarioId = scenariosRadio.getCheckedRadioButtonId();
+        int checkScenarioId = mScenariosRadio.getCheckedRadioButtonId();
         if(checkScenarioId == RadioGroup.NO_ID){
-            Toast.makeText(getContext(),"Wybierz scenariusz",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.no_scenario_chosen,Toast.LENGTH_SHORT).show();
         } else{
             setUpExpansionView();
             mViewFlipper.showNext();
@@ -178,31 +200,56 @@ public class MatchDialog extends DialogFragment {
 
     }
 
+    private void handlePlayerChoiceNextAction() {
+        LinearLayout playersView = getDialog().findViewById(R.id.players_view);
+        int max = MainActivity.mBoardGameDao.getMaxNumberOfPlayersByGameName(mGame.name);
+        int min = MainActivity.mBoardGameDao.getMinNumberOfPlayersByGameName(mGame.name);
+        int checkedButton = countChecks(playersView);
+        if(checkedButton > max || checkedButton < min){
+            if(min == max)
+                Toast.makeText(getContext(),getString(R.string.max_eql_min) + max,Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getContext(),getString(R.string.wrong_number_of_players,min,max),Toast.LENGTH_SHORT).show();
+        } else
+            mViewFlipper.showNext();
+
+    }
+
+    private int countChecks(LinearLayout layout){
+        int result = 0;
+        CheckBox checkBox;
+        for(int i = 0; i < layout.getChildCount(); i++){
+            checkBox = (CheckBox) layout.getChildAt(i);
+            if(checkBox.isChecked())
+                result++;
+        }
+        return result;
+    }
+
     private void setUpScenarioView() {
         RadioGroup scenarioLayout = getDialog().findViewById(R.id.scenarios_view);
         scenarioLayout.removeAllViews();
-        mScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
-        if(mScenarios.size() == 1 && !mGame.requireScenario){
+        mAllScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
+        if(mAllScenarios.size() == 1 && !mGame.requireScenario){
             mViewFlipper.showNext();
             setUpExpansionView();
         } else {
-            for(Scenario scenario : mScenarios){
-                RadioButton button = new RadioButton(getContext());
-                setButtonAttributes(button ,(scenario.name.equals(Scenario.DEFAULT_NAME)) ? "Brak" : scenario.name);
-                scenarioLayout.addView(button);
+            for(Scenario scenario : mAllScenarios){
+                String buttonText  = (scenario.name.equals(Scenario.DEFAULT_NAME)) ? getString(R.string.default_scenario) : scenario.name;
+                addRadioButtonToLinearLayout(scenarioLayout,buttonText);
             }
             setScrollViewSize(scenarioLayout);
         }
     }
 
     private void setUpExpansionView() {
-        mExpansions = MainActivity.mBoardGameDao.getExpansionsByGameName(mGame.name);
-        if(mExpansions.size() == 0)
+        mAllExpansions = MainActivity.mBoardGameDao.getExpansionsByGameName(mGame.name);
+        if(mAllExpansions.size() == 0)
             mViewFlipper.showNext();
         else {
             LinearLayout expansionsView = getDialog().findViewById(R.id.expansions_view);
             expansionsView.removeAllViews();
-            for(Expansion expansion : mExpansions){
+            for(Expansion expansion : mAllExpansions){
                 CheckBox checkBox = new CheckBox(getContext());
                 setButtonAttributes(checkBox,expansion.name);
                 expansionsView.addView(checkBox);
@@ -210,6 +257,18 @@ public class MatchDialog extends DialogFragment {
             setScrollViewSize(expansionsView);
         }
 
+    }
+
+    private void addRadioButtonToLinearLayout(RadioGroup layout, String text) {
+        RadioButton button = new RadioButton(getContext());
+        setButtonAttributes(button ,text);
+        layout.addView(button);
+    }
+
+    private void addCheckboxButtonToLinearLayout(LinearLayout layout,String text) {
+        CheckBox checkBox = new CheckBox(getContext());
+        setButtonAttributes(checkBox,text);
+        layout.addView(checkBox);
     }
 
     private void setButtonAttributes(Button button, String text){
