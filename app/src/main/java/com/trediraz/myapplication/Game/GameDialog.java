@@ -227,9 +227,12 @@ public class GameDialog extends DialogFragment {
             case 0:
                 EditText gameNameText = getDialog().findViewById(R.id.game_name);
                 String gameName = gameNameText.getText().toString();
-                if (gameName.equals("")){
+                if (gameName.equals("")) {
                     isDataValid = false;
                     errorToastMessage = R.string.no_name_toast;
+                } else if(MainActivity.mBoardGameDao.getAllGameNames().contains(gameName)){
+                    errorToastMessage =  R.string.game_name_used;
+                    isDataValid = false;
                 } else {
                     mViewFlipper.setDisplayedChild((skipOptionalView) ? (OPTIONAL_VIEW+1) : OPTIONAL_VIEW);
                 }

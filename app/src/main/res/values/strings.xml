@@ -37,6 +37,7 @@
     <string name="default_scenario">Brak</string>
     <string name="wrong_number_of_players">Zaznacz liczbę graczy między %1d a %1d</string>
     <string name="max_eql_min">Liczba zaznaczonych graczy musi wynosić </string>
+    <string name="game_name_used">Gra o takiej nazwie już istnieje</string>
 
     <string-array name="game_types">
         <item>Versus</item>
