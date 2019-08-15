@@ -35,9 +35,20 @@
     <string name="all">Wszystkie</string>
     <string name="no_scenario_chosen">Wybierz scenariusz</string>
     <string name="default_scenario">Brak</string>
-    <string name="wrong_number_of_players">Zaznacz liczbę graczy między %1d a %1d</string>
+    <string name="wrong_number_of_players">Zaznacz liczbę graczy między %1d i %1d</string>
     <string name="max_eql_min">Liczba zaznaczonych graczy musi wynosić </string>
     <string name="game_name_used">Gra o takiej nazwie już istnieje</string>
+    <string name="chose_game">Gra</string>
+    <string name="chose_scenario">Scenariusz</string>
+    <string name="chose_expansion">Dodatki</string>
+    <string name="chose_players">Gracze</string>
+    <string name="chose_outcome">Wynik</string>
+    <string name="date">Data</string>
+    <string name="overlord">Overlord</string>
+    <string name="victory">Zwycięstwo</string>
+    <string name="defeat">Porażka</string>
+    <string name="heroes">Bohaterowie</string>
+    <string name="not_finished">Nieskończona</string>
 
     <string-array name="game_types">
         <item>Versus</item>
