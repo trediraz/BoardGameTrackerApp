@@ -40,6 +40,8 @@ public class MatchFragment extends Fragment {
         addNewMatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO: add no game or player validation:
+
                 DialogFragment dialogName = new MatchDialog();
                 dialogName.setCancelable(false);
                 dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");

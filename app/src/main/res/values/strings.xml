@@ -49,6 +49,8 @@
     <string name="defeat">Porażka</string>
     <string name="heroes">Bohaterowie</string>
     <string name="not_finished">Nieskończona</string>
+    <string name="draw">Remis</string>
+    <string name="place">Miejsce %1d</string>
 
     <string-array name="game_types">
         <item>Versus</item>

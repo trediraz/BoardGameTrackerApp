@@ -33,6 +33,9 @@ public interface BoardGameDao {
             "WHERE game.name = :name")
     List<Scenario> getScenariosByGameName(String name);
 
+    @Query("SELECT * FROM scenario WHERE name = :name AND game_id = :gameId LIMIT 1")
+    Scenario getScenarioByNameAndGameId(String name,int gameId);
+
     @Query("SELECT min_number_of_players FROM game WHERE name = :name LIMIT 1")
     int getMinNumberOfPlayersByGameName(String name);
 
@@ -44,6 +47,9 @@ public interface BoardGameDao {
 
     @Query("SELECT name FROM player")
     List<String> getAllPlayerNames();
+
+    @Query("SELECT * FROM player WHERE name= :name")
+    Player getPlayerByName(String name);
 
     @Insert
     void insertGame(Game game);

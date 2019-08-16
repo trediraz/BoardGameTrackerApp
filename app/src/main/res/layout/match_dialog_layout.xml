@@ -84,18 +84,18 @@
 
         </ScrollView>
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <Spinner
-                android:id="@+id/game_outcome_spinner"
+
+            <LinearLayout
+                android:id="@+id/game_outcome_view"
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:visibility="gone"
                 android:layout_height="wrap_content">
 
-            </Spinner>
-        </LinearLayout>
-
+            </LinearLayout>
+        </ScrollView>
 
         <DatePicker
             android:layout_width="wrap_content"
