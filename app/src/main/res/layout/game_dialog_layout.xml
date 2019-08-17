@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <ScrollView
+                android:scrollbars="none"
                 android:id="@+id/scenarios_scroll_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,6 +86,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <ScrollView
+                android:scrollbars="none"
                 android:id="@+id/expansions_scroll_view"
                 android:fillViewport="true"
                 android:layout_width="wrap_content"

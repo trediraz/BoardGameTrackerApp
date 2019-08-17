@@ -13,6 +13,7 @@
         android:layout_gravity="center">
 
         <ScrollView
+            android:scrollbars="none"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <RadioGroup
@@ -25,6 +26,7 @@
         </ScrollView>
 
         <ScrollView
+            android:scrollbars="none"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <RadioGroup
@@ -55,6 +57,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <ScrollView
+                android:scrollbars="none"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -71,6 +74,7 @@
 
 
         <ScrollView
+            android:scrollbars="none"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -86,7 +90,8 @@
 
         <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/game_outcome_view"

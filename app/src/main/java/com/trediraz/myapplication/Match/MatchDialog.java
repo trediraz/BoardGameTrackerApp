@@ -317,6 +317,12 @@ public class MatchDialog extends DialogFragment {
         for(int i = 0; i < mPlayers.size();i++){
             PlayerPlaceLayout playerPlaceLayout = new PlayerPlaceLayout(getContext());
             playerPlaceLayout.setTexts(i+1, (ArrayList<Player>) mPlayers);
+            playerPlaceLayout.setListener(new PlayerPlaceLayout.DrawClickedListener() {
+                @Override
+                public void onDrawClicked(int id, boolean isChecked, String text) {
+                    Toast.makeText(getContext(),id + " " + isChecked + text,Toast.LENGTH_SHORT).show();
+                }
+            });
             layout.addView(playerPlaceLayout);
         }
         setScrollViewSize(layout, 5);

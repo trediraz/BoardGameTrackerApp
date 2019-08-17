@@ -3,6 +3,8 @@ package com.trediraz.myapplication.Match;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -14,8 +16,19 @@ import java.util.ArrayList;
 
 public class PlayerPlaceLayout extends LinearLayout {
 
+    public interface DrawClickedListener{
+        void onDrawClicked(int pos,boolean isChecked, String text);
+    }
+
+    private DrawClickedListener mListener;
+
+    public void setListener(DrawClickedListener listener) {
+        mListener = listener;
+    }
+
     private TextView placeView;
     private Spinner playersSpinner;
+    private CheckBox drawCheckBox;
 
     public PlayerPlaceLayout(Context context) {
         super(context);
@@ -35,9 +48,10 @@ public class PlayerPlaceLayout extends LinearLayout {
     private void initComponents() {
         placeView = findViewById(R.id.place);
         playersSpinner = findViewById(R.id.player_spinner);
+        drawCheckBox = findViewById(R.id.draw_checkbox);
     }
 
-    public void setTexts(int place, ArrayList<Player> players){
+    public void setTexts(final int place, ArrayList<Player> players){
         placeView.setText(getResources().getString(R.string.place,place));
         ArrayList<String> playerNames = new ArrayList<>();
         playerNames.add("-");
@@ -48,9 +62,17 @@ public class PlayerPlaceLayout extends LinearLayout {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item,playerNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         playersSpinner.setAdapter(adapter);
+
+        drawCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mListener.onDrawClicked(place - 1, b , placeView.getText().toString());
+            }
+        });
     }
 
     public void setPlaceText(String text){
         placeView.setText(text);
     }
+
 }
