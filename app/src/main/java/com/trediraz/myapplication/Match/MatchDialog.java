@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -315,25 +316,41 @@ public class MatchDialog extends DialogFragment {
         final LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
         layout.removeAllViews();
         for(int i = 0; i < mPlayers.size();i++){
-            PlayerPlaceLayout playerPlaceLayout = new PlayerPlaceLayout(getContext());
-            playerPlaceLayout.setTexts(i+1, (ArrayList<Player>) mPlayers);
-            playerPlaceLayout.setListener(new PlayerPlaceLayout.DrawClickedListener() {
-                @Override
-                public void onDrawClicked() {
-                    for(int i = 0, j = 1; i < layout.getChildCount();i++){
-                        PlayerPlaceLayout child = (PlayerPlaceLayout) layout.getChildAt(i);
-                        child.setPlace(j);
-                        if(!child.isDraw())
-                            j = i+2;
-                    }
-                }
-            });
-            if(i == mPlayers.size()-1)
-                playerPlaceLayout.hideDrawButton();
-
+            PlayerPlaceLayout playerPlaceLayout = createPlayerPlaceLayout(layout, i);
             layout.addView(playerPlaceLayout);
         }
         setScrollViewSize(layout, 4);
+    }
+
+    private PlayerPlaceLayout createPlayerPlaceLayout(final LinearLayout layout , int id) {
+        PlayerPlaceLayout playerPlaceLayout = new PlayerPlaceLayout(getContext());
+        playerPlaceLayout.setTexts(id+1, (ArrayList<Player>) mPlayers);
+        playerPlaceLayout.setId(id);
+        playerPlaceLayout.setListener(new PlayerPlaceLayout.PlayerPlaceLayoutListener() {
+            @Override
+            public void onDrawClicked() {
+                for(int i = 0, j = 1; i < layout.getChildCount();i++){
+                    PlayerPlaceLayout child = (PlayerPlaceLayout) layout.getChildAt(i);
+                    child.setPlace(j);
+                    if(!child.isDraw())
+                        j = i+2;
+                }
+            }
+
+            @Override
+            public void onPlayerSelected(String selectedPlayer, int id) {
+                for(int i = 0; i < layout.getChildCount();i++){
+                    PlayerPlaceLayout child = (PlayerPlaceLayout) layout.getChildAt(i);
+                    if(selectedPlayer.equals(child.getSelectedPlayer()) && i != id){
+                        child.setPlayerToNone();
+                        return;
+                    }
+                }
+            }
+        });
+        if(id == mPlayers.size()-1)
+            playerPlaceLayout.hideDrawButton();
+        return playerPlaceLayout;
     }
 
     private void setSpinnerFromArrayList(ArrayList<String> arrayList) {

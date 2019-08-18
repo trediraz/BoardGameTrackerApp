@@ -2,6 +2,8 @@ package com.trediraz.myapplication.Match;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -16,13 +18,14 @@ import java.util.ArrayList;
 
 public class PlayerPlaceLayout extends LinearLayout {
 
-    public interface DrawClickedListener{
+    public interface PlayerPlaceLayoutListener {
         void onDrawClicked();
+        void onPlayerSelected(String name, int id);
     }
 
-    private DrawClickedListener mListener;
+    private PlayerPlaceLayoutListener mListener;
 
-    public void setListener(DrawClickedListener listener) {
+    public void setListener(PlayerPlaceLayoutListener listener) {
         mListener = listener;
     }
 
@@ -70,6 +73,17 @@ public class PlayerPlaceLayout extends LinearLayout {
                 mListener.onDrawClicked();
             }
         });
+
+        playersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mListener.onPlayerSelected(adapterView.getItemAtPosition(i).toString(), getId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
     }
 
     public void setPlace(int place){
@@ -84,4 +98,10 @@ public class PlayerPlaceLayout extends LinearLayout {
         return drawCheckBox.isChecked();
     }
 
+    public String getSelectedPlayer(){
+        return playersSpinner.getSelectedItem().toString();
+    }
+    public void setPlayerToNone(){
+        playersSpinner.setSelection(0);
+    }
 }
