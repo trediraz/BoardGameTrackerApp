@@ -24,7 +24,7 @@
         android:id="@+id/bottomNavigationView"
         app:menu="@menu/navigation_menu"
         android:textAlignment="center"
-        app:itemBackground="@color/white"
+        app:itemBackground="@color/icons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:labelVisibilityMode="labeled"

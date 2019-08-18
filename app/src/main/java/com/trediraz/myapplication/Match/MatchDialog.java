@@ -299,13 +299,13 @@ public class MatchDialog extends DialogFragment {
             case "Overlord":
                 outcomes.add(getString(R.string.overlord));
                 outcomes.add(getString(R.string.heroes));
-                outcomes.add(getString(R.string.not_finished));
+                outcomes.add(getString(R.string.unfinished));
                 setSpinnerFromArrayList(outcomes);
                 break;
             case "Coop":
                 outcomes.add(getString(R.string.victory));
                 outcomes.add(getString(R.string.defeat));
-                outcomes.add(getString(R.string.not_finished));
+                outcomes.add(getString(R.string.unfinished));
                 setSpinnerFromArrayList(outcomes);
         }
 
@@ -323,6 +323,10 @@ public class MatchDialog extends DialogFragment {
                     Toast.makeText(getContext(),id + " " + isChecked + text,Toast.LENGTH_SHORT).show();
                 }
             });
+
+            if(i == mPlayers.size()-1)
+                playerPlaceLayout.hideDrawButton();
+
             layout.addView(playerPlaceLayout);
         }
         setScrollViewSize(layout, 5);

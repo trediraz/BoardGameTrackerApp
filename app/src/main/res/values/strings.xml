@@ -48,7 +48,7 @@
     <string name="victory">Zwycięstwo</string>
     <string name="defeat">Porażka</string>
     <string name="heroes">Bohaterowie</string>
-    <string name="not_finished">Nieskończona</string>
+    <string name="unfinished">Nieskończona</string>
     <string name="draw">Remis</string>
     <string name="place">Miejsce %1d</string>
 

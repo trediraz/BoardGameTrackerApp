@@ -75,4 +75,8 @@ public class PlayerPlaceLayout extends LinearLayout {
         placeView.setText(text);
     }
 
+    public void hideDrawButton(){
+        drawCheckBox.setVisibility(GONE);
+    }
+
 }
