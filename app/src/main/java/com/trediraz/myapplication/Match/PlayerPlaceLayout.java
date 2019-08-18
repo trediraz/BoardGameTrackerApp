@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class PlayerPlaceLayout extends LinearLayout {
 
     public interface DrawClickedListener{
-        void onDrawClicked(int pos,boolean isChecked, String text);
+        void onDrawClicked();
     }
 
     private DrawClickedListener mListener;
@@ -52,7 +52,8 @@ public class PlayerPlaceLayout extends LinearLayout {
     }
 
     public void setTexts(final int place, ArrayList<Player> players){
-        placeView.setText(getResources().getString(R.string.place,place));
+        setPlace(place);
+
         ArrayList<String> playerNames = new ArrayList<>();
         playerNames.add("-");
         for (Player player : players) {
@@ -66,17 +67,21 @@ public class PlayerPlaceLayout extends LinearLayout {
         drawCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mListener.onDrawClicked(place - 1, b , placeView.getText().toString());
+                mListener.onDrawClicked();
             }
         });
     }
 
-    public void setPlaceText(String text){
-        placeView.setText(text);
+    public void setPlace(int place){
+        placeView.setText(getResources().getString(R.string.place,place));
     }
 
     public void hideDrawButton(){
         drawCheckBox.setVisibility(GONE);
+    }
+
+    public boolean isDraw(){
+        return drawCheckBox.isChecked();
     }
 
 }

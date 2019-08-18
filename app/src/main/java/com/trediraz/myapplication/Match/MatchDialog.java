@@ -312,24 +312,28 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void addPlaceLayouts() {
-        LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
+        final LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
         layout.removeAllViews();
         for(int i = 0; i < mPlayers.size();i++){
             PlayerPlaceLayout playerPlaceLayout = new PlayerPlaceLayout(getContext());
             playerPlaceLayout.setTexts(i+1, (ArrayList<Player>) mPlayers);
             playerPlaceLayout.setListener(new PlayerPlaceLayout.DrawClickedListener() {
                 @Override
-                public void onDrawClicked(int id, boolean isChecked, String text) {
-                    Toast.makeText(getContext(),id + " " + isChecked + text,Toast.LENGTH_SHORT).show();
+                public void onDrawClicked() {
+                    for(int i = 0, j = 1; i < layout.getChildCount();i++){
+                        PlayerPlaceLayout child = (PlayerPlaceLayout) layout.getChildAt(i);
+                        child.setPlace(j);
+                        if(!child.isDraw())
+                            j = i+2;
+                    }
                 }
             });
-
             if(i == mPlayers.size()-1)
                 playerPlaceLayout.hideDrawButton();
 
             layout.addView(playerPlaceLayout);
         }
-        setScrollViewSize(layout, 5);
+        setScrollViewSize(layout, 4);
     }
 
     private void setSpinnerFromArrayList(ArrayList<String> arrayList) {
