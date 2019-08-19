@@ -32,6 +32,7 @@ public class PlayerPlaceLayout extends LinearLayout {
     private TextView placeView;
     private Spinner playersSpinner;
     private CheckBox drawCheckBox;
+    private int place;
 
     public PlayerPlaceLayout(Context context) {
         super(context);
@@ -87,6 +88,7 @@ public class PlayerPlaceLayout extends LinearLayout {
     }
 
     public void setPlace(int place){
+        this.place = place;
         placeView.setText(getResources().getString(R.string.place,place));
     }
 
@@ -103,5 +105,8 @@ public class PlayerPlaceLayout extends LinearLayout {
     }
     public void setPlayerToNone(){
         playersSpinner.setSelection(0);
+    }
+    public int getPlace(){
+        return place;
     }
 }

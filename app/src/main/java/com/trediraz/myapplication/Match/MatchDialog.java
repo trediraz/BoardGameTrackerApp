@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.Spanned;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,6 +30,7 @@ import androidx.fragment.app.DialogFragment;
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Match;
+import com.trediraz.myapplication.Database.PlayedIn;
 import com.trediraz.myapplication.Database.Player;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
@@ -203,11 +201,40 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void updateDatabase() {
+        String date;
+        DatePicker datePicker = getDialog().findViewById(R.id.date_picker);
+        date = String.format("%s-%s-%s",datePicker.getYear(),datePicker.getMonth()+1,datePicker.getDayOfMonth());
+
+        EditText commentsView = getDialog().findViewById(R.id.comments);
 
         Match newMatch = new Match();
         newMatch.game_id = mGame.id;
         newMatch.scenario_id = mScenario.id;
         newMatch.outcome = mOutcome;
+        newMatch.date = date;
+        newMatch.comments = commentsView.getText().toString();
+        newMatch.id = (int) MainActivity.mBoardGameDao.insertMatch(newMatch);
+
+        for (Player player : mPlayers) {
+            PlayedIn playedIn = new PlayedIn();
+            playedIn.match_id = newMatch.id;
+            playedIn.player_id = player.id;
+            if(mScenario.type.equals("Versus"))
+                playedIn.place = getPlayerPlace(player.name);
+            else playedIn.place = 0;
+            MainActivity.mBoardGameDao.insertPlayedIn(playedIn);
+        }
+
+    }
+
+    private int getPlayerPlace(String name) {
+        LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
+        for(int i = 0; i < layout.getChildCount();i++){
+            PlayerPlaceLayout playerPlaceLayout = (PlayerPlaceLayout) layout.getChildAt(i);
+            if(name.equals(playerPlaceLayout.getSelectedPlayer()))
+                return playerPlaceLayout.getPlace();
+        }
+        return 0;
     }
 
 
