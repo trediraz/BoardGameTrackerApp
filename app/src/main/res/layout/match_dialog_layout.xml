@@ -128,6 +128,17 @@
 
         </DatePicker>
 
+        <EditText
+            android:id="@+id/comments"
+            android:hint="@string/comment_hint"
+            android:gravity="top"
+            android:layout_width="270dp"
+            android:layout_height="400dp"
+            android:autofillHints="@string/comment_hint"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:background="@null"
+            android:imeOptions="actionNone"/>
+
     </ViewFlipper>
 
     <LinearLayout

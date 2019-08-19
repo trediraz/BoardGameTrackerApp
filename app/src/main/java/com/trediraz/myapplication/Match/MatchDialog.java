@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -68,6 +72,7 @@ public class MatchDialog extends DialogFragment {
         Button previousButton = getDialog().findViewById(R.id.previous_button);
         CheckBox toggleAllExpansions = getDialog().findViewById(R.id.toggle_all_expansions);
         DatePicker datePicker = getDialog().findViewById(R.id.date_picker);
+        final EditText commnetsView = getDialog().findViewById(R.id.comments);
 
         datePicker.setMaxDate(new Date().getTime());
 
@@ -478,6 +483,8 @@ public class MatchDialog extends DialogFragment {
             case 5:
                 newTitle = getString(R.string.date);
                 break;
+            case 6:
+                newTitle = getString(R.string.comment_title);
         }
         getDialog().setTitle(newTitle);
     }
