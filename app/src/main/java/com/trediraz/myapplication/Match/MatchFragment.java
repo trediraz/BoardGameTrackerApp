@@ -12,12 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.trediraz.myapplication.Database.BoardGameDao;
+import com.trediraz.myapplication.Database.Match;
 import com.trediraz.myapplication.Game.GameDialog;
+import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
+import java.util.List;
 import java.util.Objects;
 
 public class MatchFragment extends Fragment {
@@ -36,6 +40,13 @@ public class MatchFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        List<Match> matches = MainActivity.mBoardGameDao.getAllMatches();
+
+        ListView matchesView = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
+        MatchListAdapter adapter = new MatchListAdapter(getActivity(),matches);
+        matchesView.setAdapter(adapter);
+
         FloatingActionButton addNewMatchButton = Objects.requireNonNull(getView()).findViewById(R.id.add_match_button);
         addNewMatchButton.setOnClickListener(new View.OnClickListener() {
             @Override

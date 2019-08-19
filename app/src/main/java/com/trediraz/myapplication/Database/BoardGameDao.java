@@ -12,6 +12,9 @@ import java.util.List;
 @Dao
 public interface BoardGameDao {
 
+    @Query("SELECT * FROM `match`")
+    List<Match> getAllMatches();
+
     @Query("SELECT * FROM `match` WHERE id = :id")
     Match getMatchById(int id);
 
@@ -23,6 +26,9 @@ public interface BoardGameDao {
 
     @Query("SELECT id FROM game WHERE name = :name")
     int getGameIdByName(String name);
+
+    @Query("SELECT name FROM game WHERE id = :id")
+    String getGameNameById(int id);
 
     @Query("SELECT expansion.name,expansion.game_id,expansion.id FROM expansion " +
             "INNER JOIN game ON expansion.game_id = game.id " +
