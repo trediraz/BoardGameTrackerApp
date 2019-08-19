@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -33,6 +34,7 @@ import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,6 +67,9 @@ public class MatchDialog extends DialogFragment {
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
         CheckBox toggleAllExpansions = getDialog().findViewById(R.id.toggle_all_expansions);
+        DatePicker datePicker = getDialog().findViewById(R.id.date_picker);
+
+        datePicker.setMaxDate(new Date().getTime());
 
         mScenariosRadio = getDialog().findViewById(R.id.scenarios_view);
 
@@ -175,6 +180,9 @@ public class MatchDialog extends DialogFragment {
                 case 3:
                     handlePlayerChoiceNextAction();
                     break;
+                case 4:
+                    handleResultChoiceNextAction();
+                    break;
                 default:
                     mViewFlipper.showNext();
             }
@@ -235,6 +243,48 @@ public class MatchDialog extends DialogFragment {
         }
     }
 
+    private void handleResultChoiceNextAction() {
+        switch (mScenario.type) {
+            case "Versus":
+                if(isPlaceViewDataValid())
+                    mViewFlipper.showNext();
+                break;
+            case "Overlord":
+            case "Coop":
+                mViewFlipper.showNext();
+        }
+    }
+
+    private boolean isPlaceViewDataValid() {
+        final String NO_PLAYER = "-";
+        LinearLayout places = getDialog().findViewById(R.id.game_outcome_view);
+        CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
+        if(!unfinished.isChecked()) {
+            PlayerPlaceLayout child = (PlayerPlaceLayout) places.getChildAt(0);
+            if(child.getSelectedPlayer().equals(NO_PLAYER)) {
+                Toast.makeText(getContext(), R.string.no_player_at_first_place,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        for(int i = 0; i < places.getChildCount();i++){
+            PlayerPlaceLayout child = (PlayerPlaceLayout) places.getChildAt(i);
+            PlayerPlaceLayout nextChild = (PlayerPlaceLayout) places.getChildAt(i+1);
+            if(child.isDraw() && nextChild.getSelectedPlayer().equals(NO_PLAYER)) {
+                Toast.makeText(getContext(), R.string.draw_place_empty,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if(child.getSelectedPlayer().equals(NO_PLAYER))
+                for(int j = i+1; j < places.getChildCount();j++){
+                    PlayerPlaceLayout placeLayout = (PlayerPlaceLayout) places.getChildAt(j);
+                    if(!placeLayout.getSelectedPlayer().equals(NO_PLAYER)) {
+                        Toast.makeText(getContext(), R.string.wrong_place_order, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+        }
+        return true;
+    }
+
     private void setPlayers(@NonNull LinearLayout layout) {
         mPlayers.clear();
         for(int i = 0; i < layout.getChildCount(); i++){
@@ -293,17 +343,21 @@ public class MatchDialog extends DialogFragment {
 
     private void setUpOutcomeView() {
         ArrayList<String> outcomes = new ArrayList<>();
+        CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         switch (mScenario.type){
             case "Versus":
+                unfinished.setVisibility(View.VISIBLE);
                 addPlaceLayouts();
                 break;
             case "Overlord":
+                unfinished.setVisibility(View.GONE);
                 outcomes.add(getString(R.string.overlord));
                 outcomes.add(getString(R.string.heroes));
                 outcomes.add(getString(R.string.unfinished));
                 setSpinnerFromArrayList(outcomes);
                 break;
             case "Coop":
+                unfinished.setVisibility(View.GONE);
                 outcomes.add(getString(R.string.victory));
                 outcomes.add(getString(R.string.defeat));
                 outcomes.add(getString(R.string.unfinished));

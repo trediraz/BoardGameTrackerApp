@@ -51,6 +51,9 @@
     <string name="unfinished">Nieskończona</string>
     <string name="draw">Remis</string>
     <string name="place">Miejsce %1d</string>
+    <string name="draw_place_empty">Puste pole remisu</string>
+    <string name="wrong_place_order">Wypełnij pola miejsc od pierwszego</string>
+    <string name="no_player_at_first_place">Wypełnij przynajmniej jedno miejsce lub oznacz grę jako nieskończoną</string>
 
     <string-array name="game_types">
         <item>Versus</item>

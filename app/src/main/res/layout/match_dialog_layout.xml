@@ -96,7 +96,7 @@
             <CheckBox
                 android:id="@+id/unfinished_checkbox"
                 android:text="@string/unfinished"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ScrollView
@@ -106,6 +106,9 @@
 
                 <LinearLayout
                     android:id="@+id/game_outcome_view"
+                    android:minWidth="150dp"
+                    android:divider="@android:color/black"
+                    android:showDividers="middle"
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -117,6 +120,7 @@
 
 
         <DatePicker
+            android:id="@+id/date_picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:datePickerMode="spinner"
