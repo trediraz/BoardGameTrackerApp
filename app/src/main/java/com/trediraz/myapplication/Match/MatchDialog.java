@@ -32,6 +32,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
+import com.trediraz.myapplication.Database.Match;
 import com.trediraz.myapplication.Database.Player;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
@@ -54,6 +55,7 @@ public class MatchDialog extends DialogFragment {
     private Game mGame;
     private Scenario mScenario;
     private List<Player> mPlayers = new ArrayList<>();
+    private String mOutcome;
 
     @NonNull
     @Override
@@ -72,7 +74,6 @@ public class MatchDialog extends DialogFragment {
         Button previousButton = getDialog().findViewById(R.id.previous_button);
         CheckBox toggleAllExpansions = getDialog().findViewById(R.id.toggle_all_expansions);
         DatePicker datePicker = getDialog().findViewById(R.id.date_picker);
-        final EditText commnetsView = getDialog().findViewById(R.id.comments);
 
         datePicker.setMaxDate(new Date().getTime());
 
@@ -175,6 +176,7 @@ public class MatchDialog extends DialogFragment {
 
     private void handleNextAction() {
         if (mViewFlipper.getDisplayedChild() != mViewFlipper.getChildCount()-1) {
+
             switch (mViewFlipper.getDisplayedChild()){
                 case 0:
                     handleGameChoiceNextAction();
@@ -188,12 +190,24 @@ public class MatchDialog extends DialogFragment {
                 case 4:
                     handleResultChoiceNextAction();
                     break;
+                case 6:
+                    break;
                 default:
                     mViewFlipper.showNext();
             }
         setTitle();
-        }else
+        }else {
+            updateDatabase();
             dismiss();
+        }
+    }
+
+    private void updateDatabase() {
+
+        Match newMatch = new Match();
+        newMatch.game_id = mGame.id;
+        newMatch.scenario_id = mScenario.id;
+        newMatch.outcome = mOutcome;
     }
 
 
@@ -251,11 +265,14 @@ public class MatchDialog extends DialogFragment {
     private void handleResultChoiceNextAction() {
         switch (mScenario.type) {
             case "Versus":
-                if(isPlaceViewDataValid())
+                if(isPlaceViewDataValid()) {
+                    setPlayerOutcome();
                     mViewFlipper.showNext();
+                }
                 break;
             case "Overlord":
             case "Coop":
+                setOutcomeFromSpinner();
                 mViewFlipper.showNext();
         }
     }
@@ -288,6 +305,25 @@ public class MatchDialog extends DialogFragment {
                 }
         }
         return true;
+    }
+
+    private void setPlayerOutcome() {
+        LinearLayout places = getDialog().findViewById(R.id.game_outcome_view);
+        CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
+        if(unfinished.isChecked())
+            mOutcome = getString(R.string.unfinished);
+        else {
+            PlayerPlaceLayout playerPlaceLayout = (PlayerPlaceLayout) places.getChildAt(0);
+            if(playerPlaceLayout.isDraw())
+                mOutcome = getString(R.string.draw);
+            else
+                mOutcome = playerPlaceLayout.getSelectedPlayer();
+        }
+    }
+
+    private void setOutcomeFromSpinner() {
+        Spinner spinner = getDialog().findViewById(R.id.outcome_spinner);
+        mOutcome = spinner.getSelectedItem().toString();
     }
 
     private void setPlayers(@NonNull LinearLayout layout) {
@@ -348,6 +384,7 @@ public class MatchDialog extends DialogFragment {
 
     private void setUpOutcomeView() {
         ArrayList<String> outcomes = new ArrayList<>();
+        final LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
         CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         switch (mScenario.type){
             case "Versus":
@@ -368,6 +405,7 @@ public class MatchDialog extends DialogFragment {
                 outcomes.add(getString(R.string.unfinished));
                 setSpinnerFromArrayList(outcomes);
         }
+        setScrollViewSize(layout,4);
 
     }
 
@@ -378,7 +416,6 @@ public class MatchDialog extends DialogFragment {
             PlayerPlaceLayout playerPlaceLayout = createPlayerPlaceLayout(layout, i);
             layout.addView(playerPlaceLayout);
         }
-        setScrollViewSize(layout, 4);
     }
 
     private PlayerPlaceLayout createPlayerPlaceLayout(final LinearLayout layout , int id) {
@@ -418,6 +455,7 @@ public class MatchDialog extends DialogFragment {
         ArrayAdapter<String> outcomeAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, arrayList);
         outcomeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         outcomeSpinner.setAdapter(outcomeAdapter);
+        outcomeSpinner.setId(R.id.outcome_spinner);
 
         if(!(layout.getChildAt(1) instanceof Spinner))
             layout.removeAllViews();
