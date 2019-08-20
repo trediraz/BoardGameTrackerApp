@@ -43,7 +43,6 @@
     <string name="chose_expansion">Dodatki</string>
     <string name="chose_players">Gracze</string>
     <string name="chose_outcome">Wynik</string>
-    <string name="date">Data</string>
     <string name="overlord">Overlord</string>
     <string name="victory">Zwycięstwo</string>
     <string name="defeat">Porażka</string>
@@ -58,6 +57,9 @@
     <string name="comment_title">Komentarze</string>
     <string name="no_games">Dodaj przynajmniej jedną grę</string>
     <string name="no_players">Dodaj przynajmniej jedngo gracza</string>
+    <string name="error">Error</string>
+    <string name="date">Data</string>
+    <string name="result">Wynik</string>
 
     <string-array name="game_types">
         <item>Versus</item>
