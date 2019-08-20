@@ -58,6 +58,12 @@ public interface BoardGameDao {
     @Query("SELECT * FROM player WHERE name= :name")
     Player getPlayerByName(String name);
 
+    @Query("SELECT COUNT(id) FROM player")
+    int countPlayers();
+
+    @Query("SELECT COUNT(id) FROM game")
+    int countGames();
+
     @Insert
     long insertMatch(Match match);
 

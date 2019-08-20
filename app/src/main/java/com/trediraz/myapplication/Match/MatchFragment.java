@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.trediraz.myapplication.Database.BoardGameDao;
@@ -51,11 +52,17 @@ public class MatchFragment extends Fragment {
         addNewMatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: add no game or player validation:
 
-                DialogFragment dialogName = new MatchDialog();
-                dialogName.setCancelable(false);
-                dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
+                int numberOfGames = MainActivity.mBoardGameDao.countGames();
+                int numberOfPlayers = MainActivity.mBoardGameDao.countPlayers();
+                if(numberOfGames == 0 || numberOfPlayers ==0) {
+                    String toastMessage = (numberOfGames == 0) ? getString(R.string.no_games) : getString(R.string.no_players);
+                    Toast.makeText(getContext(),toastMessage,Toast.LENGTH_SHORT).show();
+                } else {
+                    DialogFragment dialogName = new MatchDialog();
+                    dialogName.setCancelable(false);
+                    dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
+                }
             }
         });
     }

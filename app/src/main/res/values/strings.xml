@@ -56,6 +56,8 @@
     <string name="no_player_at_first_place">Wypełnij przynajmniej jedno miejsce lub oznacz grę jako nieskończoną</string>
     <string name="comment_hint">Napisz komentarz</string>
     <string name="comment_title">Komentarze</string>
+    <string name="no_games">Dodaj przynajmniej jedną grę</string>
+    <string name="no_players">Dodaj przynajmniej jedngo gracza</string>
 
     <string-array name="game_types">
         <item>Versus</item>
