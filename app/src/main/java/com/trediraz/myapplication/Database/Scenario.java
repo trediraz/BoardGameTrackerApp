@@ -15,6 +15,12 @@ public class Scenario {
 
     @Ignore
     public static final String DEFAULT_NAME = "__default_scenario__";
+    @Ignore
+    public static final String OVERLORD = "Overlord";
+    @Ignore
+    public static final String COOP = "Coop";
+    @Ignore
+    public static final String VERSUS = "Versus";
 
     @PrimaryKey(autoGenerate = true)
     public int id;

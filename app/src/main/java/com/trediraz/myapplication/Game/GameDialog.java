@@ -46,7 +46,7 @@ public class GameDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),android.R.style.Theme_Material_Light_Dialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         builder.setTitle(R.string.new_game)
                 .setView(R.layout.game_dialog_layout);
         return builder.create();

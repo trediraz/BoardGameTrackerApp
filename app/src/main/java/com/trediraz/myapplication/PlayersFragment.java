@@ -61,7 +61,7 @@ public class PlayersFragment extends Fragment {
     }
 
     private void showNewPlayerDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),android.R.style.Theme_Material_Light_Dialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         final View view = LinearLayout.inflate(getContext(),R.layout.add_player_dialog_view,null);
         builder.setTitle(R.string.add_player)
                 .setView(view)

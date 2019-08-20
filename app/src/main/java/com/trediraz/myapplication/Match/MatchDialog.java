@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,17 +158,27 @@ public class MatchDialog extends DialogFragment {
                 }
                 break;
             case 3:
-                if(mAllExpansions.size() == 0 && mAllScenarios.size() == 1 && !mGame.requireScenario)
+                if(skipScenarioAndDialog())
                     mViewFlipper.setDisplayedChild(0);
                 else if(mAllExpansions.size() == 0)
                     mViewFlipper.setDisplayedChild(1);
                 else
                     mViewFlipper.showPrevious();
                 break;
+            case 5:
+                if(mScenario.type.equals(Scenario.OVERLORD))
+                    mViewFlipper.showPrevious();
+                else
+                    mViewFlipper.setDisplayedChild(3);
+                break;
             default:
                 mViewFlipper.showPrevious();
         }
         setTitle();
+    }
+
+    private boolean skipScenarioAndDialog(){
+        return mAllExpansions.size() == 0 && mAllScenarios.size() == 1 && !mGame.requireScenario;
     }
 
     private void handleNextAction() {
@@ -185,11 +194,10 @@ public class MatchDialog extends DialogFragment {
                 case 3:
                     handlePlayerChoiceNextAction();
                     break;
-                case 4:
+                case 5:
                     handleResultChoiceNextAction();
                     break;
-                case 6:
-                    break;
+
                 default:
                     mViewFlipper.showNext();
             }
@@ -219,7 +227,7 @@ public class MatchDialog extends DialogFragment {
             PlayedIn playedIn = new PlayedIn();
             playedIn.match_id = newMatch.id;
             playedIn.player_id = player.id;
-            if(mScenario.type.equals("Versus"))
+            if(mScenario.type.equals(Scenario.VERSUS))
                 playedIn.place = getPlayerPlace(player.name);
             else playedIn.place = 0;
             MainActivity.mBoardGameDao.insertPlayedIn(playedIn);
@@ -284,21 +292,26 @@ public class MatchDialog extends DialogFragment {
                 Toast.makeText(getContext(),getString(R.string.wrong_number_of_players,min,max),Toast.LENGTH_SHORT).show();
         } else {
             setPlayers(playersView);
-            mViewFlipper.showNext();
             setUpOutcomeView();
+            if(mScenario.type.equals(Scenario.OVERLORD)) {
+                setOverlordView();
+                mViewFlipper.showNext();
+            } else
+                mViewFlipper.setDisplayedChild(5);
         }
     }
 
+
     private void handleResultChoiceNextAction() {
         switch (mScenario.type) {
-            case "Versus":
+            case Scenario.VERSUS:
                 if(isPlaceViewDataValid()) {
                     setPlayerOutcome();
                     mViewFlipper.showNext();
                 }
                 break;
-            case "Overlord":
-            case "Coop":
+            case Scenario.OVERLORD:
+            case Scenario.COOP:
                 setOutcomeFromSpinner();
                 mViewFlipper.showNext();
         }
@@ -409,23 +422,34 @@ public class MatchDialog extends DialogFragment {
 
     }
 
+    private void setOverlordView() {
+        Spinner spinner = getDialog().findViewById(R.id.overlord_spinner);
+        ArrayList<String> names = new ArrayList<>();
+        for (Player player : mPlayers) {
+            names.add(player.name);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.support_simple_spinner_dropdown_item,names);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
     private void setUpOutcomeView() {
         ArrayList<String> outcomes = new ArrayList<>();
         final LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
         CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         switch (mScenario.type){
-            case "Versus":
+            case Scenario.VERSUS:
                 unfinished.setVisibility(View.VISIBLE);
                 addPlaceLayouts();
                 break;
-            case "Overlord":
+            case Scenario.OVERLORD:
                 unfinished.setVisibility(View.GONE);
                 outcomes.add(getString(R.string.overlord));
                 outcomes.add(getString(R.string.heroes));
                 outcomes.add(getString(R.string.unfinished));
                 setSpinnerFromArrayList(outcomes);
                 break;
-            case "Coop":
+            case Scenario.COOP:
                 unfinished.setVisibility(View.GONE);
                 outcomes.add(getString(R.string.victory));
                 outcomes.add(getString(R.string.defeat));
@@ -543,12 +567,15 @@ public class MatchDialog extends DialogFragment {
                 newTitle = getString(R.string.chose_players);
                 break;
             case 4:
-                newTitle = getString(R.string.chose_outcome);
+                newTitle = getString(R.string.overlord);
                 break;
             case 5:
-                newTitle = getString(R.string.date);
+                newTitle = getString(R.string.chose_outcome);
                 break;
             case 6:
+                newTitle = getString(R.string.date);
+                break;
+            case 7:
                 newTitle = getString(R.string.comment_title);
         }
         getDialog().setTitle(newTitle);
