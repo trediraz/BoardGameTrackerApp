@@ -16,4 +16,8 @@
 
     </style>
 
+    <style name="ListViewTextStyle">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">15sp</item>
+    </style>
 </resources>

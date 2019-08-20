@@ -60,6 +60,7 @@
     <string name="error">Error</string>
     <string name="date">Data</string>
     <string name="result">Wynik</string>
+    <string name="scenario">Scenariusz</string>
 
     <string-array name="game_types">
         <item>Versus</item>

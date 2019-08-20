@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="5dp">
@@ -11,11 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:text="@string/error"
         android:textColor="@color/primary_text"
-        android:textSize="23sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,8 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/error"
-        android:textColor="@color/primary_text"
-        android:textSize="17sp"
+        style="@style/ListViewTextStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/outcome_title" />
 
@@ -36,8 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/error"
-        android:textColor="@color/primary_text"
-        android:textSize="17sp"
+        style="@style/ListViewTextStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_title" />
 
@@ -45,6 +40,7 @@
         android:id="@+id/outcome_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="@string/result"
         app:layout_constraintStart_toStartOf="@+id/outcome"
         app:layout_constraintTop_toBottomOf="@+id/game_name" />
@@ -56,4 +52,23 @@
         android:text="@string/date"
         app:layout_constraintStart_toStartOf="@+id/date"
         app:layout_constraintTop_toBottomOf="@+id/game_name" />
+
+    <TextView
+        android:id="@+id/scenario_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/scenario"
+        app:layout_constraintStart_toStartOf="@+id/scenario"
+        app:layout_constraintTop_toBottomOf="@+id/outcome" />
+
+    <TextView
+        android:id="@+id/scenario"
+        style="@style/ListViewTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/error"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scenario_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>

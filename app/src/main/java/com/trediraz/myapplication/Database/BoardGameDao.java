@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface BoardGameDao {
 
-    @Query("SELECT * FROM `match`")
+    @Query("SELECT * FROM `match` ORDER BY date ASC")
     List<Match> getAllMatches();
 
     @Query("SELECT * FROM `match` WHERE id = :id")
@@ -39,6 +39,9 @@ public interface BoardGameDao {
             "INNER JOIN game ON scenario.game_id = game.id " +
             "WHERE game.name = :name")
     List<Scenario> getScenariosByGameName(String name);
+
+    @Query("SELECT name FROM scenario WHERE id = :id")
+    String getScenarioNameById(int id);
 
     @Query("SELECT * FROM scenario WHERE name = :name AND game_id = :gameId LIMIT 1")
     Scenario getScenarioByNameAndGameId(String name,int gameId);

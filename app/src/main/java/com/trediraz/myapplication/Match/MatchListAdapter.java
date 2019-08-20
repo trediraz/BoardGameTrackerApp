@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.trediraz.myapplication.Database.Match;
+import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
@@ -23,6 +24,7 @@ public class MatchListAdapter extends BaseAdapter {
         TextView gameName;
         TextView gameOutcome;
         TextView date;
+        TextView scenario;
     }
 
     MatchListAdapter(Activity activity, List<Match> matches){
@@ -54,16 +56,21 @@ public class MatchListAdapter extends BaseAdapter {
             holder.gameName = view.findViewById(R.id.game_name);
             holder.gameOutcome = view.findViewById(R.id.outcome);
             holder.date = view.findViewById(R.id.date);
+            holder.scenario = view.findViewById(R.id.scenario);
             view.setTag(holder);
         }
 
         final Match match = getItem(i);
         final ViewHolder holder = (ViewHolder) view.getTag();
 
-        String name = MainActivity.mBoardGameDao.getGameNameById(match.game_id);
-        holder.gameName.setText(name);
+        String gameName = MainActivity.mBoardGameDao.getGameNameById(match.game_id);
+        String scenarioName = MainActivity.mBoardGameDao.getScenarioNameById(match.scenario_id);
+        if(scenarioName.equals(Scenario.DEFAULT_NAME))
+            scenarioName = "-";
+        holder.gameName.setText(gameName);
         holder.gameOutcome.setText(match.outcome);
         holder.date.setText(match.date);
+        holder.scenario.setText(scenarioName);
 
         return view;
     }
