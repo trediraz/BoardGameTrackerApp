@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -223,6 +224,12 @@ public class MatchDialog extends DialogFragment {
         newMatch.comments = commentsView.getText().toString();
         newMatch.id = (int) MainActivity.mBoardGameDao.insertMatch(newMatch);
 
+        String overlordPlayer = null;
+        if(mScenario.type.equals(Scenario.OVERLORD)) {
+            Spinner spinner = getDialog().findViewById(R.id.overlord_spinner);
+            overlordPlayer = spinner.getSelectedItem().toString();
+        }
+
         for (Player player : mPlayers) {
             PlayedIn playedIn = new PlayedIn();
             playedIn.match_id = newMatch.id;
@@ -230,6 +237,10 @@ public class MatchDialog extends DialogFragment {
             if(mScenario.type.equals(Scenario.VERSUS))
                 playedIn.place = getPlayerPlace(player.name);
             else playedIn.place = 0;
+            if(mScenario.type.equals(Scenario.OVERLORD)){
+                playedIn.role = player.name.equals(overlordPlayer) ? PlayedIn.OVERLORD : PlayedIn.HERO;
+            }
+            Log.d("Database",player.name + " " + playedIn.role);
             MainActivity.mBoardGameDao.insertPlayedIn(playedIn);
         }
 
