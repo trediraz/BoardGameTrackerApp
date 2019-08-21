@@ -24,6 +24,7 @@
     <style name="TitleStyle">
         <item name="android:textColor">@color/secondary_text</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:layout_margin">8dp</item>
     </style>
 
     <style name="PrimaryText">
