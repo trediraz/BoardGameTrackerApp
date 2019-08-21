@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.trediraz.myapplication.Database.Expansion;
+import com.trediraz.myapplication.Database.Match;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
@@ -35,44 +36,42 @@ public class GameInfoFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        View view = getView();
-        LinearLayout scenariosNameView = Objects.requireNonNull(view).findViewById(R.id.info_scenario_name);
-        LinearLayout scenarioTypeView = view.findViewById(R.id.info_scenario_type);
-        LinearLayout expansionsView = view.findViewById(R.id.expansions_info);
-        TextView gameNameView = view.findViewById(R.id.info_game_name);
-        TextView min = view.findViewById(R.id.min_number);
-        TextView max = view.findViewById(R.id.max_number);
 
+        TextView gameNameView = Objects.requireNonNull(getView()).findViewById(R.id.game_name);
         String gameName = GameInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
         gameNameView.setText(gameName);
 
-        List<Expansion> expansions =  MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
-        for(Expansion expansion : expansions){
-            TextView textView = new TextView(getContext());
-            textView.setText(expansion.name);
-            textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            expansionsView.addView(textView);
-        }
         List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
-        for(Scenario scenario : scenarios){
-            if(!scenario.name.equals("__default_scenario__")){
-                TextView name = new TextView(getContext());
-                TextView type = new TextView(getContext());
-                name.setText(scenario.name);
-                name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                type.setText(scenario.type);
-                type.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                scenariosNameView.addView(name);
-                scenarioTypeView.addView(type);
+        List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
+
+        setScenarioView(scenarios);
+        setExpansionView(expansions);
+    }
+
+    private void setScenarioView(List<Scenario> scenarios) {
+        LinearLayout scenarioViews = Objects.requireNonNull(getView()).findViewById(R.id.scenarios);
+
+        for (Scenario scenario : scenarios) {
+            if(!scenario.name.equals(Scenario.DEFAULT_NAME)) {
+                ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
+                scenarioViews.addView(scenarioView);
             }
         }
+        if(scenarioViews.getChildCount() == 0){
+            TextView textView = new TextView(getContext());
+            textView.setText(R.string.no_item);
+            textView.setTextAppearance(R.style.SecondaryText);
+            scenarioViews.addView(textView);
+        }
+    }
 
-        String minNumber = String.valueOf(MainActivity.mBoardGameDao.getMinNumberOfPlayersByGameName(gameName));
-        String maxNumber = String.valueOf(MainActivity.mBoardGameDao.getMaxNumberOfPlayersByGameName(gameName));
-
-        min.setText(minNumber);
-        max.setText(maxNumber);
-
-
+    private void setExpansionView(List<Expansion> expansions) {
+        LinearLayout expansionViews = Objects.requireNonNull(getView()).findViewById(R.id.expansions);
+        for (Expansion expansion : expansions) {
+            TextView expansionView = new TextView(getContext());
+            expansionView.setText(expansion.name);
+            expansionView.setTextAppearance(R.style.PrimaryText);
+            expansionViews.addView(expansionView);
+        }
     }
 }

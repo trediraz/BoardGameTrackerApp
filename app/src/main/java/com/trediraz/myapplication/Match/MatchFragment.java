@@ -25,8 +25,9 @@ import com.trediraz.myapplication.R;
 import java.util.List;
 import java.util.Objects;
 
-public class MatchFragment extends Fragment {
+public class MatchFragment extends Fragment implements MatchDialog.MatchDialogListener {
 
+    private List<Match> mMatches;
 
     public MatchFragment() {
        this.setHasOptionsMenu(true);
@@ -43,10 +44,10 @@ public class MatchFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        List<Match> matches = MainActivity.mBoardGameDao.getAllMatches();
+        mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
-        MatchListAdapter adapter = new MatchListAdapter(getActivity(),matches);
+        MatchListAdapter adapter = new MatchListAdapter(getActivity(), mMatches);
         matchViews.setAdapter(adapter);
         matchViews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -92,4 +93,8 @@ public class MatchFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onMatchAdded(Match match) {
+        mMatches.add(match);
+    }
 }

@@ -2,6 +2,7 @@ package com.trediraz.myapplication.Match;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +45,12 @@ import java.util.Objects;
 
 public class MatchDialog extends DialogFragment {
 
+    public interface MatchDialogListener{
+        void onMatchAdded(Match match);
+    }
+
+    private MatchDialogListener mListener;
+
     private ViewFlipper mViewFlipper;
     private RadioGroup mRadioGameButtons;
     private RadioGroup mScenariosRadio;
@@ -63,6 +70,16 @@ public class MatchDialog extends DialogFragment {
         builder.setTitle(R.string.chose_game)
                 .setView(R.layout.match_dialog_layout);
         return builder.create();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (MatchDialogListener) getParentFragment();
+        }catch ( ClassCastException e){
+            throw new ClassCastException(context.toString() + " must implement");
+        }
     }
 
     @Override
@@ -224,6 +241,8 @@ public class MatchDialog extends DialogFragment {
         newMatch.date = date;
         newMatch.comments = commentsView.getText().toString();
         newMatch.id = (int) MainActivity.mBoardGameDao.insertMatch(newMatch);
+
+        mListener.onMatchAdded(newMatch);
 
         String overlordPlayer = null;
         if(mScenario.type.equals(Scenario.OVERLORD)) {

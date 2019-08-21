@@ -1,7 +1,6 @@
 package com.trediraz.myapplication.Game;
 
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -43,7 +41,7 @@ public class AddScenarioLayout extends LinearLayout {
 
     private void initComponents() {
         spinner = findViewById(R.id.spinner);
-        editText = findViewById(R.id.scenario_name);
+        editText = findViewById(R.id.scenario_type);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {

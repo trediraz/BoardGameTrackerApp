@@ -22,8 +22,8 @@
     <string name="no_number_of_players">Pola liczby graczy nie mogą być puste</string>
     <string name="min_grater_then_max">Minimalna liczba graczy nie może być większa od makslymalnej</string>
     <string name="title_game_type">Typ rozgrywki</string>
-    <string name="title_scenarios">Scenariusze</string>
-    <string name="title_expansions">Dodatki</string>
+    <string name="title_scenarios">Scenariusze:</string>
+    <string name="title_expansions">Dodatki:</string>
     <string name="title_number_of_players">Liczba graczy</string>
     <string name="duplicate_scenrio_name">Nazwa scenariusza nie może się powtarzac</string>
     <string name="duplicate_expansion_name">Nazwa dodatku nie może się powtarzać</string>
@@ -62,6 +62,7 @@
     <string name="scenario">Scenariusz</string>
     <string name="delete_match_dialog_message">Usuniąc rozgrywkę?</string>
     <string name="cancel">Anuluj</string>
+    <string name="no_item">brak</string>
 
     <string-array name="game_types">
         <item>Versus</item>
