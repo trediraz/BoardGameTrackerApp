@@ -5,6 +5,8 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 @Entity(primaryKeys = {"player_id","match_id"},
         foreignKeys = {
                 @ForeignKey(entity = Player.class,
@@ -12,7 +14,8 @@ import androidx.room.Index;
                         childColumns = "player_id"),
                 @ForeignKey(entity = Match.class,
                         parentColumns = "id",
-                        childColumns = "match_id"),},
+                        childColumns = "match_id",
+                        onDelete = CASCADE),},
         indices = {@Index("player_id"),@Index("match_id")})
 public class PlayedIn {
 

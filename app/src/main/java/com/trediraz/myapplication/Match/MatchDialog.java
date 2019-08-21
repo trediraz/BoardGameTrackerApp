@@ -30,6 +30,7 @@ import androidx.fragment.app.DialogFragment;
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Match;
+import com.trediraz.myapplication.Database.MatchExpansion;
 import com.trediraz.myapplication.Database.PlayedIn;
 import com.trediraz.myapplication.Database.Player;
 import com.trediraz.myapplication.Database.Scenario;
@@ -240,10 +241,29 @@ public class MatchDialog extends DialogFragment {
             if(mScenario.type.equals(Scenario.OVERLORD)){
                 playedIn.role = player.name.equals(overlordPlayer) ? PlayedIn.OVERLORD : PlayedIn.HERO;
             }
-            Log.d("Database",player.name + " " + playedIn.role);
             MainActivity.mBoardGameDao.insertPlayedIn(playedIn);
         }
 
+        LinearLayout layout = getDialog().findViewById(R.id.expansions_view);
+        for(int i = 0; i < layout.getChildCount(); i++){
+            CheckBox checkBox = (CheckBox) layout.getChildAt(i);
+            if(checkBox.isChecked()){
+                MatchExpansion mE = new MatchExpansion();
+                mE.match_id = newMatch.id;
+                mE.expansion_id = getExpansionIdFromListByName(checkBox.getText().toString());
+                Log.d("Database",mE.match_id + " " + mE.expansion_id);
+                MainActivity.mBoardGameDao.insertMatchExpanion(mE);
+            }
+        }
+
+    }
+
+    private int getExpansionIdFromListByName(String name) {
+        for (Expansion expansion : mAllExpansions) {
+            if(expansion.name.equals(name))
+                return expansion.id;
+        }
+        return -1;
     }
 
     private int getPlayerPlace(String name) {

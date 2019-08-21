@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.room.Room;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -59,4 +60,5 @@ public class MainActivity extends AppCompatActivity {
     private boolean isBottomNavDestination(int id) {
         return (id == R.id.players_fragment || id == R.id.games_fragment || id == R.id.match_frament || id == R.id.stats_fragment);
     }
+
 }

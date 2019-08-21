@@ -29,7 +29,6 @@
     <string name="duplicate_expansion_name">Nazwa dodatku nie może się powtarzać</string>
     <string name="add_player">Dodaj gracza</string>
     <string name="player_name">Nazwa gracza</string>
-    <string name="cancel">Anuluj</string>
     <string name="new_match">Nowa rozgrywka</string>
     <string name="no_game_chosen">Wybierz gre</string>
     <string name="all">Wszystkie</string>
@@ -61,6 +60,8 @@
     <string name="date">Data</string>
     <string name="result">Wynik</string>
     <string name="scenario">Scenariusz</string>
+    <string name="delete_match_dialog_message">Usuniąc rozgrywkę?</string>
+    <string name="cancel">Anuluj</string>
 
     <string-array name="game_types">
         <item>Versus</item>

@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
         android:text="@string/error"
         android:textColor="@color/primary_text"
         android:textSize="22sp"
@@ -40,7 +41,7 @@
         android:id="@+id/outcome_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:text="@string/result"
         app:layout_constraintStart_toStartOf="@+id/outcome"
         app:layout_constraintTop_toBottomOf="@+id/game_name" />
@@ -57,7 +58,7 @@
         android:id="@+id/scenario_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:text="@string/scenario"
         app:layout_constraintStart_toStartOf="@+id/scenario"
         app:layout_constraintTop_toBottomOf="@+id/outcome" />
@@ -68,7 +69,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/error"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scenario_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>

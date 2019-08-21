@@ -3,6 +3,7 @@ package com.trediraz.myapplication.Database;
 import android.widget.LinearLayout;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Ignore;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -84,5 +85,17 @@ public interface BoardGameDao {
 
     @Insert
     void insertPlayedIn(PlayedIn playedIn);
+
+    @Insert
+    void insertMatchExpanion(MatchExpansion mE);
+
+    @Delete
+    void deleteMatch(Match match);
+
+    @Query("SELECT * FROM playedin")
+    List<PlayedIn> getAllFromPlayedIn();
+
+    @Query("SELECT * FROM matchexpansion")
+    List<MatchExpansion> getAllFromMatchEpanions();
 
 }

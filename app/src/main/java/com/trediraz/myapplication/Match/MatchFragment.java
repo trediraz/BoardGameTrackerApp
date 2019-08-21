@@ -1,6 +1,8 @@
 package com.trediraz.myapplication.Match;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,14 +13,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.trediraz.myapplication.Database.BoardGameDao;
 import com.trediraz.myapplication.Database.Match;
-import com.trediraz.myapplication.Game.GameDialog;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
@@ -29,6 +29,7 @@ public class MatchFragment extends Fragment {
 
 
     public MatchFragment() {
+       this.setHasOptionsMenu(true);
     }
 
 
@@ -44,26 +45,51 @@ public class MatchFragment extends Fragment {
 
         List<Match> matches = MainActivity.mBoardGameDao.getAllMatches();
 
-        ListView matchesView = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
+        ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
         MatchListAdapter adapter = new MatchListAdapter(getActivity(),matches);
-        matchesView.setAdapter(adapter);
+        matchViews.setAdapter(adapter);
+        matchViews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Match match = (Match) adapterView.getItemAtPosition(i);
+                showDeleteDialog(match);
+                return true;
+            }
+        });
 
         FloatingActionButton addNewMatchButton = Objects.requireNonNull(getView()).findViewById(R.id.add_match_button);
         addNewMatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                int numberOfGames = MainActivity.mBoardGameDao.countGames();
-                int numberOfPlayers = MainActivity.mBoardGameDao.countPlayers();
-                if(numberOfGames == 0 || numberOfPlayers ==0) {
-                    String toastMessage = (numberOfGames == 0) ? getString(R.string.no_games) : getString(R.string.no_players);
-                    Toast.makeText(getContext(),toastMessage,Toast.LENGTH_SHORT).show();
-                } else {
-                    DialogFragment dialogName = new MatchDialog();
-                    dialogName.setCancelable(false);
-                    dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
-                }
+                showAddDialog();
             }
         });
     }
+
+    private void showDeleteDialog(final Match match) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setMessage(R.string.delete_match_dialog_message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        MainActivity.mBoardGameDao.deleteMatch(match);
+                    }
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .show();
+    }
+
+    private void showAddDialog() {
+        int numberOfGames = MainActivity.mBoardGameDao.countGames();
+        int numberOfPlayers = MainActivity.mBoardGameDao.countPlayers();
+        if(numberOfGames == 0 || numberOfPlayers ==0) {
+            String toastMessage = (numberOfGames == 0) ? getString(R.string.no_games) : getString(R.string.no_players);
+            Toast.makeText(getContext(),toastMessage,Toast.LENGTH_SHORT).show();
+        } else {
+            DialogFragment dialogName = new MatchDialog();
+            dialogName.setCancelable(false);
+            dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
+        }
+    }
+
 }
