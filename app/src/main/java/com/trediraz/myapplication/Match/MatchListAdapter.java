@@ -2,6 +2,7 @@ package com.trediraz.myapplication.Match;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,10 @@ public class MatchListAdapter extends BaseAdapter {
             scenarioName = "-";
         holder.gameName.setText(gameName);
         holder.gameOutcome.setText(match.outcome);
+        if(match.outcome.equals("Ania"))
+            holder.gameOutcome.setTextColor(Color.RED);
+        else
+            holder.gameOutcome.setTextColor(Color.BLACK);
         holder.date.setText(match.date);
         holder.scenario.setText(scenarioName);
 

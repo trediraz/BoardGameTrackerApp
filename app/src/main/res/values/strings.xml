@@ -63,6 +63,7 @@
     <string name="delete_match_dialog_message">Usuniąc rozgrywkę?</string>
     <string name="cancel">Anuluj</string>
     <string name="no_item">brak</string>
+    <string name="player_name_used">Gracz o takiej nazwie już istnieje</string>
 
     <string-array name="game_types">
         <item>Versus</item>

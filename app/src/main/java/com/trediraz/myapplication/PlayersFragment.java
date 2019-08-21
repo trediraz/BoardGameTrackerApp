@@ -73,7 +73,7 @@ public class PlayersFragment extends Fragment {
                         String newPlayerName = editText.getText().toString();
                         for(String name : players){
                             if(newPlayerName.equals(name)){
-                                Toast.makeText(getContext(),"Gracz o takiej nazwie już istnieje",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.player_name_used,Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }

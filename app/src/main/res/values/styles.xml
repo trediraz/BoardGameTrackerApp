@@ -22,9 +22,10 @@
     </style>
 
     <style name="TitleStyle">
-        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:textColor">@color/title</item>
         <item name="android:textSize">18sp</item>
         <item name="android:layout_margin">8dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="PrimaryText">
