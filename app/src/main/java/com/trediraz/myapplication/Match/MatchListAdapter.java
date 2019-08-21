@@ -14,6 +14,7 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class MatchListAdapter extends BaseAdapter {
@@ -78,5 +79,19 @@ public class MatchListAdapter extends BaseAdapter {
         holder.scenario.setText(scenarioName);
 
         return view;
+    }
+
+    void addMatch(Match match){
+        for (int i = mMatches.size()-1; i >= 0 ; i--) {
+            LocalDate addedMatchDate = LocalDate.parse(match.date);
+            LocalDate date = LocalDate.parse(mMatches.get(i).date);
+            if(!addedMatchDate.isBefore(date)){
+                mMatches.add(i+1,match);
+                notifyDataSetChanged();
+                return;
+            }
+        }
+        mMatches.add(0,match);
+        notifyDataSetChanged();
     }
 }

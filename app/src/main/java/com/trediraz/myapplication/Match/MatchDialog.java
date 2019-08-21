@@ -1,5 +1,6 @@
 package com.trediraz.myapplication.Match;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -38,7 +39,10 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -228,9 +232,11 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void updateDatabase() {
-        String date;
         DatePicker datePicker = getDialog().findViewById(R.id.date_picker);
-        date = String.format("%s-%s-%s",datePicker.getYear(),datePicker.getMonth()+1,datePicker.getDayOfMonth());
+        Date date = getDateFromDatePicker(datePicker);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = sdf.format(date);
+        Log.d("Database",dateString);
 
         EditText commentsView = getDialog().findViewById(R.id.comments);
 
@@ -238,7 +244,7 @@ public class MatchDialog extends DialogFragment {
         newMatch.game_id = mGame.id;
         newMatch.scenario_id = mScenario.id;
         newMatch.outcome = mOutcome;
-        newMatch.date = date;
+        newMatch.date = dateString;
         newMatch.comments = commentsView.getText().toString();
         newMatch.id = (int) MainActivity.mBoardGameDao.insertMatch(newMatch);
 
@@ -275,6 +281,17 @@ public class MatchDialog extends DialogFragment {
             }
         }
 
+    }
+
+    private Date getDateFromDatePicker(DatePicker datePicker) {
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year =  datePicker.getYear();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        return calendar.getTime();
     }
 
     private int getExpansionIdFromListByName(String name) {

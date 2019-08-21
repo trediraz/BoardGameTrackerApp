@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class MatchFragment extends Fragment implements MatchDialog.MatchDialogListener {
 
-    private List<Match> mMatches;
+    private MatchListAdapter mAdapter;
 
     public MatchFragment() {
        this.setHasOptionsMenu(true);
@@ -44,11 +44,11 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mMatches = MainActivity.mBoardGameDao.getAllMatches();
+        List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
-        MatchListAdapter adapter = new MatchListAdapter(getActivity(), mMatches);
-        matchViews.setAdapter(adapter);
+        mAdapter = new MatchListAdapter(getActivity(), mMatches);
+        matchViews.setAdapter(mAdapter);
         matchViews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -95,6 +95,6 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
     @Override
     public void onMatchAdded(Match match) {
-        mMatches.add(match);
+        mAdapter.addMatch(match);
     }
 }
