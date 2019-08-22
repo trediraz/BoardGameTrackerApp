@@ -2,6 +2,7 @@ package com.trediraz.myapplication.Game;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +81,32 @@ public class GameInfoFragment extends Fragment {
             }
         });
 
+        setItemListVisibilityListener(R.id.scenario_title,R.id.scenarios,R.id.scenarios_divider);
+        setItemListVisibilityListener(R.id.expansions_title,R.id.expansions,R.id.expansions_divider);
+        setItemListVisibilityListener(R.id.player_title,R.id.number_of_players,R.id.players_divider);
+
+    }
+
+    private void setItemListVisibilityListener(int titleId,int layoutId, int dividerId){
+        final View layout = Objects.requireNonNull(getView()).findViewById(layoutId);
+        final View divider = getView().findViewById(dividerId);
+        TextView title = getView().findViewById(titleId);
+        title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setItemListVisibility(layout,divider);
+            }
+        });
+    }
+
+    private void setItemListVisibility(View layout, View divider) {
+        if(layout.getVisibility() == View.VISIBLE) {
+            layout.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
+        } else {
+            layout.setVisibility(View.VISIBLE);
+            divider.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setGameTypeView() {
