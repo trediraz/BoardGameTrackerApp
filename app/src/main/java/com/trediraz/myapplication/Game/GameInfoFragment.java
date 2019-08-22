@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,7 +26,9 @@ import java.util.Objects;
 
 public class GameInfoFragment extends Fragment {
 
+    private LinearLayout mExpansionViews;
     private LinearLayout mScenariosView;
+
     private List<Scenario> mScenarios;
     private List<Expansion> mExpansions;
     private Game mGame;
@@ -68,6 +71,15 @@ public class GameInfoFragment extends Fragment {
                 showAddScenarioDialog();
             }
         });
+
+        ImageView addExpansion = getView().findViewById(R.id.add_expansion_button);
+        addExpansion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddExpansionDialog();
+            }
+        });
+
     }
 
     private void setGameTypeView() {
@@ -104,14 +116,12 @@ public class GameInfoFragment extends Fragment {
 
 
     private void setExpansionView() {
-        LinearLayout expansionViews = Objects.requireNonNull(getView()).findViewById(R.id.expansions);
+        mExpansionViews = Objects.requireNonNull(getView()).findViewById(R.id.expansions);
         for (Expansion expansion : mExpansions) {
-            TextView expansionView = new TextView(getContext());
-            expansionView.setText(expansion.name);
-            expansionView.setTextAppearance(R.style.PrimaryText);
-            expansionViews.addView(expansionView);
+            TextView expansionView = createExpansionTextView(expansion.name);
+            mExpansionViews.addView(expansionView);
         }
-        if(expansionViews.getChildCount() > 1) {
+        if(mExpansionViews.getChildCount() > 1) {
             hideNoExpansionView();
         }
     }
@@ -163,6 +173,44 @@ public class GameInfoFragment extends Fragment {
         });
     }
 
+    private void showAddExpansionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        final EditText editText = createExpansionEditText();
+        builder.setTitle(R.string.add_expansion_title)
+                .setView(editText)
+                .setNegativeButton(R.string.cancel,null)
+                .setPositiveButton("OK",null);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String expansionName = editText.getText().toString().trim();
+                if(expansionName.equals("")){
+                    Toast.makeText(getContext(),R.string.empty_expansion_name,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                for (Expansion expansion : mExpansions) {
+                    if(expansionName.equals(expansion.name)){
+                        Toast.makeText(getContext(),R.string.duplicate_expansion_name,Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                addNewExpansion(expansionName);
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private EditText createExpansionEditText() {
+        EditText editText = new EditText(getContext());
+        editText.setHint(R.string.expansion_name);
+        editText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        editText.setEms(10);
+        return editText;
+    }
+
     private void addNewScenario(Scenario scenario) {
         scenario.game_id = mGame.id;
         MainActivity.mBoardGameDao.insertScenario(scenario);
@@ -170,5 +218,25 @@ public class GameInfoFragment extends Fragment {
         ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
         mScenariosView.addView(scenarioView);
         hideNoScenarioView();
+    }
+
+    private void addNewExpansion(String expansionName) {
+        Expansion expansion = new Expansion();
+        expansion.name = expansionName;
+        expansion.game_id = mGame.id;
+
+        mExpansions.add(expansion);
+        MainActivity.mBoardGameDao.insertExpansion(expansion);
+
+        TextView expansionView = createExpansionTextView(expansion.name);
+        mExpansionViews.addView(expansionView);
+        hideNoExpansionView();
+    }
+
+    private TextView createExpansionTextView(String name) {
+        TextView expansionView = new TextView(getContext());
+        expansionView.setText(name);
+        expansionView.setTextAppearance(R.style.PrimaryText);
+        return expansionView;
     }
 }

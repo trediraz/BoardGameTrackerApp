@@ -66,6 +66,9 @@
     <string name="player_name_used">Gracz o takiej nazwie już istnieje</string>
     <string name="add_scenario">Przycisk dodający scenariusz</string>
     <string name="add_scenario_title">Dodaj scenariusz</string>
+    <string name="add_expansions_button_desc">Przycisk dodający dodatek</string>
+    <string name="add_expansion_title">Dodaj dodatek</string>
+    <string name="empty_expansion_name">Nazwa dodatku nie może być pusta</string>
 
     <string-array name="game_types">
         <item>Versus</item>

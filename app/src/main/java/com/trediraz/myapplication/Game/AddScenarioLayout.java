@@ -23,6 +23,8 @@ public class AddScenarioLayout extends LinearLayout {
 
     private Spinner spinner;
     private EditText editText;
+    private ImageView deleteButton;
+
 
     public AddScenarioLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -56,7 +58,7 @@ public class AddScenarioLayout extends LinearLayout {
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        ImageView deleteButton = findViewById(R.id.delete_scenario_button);
+        deleteButton = findViewById(R.id.delete_scenario_button);
         deleteButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,7 +68,7 @@ public class AddScenarioLayout extends LinearLayout {
     }
 
     public String getScenarioName(){
-        return editText.getText().toString();
+        return editText.getText().toString().trim();
     }
 
     public boolean isEmpty(){
@@ -76,7 +78,7 @@ public class AddScenarioLayout extends LinearLayout {
     public Scenario getScenario(){
         Scenario scenario = new Scenario();
         scenario.name = getScenarioName();
-        scenario.type = spinner.getSelectedItem().toString();
+        scenario.type = spinner.getSelectedItem().toString().trim();
         return scenario;
     }
 
@@ -98,6 +100,10 @@ public class AddScenarioLayout extends LinearLayout {
         if (inputMethodManager != null) {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(),0);
         }
+    }
+
+    public void hideDelete(){
+        deleteButton.setVisibility(GONE);
     }
 
 }

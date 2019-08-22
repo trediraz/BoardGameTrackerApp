@@ -160,7 +160,7 @@ public class GameDialog extends DialogFragment {
         LinearLayout linearLayout = getDialog().findViewById(R.id.expansions);
         ScrollView scrollView = getDialog().findViewById(R.id.expansions_scroll_view);
         EditText lastEditText = (EditText) linearLayout.getChildAt(linearLayout.getChildCount()-1);
-        if(!lastEditText.getText().toString().equals("")) {
+        if(!lastEditText.getText().toString().trim().equals("")) {
             createNewExpansionView(linearLayout);
             if(linearLayout.getChildCount() == 5){
                 scrollView.setLayoutParams(new LinearLayout.LayoutParams(ScrollView.LayoutParams.WRAP_CONTENT,500));
@@ -179,7 +179,7 @@ public class GameDialog extends DialogFragment {
                     addNewExpansionView();
                     return true;
                 }
-                else if(textView.getText().toString().equals("")){
+                else if(textView.getText().toString().trim().equals("")){
                     layout.removeView(textView);
                     layout.getChildAt(layout.getChildCount()-1).requestFocus();
                     return true;
@@ -226,7 +226,7 @@ public class GameDialog extends DialogFragment {
         switch (currentView){
             case 0:
                 EditText gameNameText = getDialog().findViewById(R.id.game_name);
-                String gameName = gameNameText.getText().toString();
+                String gameName = gameNameText.getText().toString().trim();
                 if (gameName.equals("")) {
                     isDataValid = false;
                     errorToastMessage = R.string.no_name_toast;
@@ -250,7 +250,7 @@ public class GameDialog extends DialogFragment {
                     errorToastMessage = R.string.empty_scenario_name;
                 } else if(!isScenarioNameUnique(layout)){
                     isDataValid = false;
-                    errorToastMessage = R.string.duplicate_scenrio_name;
+                    errorToastMessage = R.string.duplicate_scenario_name;
 
                 } else {
                     mViewFlipper.showNext();
@@ -303,10 +303,10 @@ public class GameDialog extends DialogFragment {
 
         for(int i = 0; i < layout.getChildCount();i++){
             comperedNameText = (EditText) layout.getChildAt(i);
-            compereName = comperedNameText.getText().toString();
+            compereName = comperedNameText.getText().toString().trim();
             for(int j = i+1; j < layout.getChildCount();j++){
                 nameText = (EditText) layout.getChildAt(j);
-                name = nameText.getText().toString();
+                name = nameText.getText().toString().trim();
                 if(compereName.equals(name)){
                     nameText.requestFocus();
                     return false;
@@ -348,7 +348,7 @@ public class GameDialog extends DialogFragment {
         EditText min_number_of_players = getDialog().findViewById(R.id.min_number_of_players);
         EditText max_number_of_players = getDialog().findViewById(R.id.max_number_of_players);
 
-        newGame.name = gameNameText.getText().toString();
+        newGame.name = gameNameText.getText().toString().trim();
         newGame.min_number_of_players = Integer.parseInt(min_number_of_players.getText().toString());
         newGame.max_number_of_players = Integer.parseInt(max_number_of_players.getText().toString());
         newGame.requireScenario = requiresScenario;
@@ -378,7 +378,7 @@ public class GameDialog extends DialogFragment {
 
         LinearLayout expansionLayout = getDialog().findViewById(R.id.expansions);
         for(int i = 0; i < expansionLayout.getChildCount();i++){
-            String expansionName = ((EditText) expansionLayout.getChildAt(i)).getText().toString();
+            String expansionName = ((EditText) expansionLayout.getChildAt(i)).getText().toString().trim();
             if(!expansionName.equals("")){
                 Expansion expansion = new Expansion();
                 expansion.name = expansionName;

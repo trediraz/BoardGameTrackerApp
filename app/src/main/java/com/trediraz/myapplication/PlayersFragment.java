@@ -70,7 +70,7 @@ public class PlayersFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         EditText editText = view.findViewById(R.id.player_name_edit_text);
-                        String newPlayerName = editText.getText().toString();
+                        String newPlayerName = editText.getText().toString().trim();
                         for(String name : players){
                             if(newPlayerName.equals(name)){
                                 Toast.makeText(getContext(), R.string.player_name_used,Toast.LENGTH_SHORT).show();
