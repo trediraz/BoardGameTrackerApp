@@ -74,6 +74,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         MainActivity.mBoardGameDao.deleteMatch(match);
+                        mAdapter.deleteMatch(match);
                     }
                 })
                 .setNegativeButton(R.string.cancel,null)

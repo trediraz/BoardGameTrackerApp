@@ -16,6 +16,7 @@ import com.trediraz.myapplication.R;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class MatchListAdapter extends BaseAdapter {
 
@@ -53,7 +54,7 @@ public class MatchListAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         if(view == null){
             LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.match_list_view_item,viewGroup,false);
+            view = Objects.requireNonNull(inflater).inflate(R.layout.match_list_view_item,viewGroup,false);
             final ViewHolder holder = new ViewHolder();
             holder.gameName = view.findViewById(R.id.game_name);
             holder.gameOutcome = view.findViewById(R.id.outcome);
@@ -92,6 +93,11 @@ public class MatchListAdapter extends BaseAdapter {
             }
         }
         mMatches.add(0,match);
+        notifyDataSetChanged();
+    }
+
+    void deleteMatch(Match match){
+        mMatches.remove(match);
         notifyDataSetChanged();
     }
 }

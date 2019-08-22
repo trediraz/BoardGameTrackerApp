@@ -129,6 +129,7 @@
                     android:digits="123456789"
                     android:maxLength="2"
                     android:imeOptions="actionNext"
+                    android:hint="@null"
                     android:importantForAutofill="no" />
             </LinearLayout>
 
@@ -139,12 +140,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/max_game_number"/>
+                    android:text="@string/max_player_number"/>
                 <EditText
                     android:id="@+id/max_number_of_players"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="2"
+                    android:hint="@null"
                     android:textAlignment="center"
                     android:inputType="numberSigned"
                     android:digits="123456789"

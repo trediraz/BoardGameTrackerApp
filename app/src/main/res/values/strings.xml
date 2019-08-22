@@ -14,7 +14,7 @@
     <string name="scenario_name">Nazwa scenarusza</string>
     <string name="expansion_name">Nazwa dodatku</string>
     <string name="min_player_number">Minimalna liczba graczy:</string>
-    <string name="max_game_number">Maksymalna liczba graczy:</string>
+    <string name="max_player_number">Maksymalna liczba graczy:</string>
     <string name="no_name_toast">Pole nazwy nie może być puste</string>
     <string name="no_scenario">Ta gra musi posidac przynajmniej jeden scenariusz</string>
     <string name="empty_scenario_name">Nazwa scenariusza nie może być pusta</string>
