@@ -1,11 +1,14 @@
 package com.trediraz.myapplication.Game;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +24,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameInfoFragment extends Fragment {
+
+    private LinearLayout mScenariosView;
+    private List<Scenario> mScenarios;
+    private List<Expansion> mExpansions;
+    private Game mGame;
 
     public GameInfoFragment() {
     }
@@ -39,25 +47,33 @@ public class GameInfoFragment extends Fragment {
         String gameName = GameInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
         gameNameView.setText(gameName);
 
-        List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
-        List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
+        mScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
+        mExpansions = MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
 
-        Game game = MainActivity.mBoardGameDao.getGameByName(gameName);
+        mGame = MainActivity.mBoardGameDao.getGameByName(gameName);
 
-        int min = game.min_number_of_players;
-        int max = game.max_number_of_players;
+        int min = mGame.min_number_of_players;
+        int max = mGame.max_number_of_players;
 
 
-        setGameTypeView(scenarios);
-        setScenarioView(scenarios);
-        setExpansionView(expansions);
+        setGameTypeView();
+        setScenarioView();
+        setExpansionView();
         setPlayerNumberView(min, max);
+
+        ImageView addScenario = getView().findViewById(R.id.add_scenario_button);
+        addScenario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddScenarioDialog();
+            }
+        });
     }
 
-    private void setGameTypeView(List<Scenario> scenarios) {
+    private void setGameTypeView() {
         TextView gameTypeView = Objects.requireNonNull(getView()).findViewById(R.id.game_type_text);
         String gameType = null;
-        for (Scenario scenario : scenarios) {
+        for (Scenario scenario : mScenarios) {
             if(scenario.name.equals(Scenario.DEFAULT_NAME)) {
                 gameType = scenario.type;
                 break;
@@ -73,37 +89,41 @@ public class GameInfoFragment extends Fragment {
 
     }
 
-    private void setScenarioView(List<Scenario> scenarios) {
-        LinearLayout scenarioViews = Objects.requireNonNull(getView()).findViewById(R.id.scenarios);
-
-        for (Scenario scenario : scenarios) {
+    private void setScenarioView() {
+        mScenariosView = Objects.requireNonNull(getView()).findViewById(R.id.scenarios);
+        for (Scenario scenario : mScenarios) {
             if(!scenario.name.equals(Scenario.DEFAULT_NAME)) {
                 ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
-                scenarioViews.addView(scenarioView);
+                mScenariosView.addView(scenarioView);
            }
         }
-        setNoItemText(scenarioViews);
-    }
-
-    private void setNoItemText(LinearLayout layout) {
-        if(layout.getChildCount() == 0){
-            TextView textView = new TextView(getContext());
-            textView.setText(R.string.no_item);
-            textView.setTextAppearance(R.style.SecondaryText);
-            layout.addView(textView);
+        if(mScenariosView.getChildCount() > 1) {
+            hideNoScenarioView();
         }
     }
 
-    private void setExpansionView(List<Expansion> expansions) {
+
+    private void setExpansionView() {
         LinearLayout expansionViews = Objects.requireNonNull(getView()).findViewById(R.id.expansions);
-        for (Expansion expansion : expansions) {
+        for (Expansion expansion : mExpansions) {
             TextView expansionView = new TextView(getContext());
             expansionView.setText(expansion.name);
             expansionView.setTextAppearance(R.style.PrimaryText);
             expansionViews.addView(expansionView);
         }
-        setNoItemText(expansionViews);
+        if(expansionViews.getChildCount() > 1) {
+            hideNoExpansionView();
+        }
+    }
 
+    private void hideNoScenarioView() {
+        TextView noScenarioText = Objects.requireNonNull(getView()).findViewById(R.id.no_scenario_text);
+        noScenarioText.setVisibility(View.GONE);
+    }
+
+    private void hideNoExpansionView() {
+        TextView noExpansionText = Objects.requireNonNull(getView()).findViewById(R.id.no_expansion_text);
+        noExpansionText.setVisibility(View.GONE);
     }
 
     private void setPlayerNumberView(int min, int max) {
@@ -111,5 +131,44 @@ public class GameInfoFragment extends Fragment {
         TextView maxView = Objects.requireNonNull(getView()).findViewById(R.id.max_players_number);
         minView.setText(String.valueOf(min));
         maxView.setText(String.valueOf(max));
+    }
+
+    private void showAddScenarioDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        final AddScenarioLayout asl = new AddScenarioLayout(getContext());
+        asl.hideDelete();
+        builder.setView(asl)
+                .setTitle(R.string.add_scenario_title)
+                .setNegativeButton(R.string.cancel,null)
+                .setPositiveButton("OK", null);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (Scenario scenario : mScenarios) {
+                    if(asl.getScenarioName().equals("")) {
+                        Toast.makeText(getContext(),R.string.empty_scenario_name,Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    if(asl.getScenarioName().equals(scenario.name)) {
+                        Toast.makeText(getContext(),R.string.duplicate_scenario_name,Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+               addNewScenario(asl.getScenario());
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void addNewScenario(Scenario scenario) {
+        scenario.game_id = mGame.id;
+        MainActivity.mBoardGameDao.insertScenario(scenario);
+        mScenarios.add(scenario);
+        ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
+        mScenariosView.addView(scenarioView);
+        hideNoScenarioView();
     }
 }

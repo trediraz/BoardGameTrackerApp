@@ -25,7 +25,7 @@
     <string name="title_scenarios">Scenariusze:</string>
     <string name="title_expansions">Dodatki:</string>
     <string name="title_number_of_players">Liczba graczy</string>
-    <string name="duplicate_scenrio_name">Nazwa scenariusza nie może się powtarzac</string>
+    <string name="duplicate_scenario_name">Nazwa scenariusza nie może się powtarzac</string>
     <string name="duplicate_expansion_name">Nazwa dodatku nie może się powtarzać</string>
     <string name="add_player">Dodaj gracza</string>
     <string name="player_name">Nazwa gracza</string>
@@ -64,6 +64,8 @@
     <string name="cancel">Anuluj</string>
     <string name="no_item">brak</string>
     <string name="player_name_used">Gracz o takiej nazwie już istnieje</string>
+    <string name="add_scenario">Przycisk dodający scenariusz</string>
+    <string name="add_scenario_title">Dodaj scenariusz</string>
 
     <string-array name="game_types">
         <item>Versus</item>

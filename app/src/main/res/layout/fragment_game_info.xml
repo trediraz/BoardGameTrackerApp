@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:scrollbars="none"
     android:fillViewport="true">
 
     <LinearLayout
@@ -19,10 +21,10 @@
             android:id="@+id/game_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/error"
             android:textColor="@color/primary_text"
-            android:textSize="25sp" />
+            android:textSize="25sp"/>
 
         <LinearLayout
             android:id="@+id/game_type_layout"
@@ -30,8 +32,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/border"
+            android:gravity="center_vertical"
             android:layout_marginTop="8dp">
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,12 +60,38 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/border">
 
-            <TextView
-                android:id="@+id/scenario_title"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/title_scenarios"
-                style="@style/TitleStyle" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/scenario_title"
+                    style="@style/TitleStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/title_scenarios"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/add_scenario_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/add_scenario"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="@+id/scenario_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/scenario_title"
+                    app:srcCompat="@drawable/ic_add_black" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -77,6 +106,13 @@
                 android:showDividers="middle"
                 android:padding="8dp"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/no_scenario_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_item"
+                    style="@style/SecondaryText"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -109,6 +145,13 @@
                 android:showDividers="middle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/no_expansion_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_item"
+                    style="@style/SecondaryText"/>
             </LinearLayout>
 
         </LinearLayout>
