@@ -17,7 +17,11 @@
         android:id="@+id/match_frament"
         android:name="com.trediraz.myapplication.Match.MatchFragment"
         android:label="Rozgrywki"
-        tools:layout="@layout/fragment_match" />
+        tools:layout="@layout/fragment_match" >
+        <action
+            android:id="@+id/go_to_mach_info"
+            app:destination="@+id/go_to_mach_info" />
+    </fragment>
     <fragment
         android:id="@+id/players_fragment"
         android:name="com.trediraz.myapplication.PlayersFragment"
@@ -37,5 +41,14 @@
             android:name="game_name"
             app:argType="string"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/go_to_mach_info"
+        android:name="com.trediraz.myapplication.Match.MatchInfoFragment"
+        android:label="Info"
+        tools:layout="@layout/fragment_match_info" >
+        <argument
+            android:name="match_id"
+            app:argType="integer" />
     </fragment>
 </navigation>

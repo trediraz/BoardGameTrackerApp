@@ -22,6 +22,9 @@ public interface BoardGameDao {
     @Query("SELECT name FROM game")
     List<String> getAllGameNames();
 
+    @Query("SELECT * FROM game WHERE id = :id")
+    Game getGameById(int id);
+
     @Query("SELECT * FROM game WHERE name = :name")
     Game getGameByName(String name);
 
@@ -40,6 +43,9 @@ public interface BoardGameDao {
             "INNER JOIN game ON scenario.game_id = game.id " +
             "WHERE game.name = :name")
     List<Scenario> getScenariosByGameName(String name);
+
+    @Query("SELECT * FROM scenario WHERE id = :id")
+    Scenario getScenarioById(int id);
 
     @Query("SELECT name FROM scenario WHERE id = :id")
     String getScenarioNameById(int id);

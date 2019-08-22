@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,14 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
         mAdapter = new MatchListAdapter(getActivity(), mMatches);
         matchViews.setAdapter(mAdapter);
+        matchViews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Match match = (Match) adapterView.getItemAtPosition(i);
+                MatchFragmentDirections.GoToMachInfo action = MatchFragmentDirections.goToMachInfo(match.id);
+                Navigation.findNavController(view).navigate(action);
+            }
+        });
         matchViews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
