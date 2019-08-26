@@ -23,6 +23,9 @@ public class PlayedIn {
     public int match_id;
     public int place;
 
+    @Ignore
+    public static int NO_PLACE = -1;
+
     public String role;
     @Ignore
     public static final String HERO = "Hero";

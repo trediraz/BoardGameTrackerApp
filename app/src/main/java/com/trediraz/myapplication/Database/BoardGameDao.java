@@ -39,6 +39,11 @@ public interface BoardGameDao {
             "WHERE game.name = :name")
     List<Expansion> getExpansionsByGameName(String name);
 
+    @Query("SELECT expansion.id,expansion.name,expansion.game_id FROM matchexpansion " +
+            "LEFT JOIN expansion on expansion.id = matchexpansion.expansion_id " +
+            "WHERE match_id = :id")
+    List<Expansion> getExpansionsByMatchId(int id);
+
     @Query("SELECT scenario.id, scenario.game_id, scenario.name, scenario.type FROM scenario " +
             "INNER JOIN game ON scenario.game_id = game.id " +
             "WHERE game.name = :name")
@@ -65,8 +70,14 @@ public interface BoardGameDao {
     @Query("SELECT name FROM player")
     List<String> getAllPlayerNames();
 
-    @Query("SELECT * FROM player WHERE name= :name")
+    @Query("SELECT name FROM player WHERE id = :id")
+    String getPlayerNameById(int id);
+
+    @Query("SELECT * FROM player WHERE name = :name")
     Player getPlayerByName(String name);
+
+    @Query("SELECT * FROM playedin WHERE match_id = :id")
+    List<PlayedIn> getAllPlayersInMatchById(int id);
 
     @Query("SELECT COUNT(id) FROM player")
     int countPlayers();

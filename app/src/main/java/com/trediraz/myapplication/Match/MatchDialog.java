@@ -262,7 +262,7 @@ public class MatchDialog extends DialogFragment {
             playedIn.player_id = player.id;
             if(mScenario.type.equals(Scenario.VERSUS))
                 playedIn.place = getPlayerPlace(player.name);
-            else playedIn.place = 0;
+            else playedIn.place = PlayedIn.NO_PLACE;
             if(mScenario.type.equals(Scenario.OVERLORD)){
                 playedIn.role = player.name.equals(overlordPlayer) ? PlayedIn.OVERLORD : PlayedIn.HERO;
             }
@@ -309,7 +309,7 @@ public class MatchDialog extends DialogFragment {
             if(name.equals(playerPlaceLayout.getSelectedPlayer()))
                 return playerPlaceLayout.getPlace();
         }
-        return 0;
+        return PlayedIn.NO_PLACE;
     }
 
 
