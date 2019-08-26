@@ -55,7 +55,12 @@ public class MatchInfoFragment extends Fragment {
         Scenario scenario = MainActivity.mBoardGameDao.getScenarioById(match.scenario_id);
 
         gameName.setText(game.name);
-        scenarioView.setText(scenario.name);
+
+        LinearLayout scenarioLayout = getView().findViewById(R.id.scenario_layout);
+        if(scenario.name.equals(Scenario.DEFAULT_NAME))
+            scenarioLayout.setVisibility(View.GONE);
+        else
+            scenarioView.setText(scenario.name);
         comment.setText(match.comments);
         outcome.setText(match.outcome);
         date.setText(match.date);
