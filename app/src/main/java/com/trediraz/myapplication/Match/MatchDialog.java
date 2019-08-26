@@ -39,7 +39,6 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -277,7 +276,7 @@ public class MatchDialog extends DialogFragment {
                 mE.match_id = newMatch.id;
                 mE.expansion_id = getExpansionIdFromListByName(checkBox.getText().toString());
                 Log.d("Database",mE.match_id + " " + mE.expansion_id);
-                MainActivity.mBoardGameDao.insertMatchExpanion(mE);
+                MainActivity.mBoardGameDao.insertMatchExpansion(mE);
             }
         }
 

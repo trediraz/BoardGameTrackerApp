@@ -7,6 +7,7 @@ import androidx.room.Delete;
 import androidx.room.Ignore;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -104,15 +105,12 @@ public interface BoardGameDao {
     void insertPlayedIn(PlayedIn playedIn);
 
     @Insert
-    void insertMatchExpanion(MatchExpansion mE);
+    void insertMatchExpansion(MatchExpansion mE);
+
+    @Update
+    void updatePlayer(Player player);
 
     @Delete
     void deleteMatch(Match match);
-
-    @Query("SELECT * FROM playedin")
-    List<PlayedIn> getAllFromPlayedIn();
-
-    @Query("SELECT * FROM matchexpansion")
-    List<MatchExpansion> getAllFromMatchEpanions();
 
 }

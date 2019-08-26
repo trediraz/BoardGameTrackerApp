@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -51,6 +51,14 @@ public class PlayersFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,players);
         listView.setAdapter(adapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String playerName = adapterView.getItemAtPosition(i).toString();
+                showEditPlayerDialog(playerName, i);
+            }
+        });
+
         FloatingActionButton addPlayerButton = view.findViewById(R.id.add_players_button);
         addPlayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,12 +79,8 @@ public class PlayersFragment extends Fragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         EditText editText = view.findViewById(R.id.player_name_edit_text);
                         String newPlayerName = editText.getText().toString().trim();
-                        for(String name : players){
-                            if(newPlayerName.equals(name)){
-                                Toast.makeText(getContext(), R.string.player_name_used,Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        }
+                        if(isNameAlreadyUsed(newPlayerName))
+                            return;
                         Player  player = new Player();
                         player.name = newPlayerName;
                         MainActivity.mBoardGameDao.insertPlayer(player);
@@ -84,5 +88,39 @@ public class PlayersFragment extends Fragment {
                     }
                 })
                 .show();
+    }
+
+    private void showEditPlayerDialog(final String playerName, final int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        final View view = LinearLayout.inflate(getContext(),R.layout.add_player_dialog_view,null);
+        final EditText editText = view.findViewById(R.id.player_name_edit_text);
+        editText.setText(playerName);
+        builder.setTitle(R.string.edit_player_dialog_title)
+                .setView(view)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String newPlayerName = editText.getText().toString().trim();
+                        if(isNameAlreadyUsed(newPlayerName))
+                            return;
+
+                        Player player = MainActivity.mBoardGameDao.getPlayerByName(playerName);
+                        player.name = newPlayerName;
+                        MainActivity.mBoardGameDao.updatePlayer(player);
+                        players.set(pos,player.name);
+                    }
+                })
+                .show();
+    }
+
+    private boolean isNameAlreadyUsed(String newPlayerName) {
+        for(String name : players){
+            if(newPlayerName.equals(name)){
+                Toast.makeText(getContext(), R.string.player_name_used,Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
     }
 }
