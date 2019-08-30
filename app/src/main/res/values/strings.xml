@@ -74,6 +74,7 @@
     <string name="edit_player_dialog_title">Zmień nazwe</string>
     <string name="new_expan_name">Nowa nazwa</string>
     <string name="game_info_scenario_title">Scenariusz</string>
+    <string name="delete_expansion">Usunąc dodatek </string>
 
     <string-array name="game_types">
         <item>Versus</item>

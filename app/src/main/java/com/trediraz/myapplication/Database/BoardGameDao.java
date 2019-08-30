@@ -127,4 +127,7 @@ public interface BoardGameDao {
     @Delete
     void deleteMatch(Match match);
 
+    @Delete
+    void  deleteExpansion(Expansion expansion);
+
 }

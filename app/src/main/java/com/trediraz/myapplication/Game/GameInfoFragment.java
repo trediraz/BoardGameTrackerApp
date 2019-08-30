@@ -1,6 +1,7 @@
 package com.trediraz.myapplication.Game;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,17 +151,11 @@ public class GameInfoFragment extends Fragment {
     private void setExpansionView() {
         mExpansionViews = Objects.requireNonNull(getView()).findViewById(R.id.expansions);
         for (final Expansion expansion : mExpansions) {
-            TextView expansionView = createExpansionTextView(expansion.name);
-            expansionView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showEditExpansionDialog(expansion, (TextView) view);
-                }
-            });
+            TextView expansionView = createExpansionTextView(expansion);
             mExpansionViews.addView(expansionView);
         }
         if(mExpansionViews.getChildCount() > 1) {
-            hideNoExpansionView();
+            setNoExpansionViewVisibility(false);
         }
     }
 
@@ -169,9 +164,9 @@ public class GameInfoFragment extends Fragment {
         noScenarioText.setVisibility(View.GONE);
     }
 
-    private void hideNoExpansionView() {
+    private void setNoExpansionViewVisibility(boolean visibility) {
         TextView noExpansionText = Objects.requireNonNull(getView()).findViewById(R.id.no_expansion_text);
-        noExpansionText.setVisibility(View.GONE);
+        noExpansionText.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
 
     private void setPlayerNumberView(int min, int max) {
@@ -318,21 +313,41 @@ public class GameInfoFragment extends Fragment {
         mExpansions.add(expansion);
         MainActivity.mBoardGameDao.insertExpansion(expansion);
 
-        TextView expansionView = createExpansionTextView(expansion.name);
+        TextView expansionView = createExpansionTextView(expansion);
+        mExpansionViews.addView(expansionView);
+        setNoExpansionViewVisibility(false);
+    }
+
+    private TextView createExpansionTextView(final Expansion expansion) {
+        TextView expansionView = new TextView(getContext());
+        expansionView.setText(expansion.name);
+        expansionView.setTextAppearance(R.style.PrimaryText);
         expansionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showEditExpansionDialog(expansion, (TextView) view);
             }
         });
-        mExpansionViews.addView(expansionView);
-        hideNoExpansionView();
-    }
-
-    private TextView createExpansionTextView(String name) {
-        TextView expansionView = new TextView(getContext());
-        expansionView.setText(name);
-        expansionView.setTextAppearance(R.style.PrimaryText);
+        expansionView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+                builder.setMessage(getString(R.string.delete_expansion) + " " + expansion.name + "?")
+                        .setNegativeButton(R.string.cancel,null)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                MainActivity.mBoardGameDao.deleteExpansion(expansion);
+                                mExpansions.remove(expansion);
+                                mExpansionViews.removeView(view);
+                                if(mExpansionViews.getChildCount() == 1)
+                                    setNoExpansionViewVisibility(true);
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
         return expansionView;
     }
 }
