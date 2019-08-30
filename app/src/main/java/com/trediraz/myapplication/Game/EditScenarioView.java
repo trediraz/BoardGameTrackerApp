@@ -2,6 +2,7 @@ package com.trediraz.myapplication.Game;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewParent;
@@ -15,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.trediraz.myapplication.Database.Scenario;
+import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
 import java.util.Objects;
@@ -47,6 +49,9 @@ public class EditScenarioView extends LinearLayout {
         this.scenario = scenario;
         editText.setText(scenario.name);
         spinner.setSelection(adapter.getPosition(scenario.type));
+        if(MainActivity.mBoardGameDao.countScenarioUsages(scenario.id) != 0) {
+            spinner.setEnabled(false);
+        }
     }
 
     private void init(Context context) {

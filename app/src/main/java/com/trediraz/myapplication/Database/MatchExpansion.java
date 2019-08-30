@@ -10,7 +10,8 @@ import static androidx.room.ForeignKey.CASCADE;
 foreignKeys = {
         @ForeignKey(entity = Expansion.class,
                 parentColumns = "id",
-                childColumns = "expansion_id"),
+                childColumns = "expansion_id",
+                onDelete = CASCADE),
         @ForeignKey(entity = Match.class,
                 parentColumns = "id",
                 childColumns = "match_id",

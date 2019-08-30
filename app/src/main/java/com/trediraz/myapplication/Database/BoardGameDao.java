@@ -91,6 +91,9 @@ public interface BoardGameDao {
     @Query("SELECT COUNT(id) FROM game")
     int countGames();
 
+    @Query("SELECT COUNT(scenario_id) FROM `match` WHERE scenario_id = :id")
+    int countScenarioUsages(int id);
+
     @Insert
     long insertMatch(Match match);
 
