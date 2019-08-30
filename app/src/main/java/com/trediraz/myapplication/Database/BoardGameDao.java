@@ -80,6 +80,11 @@ public interface BoardGameDao {
     @Query("SELECT * FROM playedin WHERE match_id = :id")
     List<PlayedIn> getAllPlayersInMatchById(int id);
 
+    @Query("UPDATE `match` " +
+            "SET outcome = :newPlayerName " +
+            "WHERE outcome = :playerName")
+    void updatePlayerOutcomes(String playerName,String newPlayerName);
+
     @Query("SELECT COUNT(id) FROM player")
     int countPlayers();
 
@@ -109,6 +114,9 @@ public interface BoardGameDao {
 
     @Update
     void updatePlayer(Player player);
+
+    @Update
+    void  updateExpansion(Expansion expansion);
 
     @Delete
     void deleteMatch(Match match);

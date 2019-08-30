@@ -2,7 +2,6 @@ package com.trediraz.myapplication.Game;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +132,12 @@ public class GameInfoFragment extends Fragment {
         for (Scenario scenario : mScenarios) {
             if(!scenario.name.equals(Scenario.DEFAULT_NAME)) {
                 ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
+//                scenarioView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        showEditExpansionDialog();
+//                    }
+//                });
                 mScenariosView.addView(scenarioView);
            }
         }
@@ -144,8 +149,14 @@ public class GameInfoFragment extends Fragment {
 
     private void setExpansionView() {
         mExpansionViews = Objects.requireNonNull(getView()).findViewById(R.id.expansions);
-        for (Expansion expansion : mExpansions) {
+        for (final Expansion expansion : mExpansions) {
             TextView expansionView = createExpansionTextView(expansion.name);
+            expansionView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showEditExpansionDialog(expansion, (TextView) view);
+                }
+            });
             mExpansionViews.addView(expansionView);
         }
         if(mExpansionViews.getChildCount() > 1) {
@@ -171,15 +182,10 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void showAddScenarioDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         final AddScenarioLayout asl = new AddScenarioLayout(getContext());
         asl.hideDelete();
-        builder.setView(asl)
-                .setTitle(R.string.add_scenario_title)
-                .setNegativeButton(R.string.cancel,null)
-                .setPositiveButton("OK", null);
 
-        final AlertDialog dialog = builder.create();
+        final AlertDialog dialog = buildDialog(getString(R.string.add_scenario_title),asl);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,33 +207,62 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void showAddExpansionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         final EditText editText = createExpansionEditText();
-        builder.setTitle(R.string.add_expansion_title)
-                .setView(editText)
-                .setNegativeButton(R.string.cancel,null)
-                .setPositiveButton("OK",null);
-
-        final AlertDialog dialog = builder.create();
+        final AlertDialog dialog = buildDialog(getString(R.string.add_expansion_title),editText);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String expansionName = editText.getText().toString().trim();
-                if(expansionName.equals("")){
-                    Toast.makeText(getContext(),R.string.empty_expansion_name,Toast.LENGTH_SHORT).show();
-                    return;
+                if(isExpansionNameValid(expansionName)) {
+                    addNewExpansion(expansionName);
+                    dialog.dismiss();
                 }
-                for (Expansion expansion : mExpansions) {
-                    if(expansionName.equals(expansion.name)){
-                        Toast.makeText(getContext(),R.string.duplicate_expansion_name,Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-                addNewExpansion(expansionName);
-                dialog.dismiss();
             }
         });
+    }
+
+
+    private void showEditExpansionDialog(final Expansion expansion, final TextView textView) {
+        final EditText editText = createExpansionEditText();
+        editText.setText(expansion.name);
+        final AlertDialog dialog = buildDialog(getString(R.string.new_expan_name),editText);
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String expansionName = editText.getText().toString().trim();
+                if(isExpansionNameValid(expansionName)) {
+                    expansion.name = expansionName;
+                    textView.setText(expansionName);
+                    MainActivity.mBoardGameDao.updateExpansion(expansion);
+                    dialog.dismiss();
+                }
+            }
+        });
+    }
+
+    private boolean isExpansionNameValid(String expansionName) {
+        if(expansionName.equals("")){
+            Toast.makeText(getContext(),R.string.empty_expansion_name,Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        for (Expansion expansion : mExpansions) {
+            if(expansionName.equals(expansion.name)){
+                Toast.makeText(getContext(),R.string.duplicate_expansion_name,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private AlertDialog buildDialog(String title, View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setTitle(title)
+                .setView(view)
+                .setNegativeButton(R.string.cancel,null)
+                .setPositiveButton("OK",null);
+        return builder.create();
     }
 
     private EditText createExpansionEditText() {
@@ -248,7 +283,7 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void addNewExpansion(String expansionName) {
-        Expansion expansion = new Expansion();
+        final Expansion expansion = new Expansion();
         expansion.name = expansionName;
         expansion.game_id = mGame.id;
 
@@ -256,6 +291,12 @@ public class GameInfoFragment extends Fragment {
         MainActivity.mBoardGameDao.insertExpansion(expansion);
 
         TextView expansionView = createExpansionTextView(expansion.name);
+        expansionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEditExpansionDialog(expansion, (TextView) view);
+            }
+        });
         mExpansionViews.addView(expansionView);
         hideNoExpansionView();
     }

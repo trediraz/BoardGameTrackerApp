@@ -72,6 +72,7 @@
     <string name="game">Gra</string>
     <string name="expansions">Dodatki</string>
     <string name="edit_player_dialog_title">Zmień nazwe</string>
+    <string name="new_expan_name">Nowa nazwa</string>
 
     <string-array name="game_types">
         <item>Versus</item>

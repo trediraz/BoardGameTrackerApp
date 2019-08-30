@@ -108,6 +108,7 @@ public class PlayersFragment extends Fragment {
                         Player player = MainActivity.mBoardGameDao.getPlayerByName(playerName);
                         player.name = newPlayerName;
                         MainActivity.mBoardGameDao.updatePlayer(player);
+                        MainActivity.mBoardGameDao.updatePlayerOutcomes(playerName,newPlayerName);
                         players.set(pos,player.name);
                     }
                 })
