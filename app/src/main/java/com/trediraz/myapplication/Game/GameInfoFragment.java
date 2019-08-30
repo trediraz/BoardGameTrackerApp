@@ -129,16 +129,16 @@ public class GameInfoFragment extends Fragment {
 
     private void setScenarioView() {
         mScenariosView = Objects.requireNonNull(getView()).findViewById(R.id.scenarios);
-        for (Scenario scenario : mScenarios) {
+        for (final Scenario scenario : mScenarios) {
             if(!scenario.name.equals(Scenario.DEFAULT_NAME)) {
-                ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
-//                scenarioView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        showEditExpansionDialog();
-//                    }
-//                });
-                mScenariosView.addView(scenarioView);
+                final ScenarioDisplayView scenarioDisplayView = new ScenarioDisplayView(getContext(),scenario);
+                scenarioDisplayView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditScenarioDialog(scenario,scenarioDisplayView);
+                    }
+                });
+                mScenariosView.addView(scenarioDisplayView);
            }
         }
         if(mScenariosView.getChildCount() > 1) {
@@ -182,26 +182,34 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void showAddScenarioDialog() {
-        final AddScenarioLayout asl = new AddScenarioLayout(getContext());
-        asl.hideDelete();
+        final EditScenarioView esv = new EditScenarioView(getContext());
+        esv.hideDelete();
 
-        final AlertDialog dialog = buildDialog(getString(R.string.add_scenario_title),asl);
+        final AlertDialog dialog = buildDialog(getString(R.string.add_scenario_title),esv);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Scenario scenario : mScenarios) {
-                    if(asl.getScenarioName().equals("")) {
-                        Toast.makeText(getContext(),R.string.empty_scenario_name,Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    if(asl.getScenarioName().equals(scenario.name)) {
-                        Toast.makeText(getContext(),R.string.duplicate_scenario_name,Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                if(isScenarioDataValid(esv)) {
+                    addNewScenario(esv.getScenario());
+                    dialog.dismiss();
                 }
-               addNewScenario(asl.getScenario());
-                dialog.dismiss();
+            }
+        });
+    }
+
+    private void showEditScenarioDialog(final Scenario scenario, final ScenarioDisplayView scenarioDisplayView) {
+        final EditScenarioView esv = new EditScenarioView(getContext(), scenario);
+        final AlertDialog dialog = buildDialog(getString(R.string.game_info_scenario_title),esv);
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isScenarioDataValid(esv)) {
+                    MainActivity.mBoardGameDao.updateScenario(esv.getScenario());
+                    scenarioDisplayView.setViews(scenario);
+                    dialog.dismiss();
+                }
             }
         });
     }
@@ -242,6 +250,20 @@ public class GameInfoFragment extends Fragment {
         });
     }
 
+    private boolean isScenarioDataValid(EditScenarioView esv) {
+        for (Scenario scenario : mScenarios) {
+            if(esv.getScenarioName().equals("")) {
+                Toast.makeText(getContext(),R.string.empty_scenario_name,Toast.LENGTH_LONG).show();
+                return false;
+            }
+            if(esv.getScenarioName().equals(scenario.name) && esv.getScenario() != scenario) {
+                Toast.makeText(getContext(),R.string.duplicate_scenario_name,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean isExpansionNameValid(String expansionName) {
         if(expansionName.equals("")){
             Toast.makeText(getContext(),R.string.empty_expansion_name,Toast.LENGTH_SHORT).show();
@@ -273,12 +295,18 @@ public class GameInfoFragment extends Fragment {
         return editText;
     }
 
-    private void addNewScenario(Scenario scenario) {
+    private void addNewScenario(final Scenario scenario) {
         scenario.game_id = mGame.id;
         MainActivity.mBoardGameDao.insertScenario(scenario);
         mScenarios.add(scenario);
-        ScenarioView scenarioView = new ScenarioView(getContext(),scenario);
-        mScenariosView.addView(scenarioView);
+        final ScenarioDisplayView scenarioDisplayView = new ScenarioDisplayView(getContext(),scenario);
+        scenarioDisplayView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEditScenarioDialog(scenario, scenarioDisplayView);
+            }
+        });
+        mScenariosView.addView(scenarioDisplayView);
         hideNoScenarioView();
     }
 

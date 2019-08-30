@@ -19,21 +19,34 @@ import com.trediraz.myapplication.R;
 
 import java.util.Objects;
 
-public class AddScenarioLayout extends LinearLayout {
+public class EditScenarioView extends LinearLayout {
 
     private Spinner spinner;
     private EditText editText;
     private ImageView deleteButton;
+    private Scenario scenario;
+    private ArrayAdapter<CharSequence> adapter;
 
 
-    public AddScenarioLayout(Context context, AttributeSet attrs) {
+    public EditScenarioView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        scenario = new Scenario();
         init(context);
     }
 
-    public AddScenarioLayout(Context context) {
+    public EditScenarioView(Context context) {
+        super(context);
+        scenario = new Scenario();
+        init(context);
+    }
+
+    public EditScenarioView(Context context, Scenario scenario) {
         super(context);
         init(context);
+        hideDelete();
+        this.scenario = scenario;
+        editText.setText(scenario.name);
+        spinner.setSelection(adapter.getPosition(scenario.type));
     }
 
     private void init(Context context) {
@@ -54,7 +67,7 @@ public class AddScenarioLayout extends LinearLayout {
         });
         requestFocus();
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),R.array.game_types,R.layout.support_simple_spinner_dropdown_item);
+        adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),R.array.game_types,R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
@@ -76,7 +89,6 @@ public class AddScenarioLayout extends LinearLayout {
     }
 
     public Scenario getScenario(){
-        Scenario scenario = new Scenario();
         scenario.name = getScenarioName();
         scenario.type = spinner.getSelectedItem().toString().trim();
         return scenario;

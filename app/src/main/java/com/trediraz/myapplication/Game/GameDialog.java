@@ -134,7 +134,7 @@ public class GameDialog extends DialogFragment {
     }
 
     private void addNewScenarioView(LinearLayout scenarioLayout) {
-        AddScenarioLayout last = (AddScenarioLayout) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
+        EditScenarioView last = (EditScenarioView) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
         LinearLayout linearLayout = getDialog().findViewById(R.id.scenarios);
         if(last == null) {
             createNewScenarioView();
@@ -152,8 +152,8 @@ public class GameDialog extends DialogFragment {
 
     private void createNewScenarioView() {
         LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
-        AddScenarioLayout addScenarioLayout = new AddScenarioLayout(getContext());
-        scenarioLayout.addView(addScenarioLayout,scenarioLayout.getChildCount());
+        EditScenarioView addEditScenarioView = new EditScenarioView(getContext());
+        scenarioLayout.addView(addEditScenarioView,scenarioLayout.getChildCount());
     }
 
     private void addNewExpansionView() {
@@ -318,8 +318,8 @@ public class GameDialog extends DialogFragment {
 
     private boolean containsEmptyNameScenario(LinearLayout layout) {
         for(int i = 0; i < layout.getChildCount();i++){
-            AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(i);
-            if(scenarioLayout.isEmpty()){
+            EditScenarioView editScenarioView = (EditScenarioView) layout.getChildAt(i);
+            if(editScenarioView.isEmpty()){
                 return true;
             }
         }
@@ -328,11 +328,11 @@ public class GameDialog extends DialogFragment {
 
     private boolean isScenarioNameUnique(LinearLayout layout) {
         for(int i = 0; i < layout.getChildCount();i++){
-            AddScenarioLayout comperedLayout = (AddScenarioLayout) layout.getChildAt(i);
+            EditScenarioView comperedLayout = (EditScenarioView) layout.getChildAt(i);
             for(int j = i+1; j < layout.getChildCount();j++){
-                AddScenarioLayout scenarioLayout = (AddScenarioLayout) layout.getChildAt(j);
-                if(comperedLayout.getScenarioName().equals(scenarioLayout.getScenarioName())){
-                    scenarioLayout.requestFocus();
+                EditScenarioView editScenarioView = (EditScenarioView) layout.getChildAt(j);
+                if(comperedLayout.getScenarioName().equals(editScenarioView.getScenarioName())){
+                    editScenarioView.requestFocus();
                     return false;
                 }
             }
@@ -370,8 +370,8 @@ public class GameDialog extends DialogFragment {
         LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
 
         for(int i = 0; i < scenarioLayout.getChildCount();i++){
-            AddScenarioLayout addScenarioLayout = (AddScenarioLayout) scenarioLayout.getChildAt(i);
-            Scenario scenario = addScenarioLayout.getScenario();
+            EditScenarioView addEditScenarioView = (EditScenarioView) scenarioLayout.getChildAt(i);
+            Scenario scenario = addEditScenarioView.getScenario();
             scenario.game_id = newGame.id;
             MainActivity.mBoardGameDao.insertScenario(scenario);
         }
