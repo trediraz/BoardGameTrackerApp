@@ -76,6 +76,8 @@
     <string name="game_info_scenario_title">Scenariusz</string>
     <string name="delete_expansion">Usunąc dodatek </string>
     <string name="change_game_name">Zmień nazwę</string>
+    <string name="title_number_of_games">Liczba gier</string>
+    <string name="title_most_games">Najwięcej gier w ostatnim roku</string>
 
     <string-array name="game_types">
         <item>Versus</item>
