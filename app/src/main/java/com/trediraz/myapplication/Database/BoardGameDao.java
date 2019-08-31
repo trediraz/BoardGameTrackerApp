@@ -94,6 +94,9 @@ public interface BoardGameDao {
     @Query("SELECT COUNT(scenario_id) FROM `match` WHERE scenario_id = :id")
     int countScenarioUsages(int id);
 
+    @Query("SELECT COUNT(id) FROM game WHERE name = :name")
+    int countGameNameUsages(String name);
+
     @Insert
     long insertMatch(Match match);
 
@@ -114,6 +117,9 @@ public interface BoardGameDao {
 
     @Insert
     void insertMatchExpansion(MatchExpansion mE);
+
+    @Update
+    void updateGame(Game game);
 
     @Update
     void updatePlayer(Player player);

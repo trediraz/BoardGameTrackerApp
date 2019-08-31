@@ -47,14 +47,40 @@ public class GameInfoFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        TextView gameNameView = Objects.requireNonNull(getView()).findViewById(R.id.game_name);
-        String gameName = GameInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
-        gameNameView.setText(gameName);
-
-        mScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
-        mExpansions = MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
-
+        final TextView gameNameView = Objects.requireNonNull(getView()).findViewById(R.id.game_name);
+        final String gameName = GameInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
         mGame = MainActivity.mBoardGameDao.getGameByName(gameName);
+
+        gameNameView.setText(mGame.name);
+        gameNameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText editText = createEditText(getString(R.string.game_name));
+                editText.setText(((TextView)view).getText().toString().trim());
+                final AlertDialog dialog = buildDialog(getString(R.string.change_game_name),editText);
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String newGameName = editText.getText().toString().trim();
+                        if(newGameName.equals(mGame.name)) {
+                            dialog.dismiss();
+                            return;
+                        }
+                        if(isGameNameValid(newGameName)){
+                            mGame.name = newGameName;
+                            gameNameView.setText(mGame.name);
+                            MainActivity.mBoardGameDao.updateGame(mGame);
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        mScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
+        mExpansions = MainActivity.mBoardGameDao.getExpansionsByGameName(mGame.name);
+
 
         int min = mGame.min_number_of_players;
         int max = mGame.max_number_of_players;
@@ -85,6 +111,18 @@ public class GameInfoFragment extends Fragment {
         setItemListVisibilityListener(R.id.expansions_title,R.id.expansions,R.id.expansions_divider);
         setItemListVisibilityListener(R.id.player_title,R.id.number_of_players,R.id.players_divider);
 
+    }
+
+    private boolean isGameNameValid(String newGameName) {
+        if(newGameName.equals("")) {
+            Toast.makeText(getContext(),R.string.no_name_toast,Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if(MainActivity.mBoardGameDao.countGameNameUsages(newGameName) != 0){
+            Toast.makeText(getContext(),R.string.game_name_used,Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 
     private void setItemListVisibilityListener(int titleId,int layoutId, int dividerId){
@@ -210,7 +248,7 @@ public class GameInfoFragment extends Fragment {
     }
 
     private void showAddExpansionDialog() {
-        final EditText editText = createExpansionEditText();
+        final EditText editText = createEditText(getString(R.string.expansion_name));
         final AlertDialog dialog = buildDialog(getString(R.string.add_expansion_title),editText);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -227,7 +265,7 @@ public class GameInfoFragment extends Fragment {
 
 
     private void showEditExpansionDialog(final Expansion expansion, final TextView textView) {
-        final EditText editText = createExpansionEditText();
+        final EditText editText = createEditText(getString(R.string.expansion_name));
         editText.setText(expansion.name);
         final AlertDialog dialog = buildDialog(getString(R.string.new_expan_name),editText);
         dialog.show();
@@ -282,9 +320,9 @@ public class GameInfoFragment extends Fragment {
         return builder.create();
     }
 
-    private EditText createExpansionEditText() {
+    private EditText createEditText(String hint) {
         EditText editText = new EditText(getContext());
-        editText.setHint(R.string.expansion_name);
+        editText.setHint(hint);
         editText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         editText.setEms(10);
         return editText;
