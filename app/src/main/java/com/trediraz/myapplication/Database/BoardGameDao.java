@@ -134,6 +134,9 @@ public interface BoardGameDao {
     void deleteMatch(Match match);
 
     @Delete
+    void  deleteScenario(Scenario scenario);
+
+    @Delete
     void  deleteExpansion(Expansion expansion);
 
 }
