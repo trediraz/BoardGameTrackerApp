@@ -64,7 +64,7 @@ public class GameInfoFragment extends Fragment {
             public void onClick(View view) {
                 final EditText editText = createEditText(getString(R.string.game_name));
                 editText.setText(((TextView)view).getText().toString().trim());
-                final AlertDialog dialog = buildDialog(getString(R.string.change_game_name),editText, null);
+                final AlertDialog dialog = buildDialog(getString(R.string.change_game_name),editText);
                 dialog.show();
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -116,7 +116,7 @@ public class GameInfoFragment extends Fragment {
 
         CheckBox requiresScenarioBox = getView().findViewById(R.id.requires_scenario_checkbox);
         requiresScenarioBox.setChecked(mGame.requireScenario);
-        Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
+        final Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
         if(defaultScenario != null) {
             if(MainActivity.mBoardGameDao.countScenarioUsages(defaultScenario.id) != 0) {
                 requiresScenarioBox.setEnabled(false);
@@ -127,12 +127,13 @@ public class GameInfoFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean requireScenario) {
 
                 if(requireScenario){
-                    Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
                     for (Scenario scenario : mScenarios) {
-                        if(scenario.name.equals(Scenario.DEFAULT_NAME))
+                        if(scenario.name.equals(Scenario.DEFAULT_NAME)) {
                             mScenarios.remove(scenario);
+                            break;
+                        }
                     }
-
+                    MainActivity.mBoardGameDao.deleteScenario(defaultScenario);
                     mGame.requireScenario = true;
                     MainActivity.mBoardGameDao.updateGame(mGame);
                     setGameTypeView();
@@ -141,24 +142,25 @@ public class GameInfoFragment extends Fragment {
                     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),R.array.game_types,R.layout.support_simple_spinner_dropdown_item);
                     adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                     spinner.setAdapter(adapter);
-                    AlertDialog dialog = buildDialog(getString(R.string.title_game_type),spinner, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Scenario defaultScenario = new Scenario();
-                            defaultScenario.name = Scenario.DEFAULT_NAME;
-                            defaultScenario.game_id = mGame.id;
-                            defaultScenario.type = spinner.getSelectedItem().toString();
-                            MainActivity.mBoardGameDao.insertScenario(defaultScenario);
-                            mScenarios.add(defaultScenario);
-                            mGame.requireScenario = false;
-                            MainActivity.mBoardGameDao.updateGame(mGame);
-                            setGameTypeView();
-
-                        }
-                    });
-                    dialog.setCancelable(false);
-                    dialog.show();
-
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+                    builder.setTitle(R.string.title_game_type)
+                            .setView(surroundWithMarginView(spinner))
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Scenario defaultScenario = new Scenario();
+                                    defaultScenario.name = Scenario.DEFAULT_NAME;
+                                    defaultScenario.game_id = mGame.id;
+                                    defaultScenario.type = spinner.getSelectedItem().toString();
+                                    MainActivity.mBoardGameDao.insertScenario(defaultScenario);
+                                    mScenarios.add(defaultScenario);
+                                    mGame.requireScenario = false;
+                                    MainActivity.mBoardGameDao.updateGame(mGame);
+                                    setGameTypeView();
+                                }
+                            });
+                    builder.setCancelable(false);
+                    builder.show();
                 }
             }
         });
@@ -207,7 +209,6 @@ public class GameInfoFragment extends Fragment {
         TextView gameTypeView = Objects.requireNonNull(getView()).findViewById(R.id.game_type_text);
         String gameType = null;
         for (Scenario scenario : mScenarios) {
-            Log.d("Database",scenario.name);
             if(scenario.name.equals(Scenario.DEFAULT_NAME)) {
                 gameType = scenario.type;
                 break;
@@ -275,7 +276,7 @@ public class GameInfoFragment extends Fragment {
         final EditScenarioView esv = new EditScenarioView(getContext());
         esv.hideDelete();
 
-        final AlertDialog dialog = buildDialog(getString(R.string.add_scenario_title),esv, null);
+        final AlertDialog dialog = buildDialog(getString(R.string.add_scenario_title),esv);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -290,7 +291,7 @@ public class GameInfoFragment extends Fragment {
 
     private void showEditScenarioDialog(final Scenario scenario, final ScenarioDisplayView scenarioDisplayView) {
         final EditScenarioView esv = new EditScenarioView(getContext(), scenario);
-        final AlertDialog dialog = buildDialog(getString(R.string.game_info_scenario_title),esv, null);
+        final AlertDialog dialog = buildDialog(getString(R.string.game_info_scenario_title),esv);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,7 +307,7 @@ public class GameInfoFragment extends Fragment {
 
     private void showAddExpansionDialog() {
         final EditText editText = createEditText(getString(R.string.expansion_name));
-        final AlertDialog dialog = buildDialog(getString(R.string.add_expansion_title),editText, null);
+        final AlertDialog dialog = buildDialog(getString(R.string.add_expansion_title),editText);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -324,7 +325,7 @@ public class GameInfoFragment extends Fragment {
     private void showEditExpansionDialog(final Expansion expansion, final TextView textView) {
         final EditText editText = createEditText(getString(R.string.expansion_name));
         editText.setText(expansion.name);
-        final AlertDialog dialog = buildDialog(getString(R.string.new_expan_name),editText, null);
+        final AlertDialog dialog = buildDialog(getString(R.string.new_expan_name),editText);
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -368,23 +369,26 @@ public class GameInfoFragment extends Fragment {
         return true;
     }
 
-    private AlertDialog buildDialog(String title, View view, DialogInterface.OnClickListener onClickListener) {
+    private AlertDialog buildDialog(String title, View view) {
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setTitle(title)
+                .setView(surroundWithMarginView(view))
+                .setNegativeButton(R.string.cancel,null)
+                .setPositiveButton("OK", null);
+        return builder.create();
+    }
+
+    private View surroundWithMarginView(View view) {
         FrameLayout container = new FrameLayout(Objects.requireNonNull(getContext()));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(dpToPx(8),0,dpToPx(8),0);
+        params.setMargins(dpToPx(16),0,dpToPx(16),0);
         view.setLayoutParams(params);
         container.addView(view);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
-        builder.setTitle(title)
-                .setView(container)
-                .setNegativeButton(R.string.cancel,null)
-                .setPositiveButton("OK",onClickListener);
-        return builder.create();
+        return container;
     }
 
     private int dpToPx(int dp)
