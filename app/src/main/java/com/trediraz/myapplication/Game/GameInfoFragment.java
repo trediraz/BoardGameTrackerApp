@@ -117,7 +117,7 @@ public class GameInfoFragment extends Fragment {
 
         CheckBox requiresScenarioBox = getView().findViewById(R.id.requires_scenario_checkbox);
         requiresScenarioBox.setChecked(mGame.requireScenario);
-        Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
+        final Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
         if(defaultScenario != null) {
             if(MainActivity.mBoardGameDao.countScenarioUsages(defaultScenario.id) != 0) {
                 requiresScenarioBox.setEnabled(false);
@@ -128,43 +128,32 @@ public class GameInfoFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean requireScenario) {
 
                 if(requireScenario){
-                    for (Scenario scenario : mScenarios) {
-                        if(scenario.name.equals(Scenario.DEFAULT_NAME)) {
-                            mScenarios.remove(scenario);
-                            break;
-                        }
-                    }
-                    Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
-                    MainActivity.mBoardGameDao.deleteScenario(defaultScenario);
-                    logAllScenarios();
-                    mGame.requireScenario = true;
-                    MainActivity.mBoardGameDao.updateGame(mGame);
-                    setGameTypeView();
-                } else {
-                    final Spinner spinner = new Spinner(getContext());
-                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),R.array.game_types,R.layout.support_simple_spinner_dropdown_item);
-                    adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                    spinner.setAdapter(adapter);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
-                    builder.setTitle(R.string.title_game_type)
-                            .setView(surroundWithMarginView(spinner))
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Scenario defaultScenario = new Scenario();
-                                    defaultScenario.name = Scenario.DEFAULT_NAME;
-                                    defaultScenario.game_id = mGame.id;
-                                    defaultScenario.type = spinner.getSelectedItem().toString();
-                                    MainActivity.mBoardGameDao.insertScenario(defaultScenario);
-                                    mScenarios.add(defaultScenario);
-                                    mGame.requireScenario = false;
-                                    MainActivity.mBoardGameDao.updateGame(mGame);
-                                    setGameTypeView();
-                                    logAllScenarios();
+                    if(mScenarios.size() == 1){
+                        final EditScenarioView esv = new EditScenarioView(getContext());
+                        esv.hideDelete();
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+                        builder.setTitle(R.string.add_scenario_title)
+                                .setView(surroundWithMarginView(esv))
+                                .setPositiveButton("OK", null);
+
+                        final AlertDialog dialog = builder.create();
+                        dialog.setCancelable(false);
+                        dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(!esv.getScenarioName().equals("")) {
+                                    addNewScenario(esv.getScenario());
+                                    dialog.dismiss();
                                 }
-                            });
-                    builder.setCancelable(false);
-                    builder.show();
+                            }
+                        });
+                    }
+                    deleteDefaultScenario();
+
+                } else {
+                    showGameTypeDialog();
                 }
             }
         });
@@ -175,13 +164,46 @@ public class GameInfoFragment extends Fragment {
 
     }
 
-    private void logAllScenarios(){
-        List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
-        for (Scenario scenario : scenarios) {
-            Log.d("Database",scenario.name);
+    private void deleteDefaultScenario() {
+        for (Scenario scenario : mScenarios) {
+            if(scenario.name.equals(Scenario.DEFAULT_NAME)) {
+                mScenarios.remove(scenario);
+                break;
+            }
         }
-
+        Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
+        MainActivity.mBoardGameDao.deleteScenario(defaultScenario);
+        mGame.requireScenario = true;
+        MainActivity.mBoardGameDao.updateGame(mGame);
+        setGameTypeView();
     }
+
+    private void showGameTypeDialog() {
+        final Spinner spinner = new Spinner(getContext());
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),R.array.game_types,R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setTitle(R.string.title_game_type)
+                .setView(surroundWithMarginView(spinner))
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Scenario defaultScenario = new Scenario();
+                        defaultScenario.name = Scenario.DEFAULT_NAME;
+                        defaultScenario.game_id = mGame.id;
+                        defaultScenario.type = spinner.getSelectedItem().toString();
+                        MainActivity.mBoardGameDao.insertScenario(defaultScenario);
+                        mScenarios.add(defaultScenario);
+                        mGame.requireScenario = false;
+                        MainActivity.mBoardGameDao.updateGame(mGame);
+                        setGameTypeView();
+                    }
+                });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
 
     private boolean isGameNameValid(String newGameName) {
         if(newGameName.equals("")) {
