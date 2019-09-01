@@ -11,7 +11,6 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.room.Room;
 
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         AppDatabase db = Room.databaseBuilder(this,AppDatabase.class,"board-games").allowMainThreadQueries().build();
         mBoardGameDao = db.boardGameDao();
+
+        
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override

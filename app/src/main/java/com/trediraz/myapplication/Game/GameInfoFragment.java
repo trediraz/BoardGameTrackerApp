@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
+import com.trediraz.myapplication.Database.Match;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
@@ -116,7 +117,7 @@ public class GameInfoFragment extends Fragment {
 
         CheckBox requiresScenarioBox = getView().findViewById(R.id.requires_scenario_checkbox);
         requiresScenarioBox.setChecked(mGame.requireScenario);
-        final Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
+        Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
         if(defaultScenario != null) {
             if(MainActivity.mBoardGameDao.countScenarioUsages(defaultScenario.id) != 0) {
                 requiresScenarioBox.setEnabled(false);
@@ -133,7 +134,9 @@ public class GameInfoFragment extends Fragment {
                             break;
                         }
                     }
+                    Scenario defaultScenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(Scenario.DEFAULT_NAME,mGame.id);
                     MainActivity.mBoardGameDao.deleteScenario(defaultScenario);
+                    logAllScenarios();
                     mGame.requireScenario = true;
                     MainActivity.mBoardGameDao.updateGame(mGame);
                     setGameTypeView();
@@ -157,6 +160,7 @@ public class GameInfoFragment extends Fragment {
                                     mGame.requireScenario = false;
                                     MainActivity.mBoardGameDao.updateGame(mGame);
                                     setGameTypeView();
+                                    logAllScenarios();
                                 }
                             });
                     builder.setCancelable(false);
@@ -168,6 +172,14 @@ public class GameInfoFragment extends Fragment {
         setItemListVisibilityListener(R.id.scenario_title,R.id.scenarios,R.id.scenarios_divider);
         setItemListVisibilityListener(R.id.expansions_title,R.id.expansions,R.id.expansions_divider);
         setItemListVisibilityListener(R.id.player_title,R.id.number_of_players,R.id.players_divider);
+
+    }
+
+    private void logAllScenarios(){
+        List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
+        for (Scenario scenario : scenarios) {
+            Log.d("Database",scenario.name);
+        }
 
     }
 

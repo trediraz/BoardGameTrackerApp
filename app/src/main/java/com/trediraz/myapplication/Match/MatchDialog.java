@@ -235,8 +235,6 @@ public class MatchDialog extends DialogFragment {
         Date date = getDateFromDatePicker(datePicker);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = sdf.format(date);
-        Log.d("Database",dateString);
-
         EditText commentsView = getDialog().findViewById(R.id.comments);
 
         Match newMatch = new Match();
@@ -275,7 +273,6 @@ public class MatchDialog extends DialogFragment {
                 MatchExpansion mE = new MatchExpansion();
                 mE.match_id = newMatch.id;
                 mE.expansion_id = getExpansionIdFromListByName(checkBox.getText().toString());
-                Log.d("Database",mE.match_id + " " + mE.expansion_id);
                 MainActivity.mBoardGameDao.insertMatchExpansion(mE);
             }
         }
