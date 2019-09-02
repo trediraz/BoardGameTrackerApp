@@ -519,7 +519,7 @@ public class MatchDialog extends DialogFragment {
                 outcomes.add(getString(R.string.unfinished));
                 setSpinnerFromArrayList(outcomes);
         }
-        setScrollViewSize(layout,4);
+        setScrollViewSize(layout,3);
 
     }
 
@@ -597,7 +597,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setScrollViewSize(@NonNull ViewGroup viewGroup, int maxChildNumber){
-        final int MAX_HEIGHT = 800;
+        final int MAX_HEIGHT = 600;
         ScrollView scrollView = (ScrollView) viewGroup.getParent();
         ViewGroup.LayoutParams layoutParams;
         if(viewGroup.getChildCount() > maxChildNumber){

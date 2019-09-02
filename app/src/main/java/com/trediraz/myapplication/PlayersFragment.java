@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.trediraz.myapplication.Database.Player;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +50,7 @@ public class PlayersFragment extends Fragment {
 
         ListView listView = Objects.requireNonNull(view).findViewById(R.id.players_list_view);
         players = MainActivity.mBoardGameDao.getAllPlayerNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,players);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,players);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -63,12 +65,12 @@ public class PlayersFragment extends Fragment {
         addPlayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showNewPlayerDialog();
+                showNewPlayerDialog(adapter);
             }
         });
     }
 
-    private void showNewPlayerDialog() {
+    private void showNewPlayerDialog(final ArrayAdapter<String> adapter) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         final View view = LinearLayout.inflate(getContext(),R.layout.add_player_dialog_view,null);
         builder.setTitle(R.string.add_player)
@@ -85,6 +87,9 @@ public class PlayersFragment extends Fragment {
                         player.name = newPlayerName;
                         MainActivity.mBoardGameDao.insertPlayer(player);
                         players.add(player.name);
+                        Collections.sort(players);
+                        adapter.notifyDataSetChanged();
+
                     }
                 })
                 .show();

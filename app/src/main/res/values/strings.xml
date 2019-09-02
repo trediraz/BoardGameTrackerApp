@@ -78,6 +78,7 @@
     <string name="change_game_name">Zmień nazwę</string>
     <string name="title_number_of_games">Liczba gier</string>
     <string name="title_most_games">Najwięcej gier w ostatnim roku</string>
+    <string name="choose_text">wybierz</string>
 
     <string-array name="game_types">
         <item>Versus</item>

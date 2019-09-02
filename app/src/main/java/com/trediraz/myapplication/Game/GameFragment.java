@@ -28,11 +28,14 @@ import com.trediraz.myapplication.R;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 public class GameFragment extends Fragment implements GameDialog.GameDialogInterface {
 
     private ArrayList<String> mGameNames;
+    private ArrayAdapter<String> adapter;
 
     public GameFragment() {
 
@@ -51,7 +54,7 @@ public class GameFragment extends Fragment implements GameDialog.GameDialogInter
 
         ListView gameList = getView().findViewById(R.id.game_list_view);
         mGameNames = (ArrayList<String>) MainActivity.mBoardGameDao.getAllGameNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout, mGameNames);
+        adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout, mGameNames);
         gameList.setAdapter(adapter);
         gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,5 +79,7 @@ public class GameFragment extends Fragment implements GameDialog.GameDialogInter
     @Override
     public void onGameAdded(Game game) {
         mGameNames.add(game.name);
+        Collections.sort(mGameNames);
+        adapter.notifyDataSetChanged();
     }
 }

@@ -59,7 +59,7 @@ public class PlayerPlaceLayout extends LinearLayout {
         setPlace(place);
 
         ArrayList<String> playerNames = new ArrayList<>();
-        playerNames.add("-");
+        playerNames.add(getContext().getString(R.string.choose_text));
         for (Player player : players) {
             playerNames.add(player.name);
         }

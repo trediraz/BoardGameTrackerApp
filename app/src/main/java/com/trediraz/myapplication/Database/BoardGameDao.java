@@ -20,7 +20,7 @@ public interface BoardGameDao {
     @Query("SELECT * FROM `match` WHERE id = :id")
     Match getMatchById(int id);
 
-    @Query("SELECT name FROM game")
+    @Query("SELECT name FROM game ORDER BY name ASC")
     List<String> getAllGameNames();
 
     @Query("SELECT * FROM game WHERE id = :id")
@@ -65,10 +65,10 @@ public interface BoardGameDao {
     @Query("SELECT max_number_of_players FROM game WHERE name = :name LIMIT 1")
     int getMaxNumberOfPlayersByGameName(String name);
 
-    @Query("SELECT * FROM player")
+    @Query("SELECT * FROM player ORDER BY name ASC")
     List<Player> getAllPlayers();
 
-    @Query("SELECT name FROM player")
+    @Query("SELECT name FROM player ORDER BY name ASC")
     List<String> getAllPlayerNames();
 
     @Query("SELECT name FROM player WHERE id = :id")
