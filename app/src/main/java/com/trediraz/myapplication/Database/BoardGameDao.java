@@ -1,6 +1,5 @@
 package com.trediraz.myapplication.Database;
 
-import android.widget.LinearLayout;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -37,17 +36,20 @@ public interface BoardGameDao {
 
     @Query("SELECT expansion.name,expansion.game_id,expansion.id FROM expansion " +
             "INNER JOIN game ON expansion.game_id = game.id " +
-            "WHERE game.name = :name")
+            "WHERE game.name = :name " +
+            "ORDER BY expansion.name ASC")
     List<Expansion> getExpansionsByGameName(String name);
 
     @Query("SELECT expansion.id,expansion.name,expansion.game_id FROM matchexpansion " +
             "LEFT JOIN expansion on expansion.id = matchexpansion.expansion_id " +
-            "WHERE match_id = :id")
+            "WHERE match_id = :id " +
+            "ORDER BY expansion.name ASC")
     List<Expansion> getExpansionsByMatchId(int id);
 
     @Query("SELECT scenario.id, scenario.game_id, scenario.name, scenario.type FROM scenario " +
             "INNER JOIN game ON scenario.game_id = game.id " +
-            "WHERE game.name = :name")
+            "WHERE game.name = :name " +
+            "ORDER BY scenario.name ASC")
     List<Scenario> getScenariosByGameName(String name);
 
     @Query("SELECT * FROM scenario WHERE id = :id")

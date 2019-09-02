@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -435,6 +436,7 @@ public class GameInfoFragment extends Fragment {
         editText.setHint(hint);
         editText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         editText.setEms(10);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         return editText;
     }
 

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:autofillHints="@string/player_name"
         android:hint="@string/player_name"
-        android:inputType="text"
+        android:inputType="textCapSentences"
         android:textAlignment="center"
         android:ems="12"/>
 

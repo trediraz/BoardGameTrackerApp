@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -195,6 +196,7 @@ public class GameDialog extends DialogFragment {
         editText.setTextAlignment(EditText.TEXT_ALIGNMENT_CENTER);
         editText.setSingleLine(true);
         editText.setEms(10);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         return  editText;
     }
 

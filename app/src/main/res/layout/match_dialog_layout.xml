@@ -146,7 +146,7 @@
             android:layout_width="270dp"
             android:layout_height="200dp"
             android:autofillHints="@string/comment_hint"
-            android:inputType="textMultiLine|textNoSuggestions"
+            android:inputType="textMultiLine|textCapSentences|textNoSuggestions"
             android:background="@null"
             android:imeOptions="actionNone"/>
 

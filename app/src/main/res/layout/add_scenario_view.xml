@@ -44,7 +44,7 @@
         android:autofillHints="@string/scenario_name"
         android:ems="20"
         android:hint="@string/scenario_name"
-        android:inputType="text"
+        android:inputType="textCapSentences"
         android:textAlignment="center" />
 
 </LinearLayout>

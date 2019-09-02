@@ -381,7 +381,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private boolean isPlaceViewDataValid() {
-        final String NO_PLAYER = "-";
+        final String NO_PLAYER = getString(R.string.choose_text);
         LinearLayout places = getDialog().findViewById(R.id.game_outcome_view);
         CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         if(!unfinished.isChecked()) {

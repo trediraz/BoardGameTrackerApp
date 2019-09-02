@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class PlayersFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         final View view = LinearLayout.inflate(getContext(),R.layout.add_player_dialog_view,null);
         final EditText editText = view.findViewById(R.id.player_name_edit_text);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         editText.setText(playerName);
         builder.setTitle(R.string.edit_player_dialog_title)
                 .setView(view)
