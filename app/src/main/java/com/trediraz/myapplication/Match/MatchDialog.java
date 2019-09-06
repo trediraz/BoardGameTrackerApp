@@ -88,7 +88,7 @@ public class MatchDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mViewFlipper = getDialog().findViewById(R.id.new_match_view_flipper);
+        mViewFlipper = Objects.requireNonNull(getDialog()).findViewById(R.id.new_match_view_flipper);
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
         CheckBox toggleAllExpansions = getDialog().findViewById(R.id.toggle_all_expansions);
@@ -98,43 +98,27 @@ public class MatchDialog extends DialogFragment {
 
         mScenariosRadio = getDialog().findViewById(R.id.scenarios_view);
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleNextAction();
-            }
-        });
+        nextButton.setOnClickListener(view -> handleNextAction());
 
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handlePreviousAction();
-            }
-        });
+        previousButton.setOnClickListener(view -> handlePreviousAction());
 
-        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                if(i == KeyEvent.KEYCODE_BACK){
-                    if(KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+        getDialog().setOnKeyListener((dialogInterface, i, keyEvent) -> {
+            if(i == KeyEvent.KEYCODE_BACK){
+                if(KeyEvent.ACTION_DOWN == keyEvent.getAction()){
 
-                        handlePreviousAction();
-                    }
-                    return true;
+                    handlePreviousAction();
                 }
-                else
-                    return false;
+                return true;
             }
+            else
+                return false;
         });
 
         final LinearLayout expansionView = getDialog().findViewById(R.id.expansions_view);
-        toggleAllExpansions.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                for(int i = 0; i < expansionView.getChildCount(); i++){
-                    CheckBox checkBox = (CheckBox) expansionView.getChildAt(i);
-                    checkBox.setChecked(b);
-                }
+        toggleAllExpansions.setOnCheckedChangeListener((compoundButton, b) -> {
+            for(int i = 0; i < expansionView.getChildCount(); i++){
+                CheckBox checkBox = (CheckBox) expansionView.getChildAt(i);
+                checkBox.setChecked(b);
             }
         });
 
@@ -143,7 +127,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setUpGameChoiceView() {
-        mRadioGameButtons = getDialog().findViewById(R.id.game_button_group);
+        mRadioGameButtons = Objects.requireNonNull(getDialog()).findViewById(R.id.game_button_group);
         if(mRadioGameButtons.getChildCount() == 0){
             List<String> gameNames = MainActivity.mBoardGameDao.getAllGameNames();
             for(String name : gameNames){
@@ -155,7 +139,7 @@ public class MatchDialog extends DialogFragment {
 
     private void setUpPlayersView() {
         List<Player> players = MainActivity.mBoardGameDao.getAllPlayers();
-        LinearLayout playersView = getDialog().findViewById(R.id.players_view);
+        LinearLayout playersView = Objects.requireNonNull(getDialog()).findViewById(R.id.players_view);
         playersView.removeAllViews();
         for(Player player : players){
             addCheckboxButtonToLinearLayout(playersView,player.name);
@@ -231,7 +215,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void updateDatabase() {
-        DatePicker datePicker = getDialog().findViewById(R.id.date_picker);
+        DatePicker datePicker = Objects.requireNonNull(getDialog()).findViewById(R.id.date_picker);
         Date date = getDateFromDatePicker(datePicker);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = sdf.format(date);
@@ -299,7 +283,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private int getPlayerPlace(String name) {
-        LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
+        LinearLayout layout = Objects.requireNonNull(getDialog()).findViewById(R.id.game_outcome_view);
         for(int i = 0; i < layout.getChildCount();i++){
             PlayerPlaceLayout playerPlaceLayout = (PlayerPlaceLayout) layout.getChildAt(i);
             if(name.equals(playerPlaceLayout.getSelectedPlayer()))
@@ -344,7 +328,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void handlePlayerChoiceNextAction() {
-        LinearLayout playersView = getDialog().findViewById(R.id.players_view);
+        LinearLayout playersView = Objects.requireNonNull(getDialog()).findViewById(R.id.players_view);
         int max = MainActivity.mBoardGameDao.getMaxNumberOfPlayersByGameName(mGame.name);
         int min = MainActivity.mBoardGameDao.getMinNumberOfPlayersByGameName(mGame.name);
         int checkedButton = countChecks(playersView);
@@ -382,7 +366,7 @@ public class MatchDialog extends DialogFragment {
 
     private boolean isPlaceViewDataValid() {
         final String NO_PLAYER = getString(R.string.choose_text);
-        LinearLayout places = getDialog().findViewById(R.id.game_outcome_view);
+        LinearLayout places = Objects.requireNonNull(getDialog()).findViewById(R.id.game_outcome_view);
         CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         if(!unfinished.isChecked()) {
             PlayerPlaceLayout child = (PlayerPlaceLayout) places.getChildAt(0);
@@ -411,7 +395,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setPlayerOutcome() {
-        LinearLayout places = getDialog().findViewById(R.id.game_outcome_view);
+        LinearLayout places = Objects.requireNonNull(getDialog()).findViewById(R.id.game_outcome_view);
         CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         if(unfinished.isChecked())
             mOutcome = getString(R.string.unfinished);
@@ -425,7 +409,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setOutcomeFromSpinner() {
-        Spinner spinner = getDialog().findViewById(R.id.outcome_spinner);
+        Spinner spinner = Objects.requireNonNull(getDialog()).findViewById(R.id.outcome_spinner);
         mOutcome = spinner.getSelectedItem().toString();
     }
 
@@ -452,7 +436,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setUpScenarioView() {
-        RadioGroup scenarioLayout = getDialog().findViewById(R.id.scenarios_view);
+        RadioGroup scenarioLayout = Objects.requireNonNull(getDialog()).findViewById(R.id.scenarios_view);
         scenarioLayout.removeAllViews();
         mAllScenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mGame.name);
         if(mAllScenarios.size() == 1 && !mGame.requireScenario){
@@ -473,7 +457,7 @@ public class MatchDialog extends DialogFragment {
         if(mAllExpansions.size() == 0)
             mViewFlipper.showNext();
         else {
-            LinearLayout expansionsView = getDialog().findViewById(R.id.expansions_view);
+            LinearLayout expansionsView = Objects.requireNonNull(getDialog()).findViewById(R.id.expansions_view);
             expansionsView.removeAllViews();
             for(Expansion expansion : mAllExpansions){
                 CheckBox checkBox = new CheckBox(getContext());
@@ -486,7 +470,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setOverlordView() {
-        Spinner spinner = getDialog().findViewById(R.id.overlord_spinner);
+        Spinner spinner = Objects.requireNonNull(getDialog()).findViewById(R.id.overlord_spinner);
         ArrayList<String> names = new ArrayList<>();
         for (Player player : mPlayers) {
             names.add(player.name);
@@ -498,7 +482,7 @@ public class MatchDialog extends DialogFragment {
 
     private void setUpOutcomeView() {
         ArrayList<String> outcomes = new ArrayList<>();
-        final LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
+        final LinearLayout layout = Objects.requireNonNull(getDialog()).findViewById(R.id.game_outcome_view);
         CheckBox unfinished = getDialog().findViewById(R.id.unfinished_checkbox);
         switch (mScenario.type){
             case Scenario.VERSUS:
@@ -524,7 +508,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void addPlaceLayouts() {
-        final LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
+        final LinearLayout layout = Objects.requireNonNull(getDialog()).findViewById(R.id.game_outcome_view);
         layout.removeAllViews();
         for(int i = 0; i < mPlayers.size();i++){
             PlayerPlaceLayout playerPlaceLayout = createPlayerPlaceLayout(layout, i);
@@ -564,7 +548,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     private void setSpinnerFromArrayList(ArrayList<String> arrayList) {
-        LinearLayout layout = getDialog().findViewById(R.id.game_outcome_view);
+        LinearLayout layout = Objects.requireNonNull(getDialog()).findViewById(R.id.game_outcome_view);
         Spinner outcomeSpinner = new Spinner(getContext());
         ArrayAdapter<String> outcomeAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.support_simple_spinner_dropdown_item, arrayList);
         outcomeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -641,6 +625,6 @@ public class MatchDialog extends DialogFragment {
             case 7:
                 newTitle = getString(R.string.comment_title);
         }
-        getDialog().setTitle(newTitle);
+        Objects.requireNonNull(getDialog()).setTitle(newTitle);
     }
 }

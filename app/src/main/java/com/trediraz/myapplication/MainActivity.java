@@ -41,14 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
         
 
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                if (isBottomNavDestination(destination.getId())){
-                    bottomNavigationView.setVisibility(View.VISIBLE);
-                }else {
-                    bottomNavigationView.setVisibility(View.GONE);
-                }
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (isBottomNavDestination(destination.getId())){
+                bottomNavigationView.setVisibility(View.VISIBLE);
+            }else {
+                bottomNavigationView.setVisibility(View.GONE);
             }
         });
     }

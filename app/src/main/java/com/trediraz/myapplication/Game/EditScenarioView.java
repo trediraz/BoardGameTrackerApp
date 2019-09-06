@@ -62,13 +62,10 @@ public class EditScenarioView extends LinearLayout {
     private void initComponents() {
         spinner = findViewById(R.id.spinner);
         editText = findViewById(R.id.scenario_type);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                textView.clearFocus();
-                hideKeyboard(textView);
-                return true;
-            }
+        editText.setOnEditorActionListener((textView, i, keyEvent) -> {
+            textView.clearFocus();
+            hideKeyboard(textView);
+            return true;
         });
         requestFocus();
 
@@ -77,12 +74,7 @@ public class EditScenarioView extends LinearLayout {
         spinner.setAdapter(adapter);
 
         deleteButton = findViewById(R.id.delete_scenario_button);
-        deleteButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                remove();
-            }
-        });
+        deleteButton.setOnClickListener(view -> remove());
     }
 
     public String getScenarioName(){

@@ -68,12 +68,7 @@ public class PlayerPlaceLayout extends LinearLayout {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         playersSpinner.setAdapter(adapter);
 
-        drawCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mListener.onDrawClicked();
-            }
-        });
+        drawCheckBox.setOnCheckedChangeListener((compoundButton, b) -> mListener.onDrawClicked());
 
         playersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

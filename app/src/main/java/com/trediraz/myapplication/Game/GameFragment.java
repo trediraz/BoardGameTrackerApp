@@ -56,22 +56,16 @@ public class GameFragment extends Fragment implements GameDialog.GameDialogInter
         mGameNames = (ArrayList<String>) MainActivity.mBoardGameDao.getAllGameNames();
         adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout, mGameNames);
         gameList.setAdapter(adapter);
-        gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String gameName = (String) adapterView.getItemAtPosition(i);
-                GameFragmentDirections.GoToGameInfo action = GameFragmentDirections.goToGameInfo(gameName);
-                Navigation.findNavController(view).navigate(action);
-            }
+        gameList.setOnItemClickListener((adapterView, view, i, l) -> {
+            String gameName = (String) adapterView.getItemAtPosition(i);
+            GameFragmentDirections.GoToGameInfo action = GameFragmentDirections.goToGameInfo(gameName);
+            Navigation.findNavController(view).navigate(action);
         });
 
-        addGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment dialogName = new GameDialog();
-                dialogName.setCancelable(false);
-                dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
-            }
+        addGameButton.setOnClickListener(view -> {
+            DialogFragment dialogName = new GameDialog();
+            dialogName.setCancelable(false);
+            dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
         });
     }
 

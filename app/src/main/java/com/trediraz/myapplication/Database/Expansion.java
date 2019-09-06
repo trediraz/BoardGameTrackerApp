@@ -19,4 +19,5 @@ public class Expansion {
     public int game_id;
 
     public String name;
+
 }

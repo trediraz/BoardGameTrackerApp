@@ -50,41 +50,27 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
         mAdapter = new MatchListAdapter(getActivity(), mMatches);
         matchViews.setAdapter(mAdapter);
-        matchViews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Match match = (Match) adapterView.getItemAtPosition(i);
-                MatchFragmentDirections.GoToMachInfo action = MatchFragmentDirections.goToMachInfo(match.id);
-                Navigation.findNavController(view).navigate(action);
-            }
+        matchViews.setOnItemClickListener((adapterView, view, i, l) -> {
+            Match match = (Match) adapterView.getItemAtPosition(i);
+            MatchFragmentDirections.GoToMachInfo action = MatchFragmentDirections.goToMachInfo(match.id);
+            Navigation.findNavController(view).navigate(action);
         });
-        matchViews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Match match = (Match) adapterView.getItemAtPosition(i);
-                showDeleteDialog(match);
-                return true;
-            }
+        matchViews.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            Match match = (Match) adapterView.getItemAtPosition(i);
+            showDeleteDialog(match);
+            return true;
         });
 
         FloatingActionButton addNewMatchButton = Objects.requireNonNull(getView()).findViewById(R.id.add_match_button);
-        addNewMatchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddDialog();
-            }
-        });
+        addNewMatchButton.setOnClickListener(view -> showAddDialog());
     }
 
     private void showDeleteDialog(final Match match) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
         builder.setMessage(R.string.delete_match_dialog_message)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        MainActivity.mBoardGameDao.deleteMatch(match);
-                        mAdapter.deleteMatch(match);
-                    }
+                .setPositiveButton("Ok", (dialogInterface, i) -> {
+                    MainActivity.mBoardGameDao.deleteMatch(match);
+                    mAdapter.deleteMatch(match);
                 })
                 .setNegativeButton(R.string.cancel,null)
                 .show();

@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="5dp"
+        android:fontFamily="sans-serif"
         android:text="@string/error"
         android:textColor="@color/primary_text"
         android:textSize="22sp"

@@ -54,7 +54,7 @@ public class GameDialog extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
             mListener = (GameDialogInterface) getParentFragment();
@@ -66,77 +66,49 @@ public class GameDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mViewFlipper = getDialog().findViewById(R.id.create_game_flipper);
+        mViewFlipper = Objects.requireNonNull(getDialog()).findViewById(R.id.create_game_flipper);
         Button nextButton = getDialog().findViewById(R.id.next_button);
         Button previousButton = getDialog().findViewById(R.id.previous_button);
 
         CheckBox requiresScenarioCheckBox = getDialog().findViewById(R.id.requires_scenario_checkbox);
-        requiresScenarioCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                requiresScenario = b;
-            }
-        });
+        requiresScenarioCheckBox.setOnCheckedChangeListener((compoundButton, b) -> requiresScenario = b);
 
         Spinner spinner = getDialog().findViewById(R.id.game_type_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),R.array.game_types,R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleNextAction();
-            }
-        });
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handlePreviousAction();
-            }
-        });
+        nextButton.setOnClickListener(view -> handleNextAction());
+        previousButton.setOnClickListener(view -> handlePreviousAction());
 
-        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                if(i == KeyEvent.KEYCODE_BACK){
-                    if(KeyEvent.ACTION_DOWN == keyEvent.getAction()){
+        getDialog().setOnKeyListener((dialogInterface, i, keyEvent) -> {
+            if(i == KeyEvent.KEYCODE_BACK){
+                if(KeyEvent.ACTION_DOWN == keyEvent.getAction()){
 
-                        handlePreviousAction();
-                    }
-                    return true;
+                    handlePreviousAction();
                 }
-                else
-                    return false;
+                return true;
             }
+            else
+                return false;
         });
 
         final LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
         if(requiresScenario) createNewScenarioView();
 
         Button addScenarioButton = getDialog().findViewById(R.id.add_scenario_button);
-        addScenarioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewScenarioView(scenarioLayout);
-            }
-        });
+        addScenarioButton.setOnClickListener(view -> addNewScenarioView(scenarioLayout));
 
         final LinearLayout expansionsLayout = getDialog().findViewById(R.id.expansions);
         if(expansionsLayout.getChildCount() == 0) createNewExpansionView(expansionsLayout);
 
         final Button addExpansionButton = getDialog().findViewById(R.id.add_expansion_button);
-        addExpansionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewExpansionView();
-            }
-        });
+        addExpansionButton.setOnClickListener(view -> addNewExpansionView());
     }
 
     private void addNewScenarioView(LinearLayout scenarioLayout) {
         EditScenarioView last = (EditScenarioView) scenarioLayout.getChildAt(scenarioLayout.getChildCount()-1);
-        LinearLayout linearLayout = getDialog().findViewById(R.id.scenarios);
+        LinearLayout linearLayout = Objects.requireNonNull(getDialog()).findViewById(R.id.scenarios);
         if(last == null) {
             createNewScenarioView();
         }
@@ -152,13 +124,13 @@ public class GameDialog extends DialogFragment {
     }
 
     private void createNewScenarioView() {
-        LinearLayout scenarioLayout = getDialog().findViewById(R.id.scenarios);
+        LinearLayout scenarioLayout = Objects.requireNonNull(getDialog()).findViewById(R.id.scenarios);
         EditScenarioView addEditScenarioView = new EditScenarioView(getContext());
         scenarioLayout.addView(addEditScenarioView,scenarioLayout.getChildCount());
     }
 
     private void addNewExpansionView() {
-        LinearLayout linearLayout = getDialog().findViewById(R.id.expansions);
+        LinearLayout linearLayout = Objects.requireNonNull(getDialog()).findViewById(R.id.expansions);
         ScrollView scrollView = getDialog().findViewById(R.id.expansions_scroll_view);
         EditText lastEditText = (EditText) linearLayout.getChildAt(linearLayout.getChildCount()-1);
         if(!lastEditText.getText().toString().trim().equals("")) {
@@ -173,20 +145,17 @@ public class GameDialog extends DialogFragment {
         final EditText editText = createExpansionEditText();
         layout.addView(editText,layout.getChildCount());
         editText.requestFocus();
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(textView == layout.getChildAt(layout.getChildCount()-1)) {
-                    addNewExpansionView();
-                    return true;
-                }
-                else if(textView.getText().toString().trim().equals("")){
-                    layout.removeView(textView);
-                    layout.getChildAt(layout.getChildCount()-1).requestFocus();
-                    return true;
-                }
-                return false;
+        editText.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if(textView == layout.getChildAt(layout.getChildCount()-1)) {
+                addNewExpansionView();
+                return true;
             }
+            else if(textView.getText().toString().trim().equals("")){
+                layout.removeView(textView);
+                layout.getChildAt(layout.getChildCount()-1).requestFocus();
+                return true;
+            }
+            return false;
         });
     }
 
@@ -227,7 +196,7 @@ public class GameDialog extends DialogFragment {
         int errorToastMessage = 0;
         switch (currentView){
             case 0:
-                EditText gameNameText = getDialog().findViewById(R.id.game_name);
+                EditText gameNameText = Objects.requireNonNull(getDialog()).findViewById(R.id.game_name);
                 String gameName = gameNameText.getText().toString().trim();
                 if (gameName.equals("")) {
                     isDataValid = false;
@@ -243,7 +212,7 @@ public class GameDialog extends DialogFragment {
                 mViewFlipper.showNext();
                 break;
             case 2:
-                LinearLayout layout = getDialog().findViewById(R.id.scenarios);
+                LinearLayout layout = Objects.requireNonNull(getDialog()).findViewById(R.id.scenarios);
                 if (layout.getChildCount() == 0 && requiresScenario) {
                     isDataValid = false;
                     errorToastMessage = R.string.no_scenario;
@@ -268,7 +237,7 @@ public class GameDialog extends DialogFragment {
                 }
                 break;
             case 4:
-                EditText minView = getDialog().findViewById(R.id.min_number_of_players);
+                EditText minView = Objects.requireNonNull(getDialog()).findViewById(R.id.min_number_of_players);
                 EditText maxView = getDialog().findViewById(R.id.max_number_of_players);
                 String minText = minView.getText().toString();
                 String maxText = maxView.getText().toString();
@@ -299,7 +268,7 @@ public class GameDialog extends DialogFragment {
     }
 
     private boolean isExpansionNameUnique() {
-        LinearLayout layout = getDialog().findViewById(R.id.expansions);
+        LinearLayout layout = Objects.requireNonNull(getDialog()).findViewById(R.id.expansions);
         EditText comperedNameText,nameText;
         String compereName, name;
 
@@ -346,7 +315,7 @@ public class GameDialog extends DialogFragment {
 
         Game newGame = new Game();
 
-        EditText gameNameText = getDialog().findViewById(R.id.game_name);
+        EditText gameNameText = Objects.requireNonNull(getDialog()).findViewById(R.id.game_name);
         EditText min_number_of_players = getDialog().findViewById(R.id.min_number_of_players);
         EditText max_number_of_players = getDialog().findViewById(R.id.max_number_of_players);
 
@@ -410,11 +379,11 @@ public class GameDialog extends DialogFragment {
                 newTitle = getString(R.string.title_number_of_players);
                 break;
         }
-        getDialog().setTitle(newTitle);
+        Objects.requireNonNull(getDialog()).setTitle(newTitle);
     }
 
     private void hideKeyboard() {
-        View view = getDialog().getCurrentFocus();
+        View view = Objects.requireNonNull(getDialog()).getCurrentFocus();
         if(view != null){
             view.clearFocus();
             InputMethodManager inputMethodManager = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);

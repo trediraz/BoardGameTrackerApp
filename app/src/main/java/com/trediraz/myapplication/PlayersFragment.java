@@ -54,21 +54,13 @@ public class PlayersFragment extends Fragment {
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),R.layout.game_list_view_layout,players);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String playerName = adapterView.getItemAtPosition(i).toString();
-                showEditPlayerDialog(playerName, i);
-            }
+        listView.setOnItemClickListener((adapterView, view12, i, l) -> {
+            String playerName = adapterView.getItemAtPosition(i).toString();
+            showEditPlayerDialog(playerName, i);
         });
 
         FloatingActionButton addPlayerButton = view.findViewById(R.id.add_players_button);
-        addPlayerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showNewPlayerDialog(adapter);
-            }
-        });
+        addPlayerButton.setOnClickListener(view1 -> showNewPlayerDialog(adapter));
     }
 
     private void showNewPlayerDialog(final ArrayAdapter<String> adapter) {
@@ -77,21 +69,18 @@ public class PlayersFragment extends Fragment {
         builder.setTitle(R.string.add_player)
                 .setView(view)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText editText = view.findViewById(R.id.player_name_edit_text);
-                        String newPlayerName = editText.getText().toString().trim();
-                        if(isNameAlreadyUsed(newPlayerName))
-                            return;
-                        Player  player = new Player();
-                        player.name = newPlayerName;
-                        MainActivity.mBoardGameDao.insertPlayer(player);
-                        players.add(player.name);
-                        Collections.sort(players);
-                        adapter.notifyDataSetChanged();
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    EditText editText = view.findViewById(R.id.player_name_edit_text);
+                    String newPlayerName = editText.getText().toString().trim();
+                    if(isNameAlreadyUsed(newPlayerName))
+                        return;
+                    Player  player = new Player();
+                    player.name = newPlayerName;
+                    MainActivity.mBoardGameDao.insertPlayer(player);
+                    players.add(player.name);
+                    Collections.sort(players);
+                    adapter.notifyDataSetChanged();
 
-                    }
                 })
                 .show();
     }
@@ -105,19 +94,16 @@ public class PlayersFragment extends Fragment {
         builder.setTitle(R.string.edit_player_dialog_title)
                 .setView(view)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String newPlayerName = editText.getText().toString().trim();
-                        if(isNameAlreadyUsed(newPlayerName))
-                            return;
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    String newPlayerName = editText.getText().toString().trim();
+                    if(isNameAlreadyUsed(newPlayerName))
+                        return;
 
-                        Player player = MainActivity.mBoardGameDao.getPlayerByName(playerName);
-                        player.name = newPlayerName;
-                        MainActivity.mBoardGameDao.updatePlayer(player);
-                        MainActivity.mBoardGameDao.updatePlayerOutcomes(playerName,newPlayerName);
-                        players.set(pos,player.name);
-                    }
+                    Player player = MainActivity.mBoardGameDao.getPlayerByName(playerName);
+                    player.name = newPlayerName;
+                    MainActivity.mBoardGameDao.updatePlayer(player);
+                    MainActivity.mBoardGameDao.updatePlayerOutcomes(playerName,newPlayerName);
+                    players.set(pos,player.name);
                 })
                 .show();
     }
