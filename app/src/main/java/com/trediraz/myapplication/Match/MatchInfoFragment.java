@@ -2,18 +2,21 @@ package com.trediraz.myapplication.Match;
 
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
@@ -24,12 +27,11 @@ import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class MatchInfoFragment extends Fragment {
 
@@ -83,23 +85,55 @@ public class MatchInfoFragment extends Fragment {
         }
 
         LinearLayout expansionsView = getView().findViewById(R.id.expansions_list);
-        final List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(match.id);
-        for (Expansion expansion : expansions) {
+        final List<Expansion> matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(match.id);
+        for (Expansion expansion : matchExpansions) {
             addTextView(expansionsView,expansion.name);
         }
 
         ImageView expansionsButton = getView().findViewById(R.id.edit_expansion_button);
-        expansionsButton.setOnClickListener(view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
-            builder.setMultiChoiceItems(expansions.stream().map(p -> p.name).toArray(String[]::new),null,null);
-            builder.show();
-        });
+        List<Expansion> gameExpansions = MainActivity.mBoardGameDao.getExpansionsNamesGameId(match.game_id);
+        if(gameExpansions.isEmpty())
+            expansionsButton.setVisibility(View.GONE);
+
+        boolean[] checkedItems = createContainsBoolArr(matchExpansions,gameExpansions);
+        expansionsButton.setOnClickListener(view -> showChooseExpansionsDialog(checkedItems,gameExpansions,matchExpansions));
 
         setItemListVisibilityListener(R.id.game_title,R.id.game_name,R.id.game_divider);
         setItemListVisibilityListener(R.id.scenario_title,R.id.scenario,R.id.scenarios_divider);
         setItemListVisibilityListener(R.id.players_title,R.id.players_list,R.id.players_divider);
         setVisibilityListenerWithCondition(R.id.comments_title,R.id.comments,R.id.comments_divider, match.comments.trim().equals(""));
-        setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,expansions.size() == 0);
+        setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,matchExpansions.size() == 0);
+    }
+
+    private void showChooseExpansionsDialog(boolean[] checkedItems, List<Expansion> gameExpansions, List<Expansion> matchExpansions) {
+        boolean[] initialChecked = checkedItems.clone();
+        String[] expansionNames = gameExpansions.stream().map(p -> p.name).toArray(String[]::new);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setTitle("Wybierz dodatki")
+                .setMultiChoiceItems(expansionNames, checkedItems, (dialogInterface, i, b) -> {})
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    for(int j = 0; j < initialChecked.length; j++){
+                        if(initialChecked[j] != checkedItems[j])
+                            Log.d("Database",gameExpansions.get(j).name);
+                    }
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .show();
+    }
+
+    private boolean[] createContainsBoolArr(List<Expansion> values, List<Expansion> items) {
+        boolean[] result = new boolean[items.size()];
+        for(int i = 0; i < items.size(); i++) {
+            boolean contains = false;
+            for(int j = 0; j < values.size(); j++)
+               if(values.get(j).id == items.get(i).id){
+                   contains = true;
+                   break;
+               }
+            result[i] = contains;
+        }
+        return result;
     }
 
     private void setVisibilityListenerWithCondition(int titleId, int viewId, int divId, boolean condition) {
