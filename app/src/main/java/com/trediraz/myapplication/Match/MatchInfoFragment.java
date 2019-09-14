@@ -33,7 +33,7 @@ public class MatchInfoFragment extends Fragment {
 
 
     private Match mMatch;
-    private LinearLayout expansionsView;
+    private LinearLayout expansionsListView;
     private List<Expansion> matchExpansions;
 
     public MatchInfoFragment() {
@@ -84,16 +84,17 @@ public class MatchInfoFragment extends Fragment {
             }
         }
 
-        expansionsView = getView().findViewById(R.id.expansions_list);
+        expansionsListView = getView().findViewById(R.id.expansions_list);
         matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(mMatch.id);
         for (Expansion expansion : matchExpansions) {
-            addTextView(expansionsView,expansion.name);
+            addTextView(expansionsListView,expansion.name);
         }
 
+        LinearLayout expansionsView = getView().findViewById(R.id.expansions_layout);
         ImageView expansionsButton = getView().findViewById(R.id.edit_expansion_button);
         List<Expansion> gameExpansions = MainActivity.mBoardGameDao.getExpansionsNamesGameId(mMatch.game_id);
         if(gameExpansions.isEmpty())
-            expansionsButton.setVisibility(View.GONE);
+            expansionsView.setVisibility(View.GONE);
 
         boolean[] checkedItems = createContainsBoolArr(matchExpansions,gameExpansions);
         expansionsButton.setOnClickListener(view -> showChooseExpansionsDialog(checkedItems,gameExpansions));
@@ -113,15 +114,16 @@ public class MatchInfoFragment extends Fragment {
         builder.setTitle(R.string.choose_expansions)
                 .setMultiChoiceItems(expansionNames, checkedItems, (dialogInterface, i, b) -> {})
                 .setPositiveButton("OK", (dialogInterface, i) -> {
-                    for(int j = 0; j < initialChecked.length; j++){
-                        if(initialChecked[j] != checkedItems[j]){
+                    for(int j = 0; j < initialChecked.length; j++) {
+                        if (initialChecked[j] != checkedItems[j]) {
                             Expansion expansion = gameExpansions.get(j);
-                            if(checkedItems[j])
+                            if (checkedItems[j])
                                 addExpansion(expansion);
                             else
                                 deleteMatchExpansion(expansion);
                         }
                     }
+                    setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,matchExpansions.size() == 0);
                 })
                 .setNegativeButton(R.string.cancel,null)
                 .show();
@@ -144,23 +146,23 @@ public class MatchInfoFragment extends Fragment {
         TextView textView = new TextView(getContext());
         textView.setTextAppearance(R.style.PrimaryText);
         textView.setText(expansion.name);
-        for(int i = 0; i < expansionsView.getChildCount(); i++){
-            TextView child = (TextView) expansionsView.getChildAt(i);
+        for(int i = 0; i < expansionsListView.getChildCount(); i++){
+            TextView child = (TextView) expansionsListView.getChildAt(i);
             if(child.getText().toString().compareTo(expansion.name) > 0){
-                expansionsView.addView(textView,i);
+                expansionsListView.addView(textView,i);
                 return;
             }
         }
-        expansionsView.addView(textView);
+        expansionsListView.addView(textView);
     }
 
     private void deleteMatchExpansion(Expansion expansion) {
         matchExpansions.remove(expansion);
         MainActivity.mBoardGameDao.deleteMatchExpansion(mMatch.id,expansion.id);
-        for (int i = 0; i < expansionsView.getChildCount(); i++) {
-            TextView textView = (TextView) expansionsView.getChildAt(i);
+        for (int i = 0; i < expansionsListView.getChildCount(); i++) {
+            TextView textView = (TextView) expansionsListView.getChildAt(i);
             if (textView.getText().equals(expansion.name)){
-                expansionsView.removeView(textView);
+                expansionsListView.removeView(textView);
                 break;
             }
         }
@@ -184,11 +186,14 @@ public class MatchInfoFragment extends Fragment {
         View divider = Objects.requireNonNull(getView()).findViewById(viewId);
         View view = Objects.requireNonNull(getView()).findViewById(divId);
         View title = getView().findViewById(titleId);
-        if(condition) {
-            setItemListVisibility(view,divider);
+
+        if(condition){
+            hideItemList(view,divider);
             title.setClickable(false);
-        } else
+        } else {
+            showItemList(view,divider);
             setItemListVisibilityListener(title,view,divider);
+        }
     }
 
 
@@ -213,12 +218,20 @@ public class MatchInfoFragment extends Fragment {
 
     private void setItemListVisibility(View layout, View divider) {
         if(layout.getVisibility() == View.VISIBLE) {
-            layout.setVisibility(View.GONE);
-            divider.setVisibility(View.GONE);
+            hideItemList(layout, divider);
         } else {
-            layout.setVisibility(View.VISIBLE);
-            divider.setVisibility(View.VISIBLE);
+            showItemList(layout, divider);
         }
+    }
+
+    private void showItemList(View layout, View divider) {
+        layout.setVisibility(View.VISIBLE);
+        divider.setVisibility(View.VISIBLE);
+    }
+
+    private void hideItemList(View layout, View divider) {
+        layout.setVisibility(View.GONE);
+        divider.setVisibility(View.GONE);
     }
 
     class SortPlayedIns implements Comparator<PlayedIn>{
