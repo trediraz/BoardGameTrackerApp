@@ -3,7 +3,6 @@ package com.trediraz.myapplication.Database;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
-import androidx.room.Ignore;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -39,6 +38,11 @@ public interface BoardGameDao {
             "WHERE game.name = :name " +
             "ORDER BY expansion.name ASC")
     List<Expansion> getExpansionsByGameName(String name);
+
+    @Query("SELECT * FROM expansion " +
+            "WHERE expansion.game_id = :game_id " +
+            "ORDER BY expansion.name ASC")
+    List<Expansion> getExpansionsNamesGameId(int game_id);
 
     @Query("SELECT expansion.id,expansion.name,expansion.game_id FROM matchexpansion " +
             "LEFT JOIN expansion on expansion.id = matchexpansion.expansion_id " +
@@ -141,4 +145,6 @@ public interface BoardGameDao {
     @Delete
     void  deleteExpansion(Expansion expansion);
 
+    @Query("DELETE FROM MatchExpansion WHERE match_id = :mid AND expansion_id = :eid")
+    void deleteMatchExpansion(int mid, int eid);
 }

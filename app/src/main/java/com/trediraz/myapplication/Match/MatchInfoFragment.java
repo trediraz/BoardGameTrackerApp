@@ -2,32 +2,28 @@ package com.trediraz.myapplication.Match;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Match;
+import com.trediraz.myapplication.Database.MatchExpansion;
 import com.trediraz.myapplication.Database.PlayedIn;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
-
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -35,6 +31,10 @@ import java.util.Objects;
 
 public class MatchInfoFragment extends Fragment {
 
+
+    private Match mMatch;
+    private LinearLayout expansionsView;
+    private List<Expansion> matchExpansions;
 
     public MatchInfoFragment() {
     }
@@ -56,9 +56,9 @@ public class MatchInfoFragment extends Fragment {
         TextView date = getView().findViewById(R.id.date);
 
         int matchId = MatchInfoFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getMatchId();
-        Match match = MainActivity.mBoardGameDao.getMatchById(matchId);
-        Game game = MainActivity.mBoardGameDao.getGameById(match.game_id);
-        Scenario scenario = MainActivity.mBoardGameDao.getScenarioById(match.scenario_id);
+        mMatch = MainActivity.mBoardGameDao.getMatchById(matchId);
+        Game game = MainActivity.mBoardGameDao.getGameById(mMatch.game_id);
+        Scenario scenario = MainActivity.mBoardGameDao.getScenarioById(mMatch.scenario_id);
 
         gameName.setText(game.name);
 
@@ -67,12 +67,12 @@ public class MatchInfoFragment extends Fragment {
             scenarioLayout.setVisibility(View.GONE);
         else
             scenarioView.setText(scenario.name);
-        comment.setText(match.comments);
-        outcome.setText(match.outcome);
-        date.setText(match.date);
+        comment.setText(mMatch.comments);
+        outcome.setText(mMatch.outcome);
+        date.setText(mMatch.date);
 
         LinearLayout players = getView().findViewById(R.id.players_list);
-        List<PlayedIn> playedIns = MainActivity.mBoardGameDao.getAllPlayersInMatchById(match.id);
+        List<PlayedIn> playedIns = MainActivity.mBoardGameDao.getAllPlayersInMatchById(mMatch.id);
         Collections.sort(playedIns,new SortPlayedIns());
         for (PlayedIn playedIn : playedIns) {
             String playerName = MainActivity.mBoardGameDao.getPlayerNameById(playedIn.player_id);
@@ -84,42 +84,86 @@ public class MatchInfoFragment extends Fragment {
             }
         }
 
-        LinearLayout expansionsView = getView().findViewById(R.id.expansions_list);
-        final List<Expansion> matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(match.id);
+        expansionsView = getView().findViewById(R.id.expansions_list);
+        matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(mMatch.id);
         for (Expansion expansion : matchExpansions) {
             addTextView(expansionsView,expansion.name);
         }
 
         ImageView expansionsButton = getView().findViewById(R.id.edit_expansion_button);
-        List<Expansion> gameExpansions = MainActivity.mBoardGameDao.getExpansionsNamesGameId(match.game_id);
+        List<Expansion> gameExpansions = MainActivity.mBoardGameDao.getExpansionsNamesGameId(mMatch.game_id);
         if(gameExpansions.isEmpty())
             expansionsButton.setVisibility(View.GONE);
 
         boolean[] checkedItems = createContainsBoolArr(matchExpansions,gameExpansions);
-        expansionsButton.setOnClickListener(view -> showChooseExpansionsDialog(checkedItems,gameExpansions,matchExpansions));
+        expansionsButton.setOnClickListener(view -> showChooseExpansionsDialog(checkedItems,gameExpansions));
 
         setItemListVisibilityListener(R.id.game_title,R.id.game_name,R.id.game_divider);
         setItemListVisibilityListener(R.id.scenario_title,R.id.scenario,R.id.scenarios_divider);
         setItemListVisibilityListener(R.id.players_title,R.id.players_list,R.id.players_divider);
-        setVisibilityListenerWithCondition(R.id.comments_title,R.id.comments,R.id.comments_divider, match.comments.trim().equals(""));
+        setVisibilityListenerWithCondition(R.id.comments_title,R.id.comments,R.id.comments_divider, mMatch.comments.trim().equals(""));
         setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,matchExpansions.size() == 0);
     }
 
-    private void showChooseExpansionsDialog(boolean[] checkedItems, List<Expansion> gameExpansions, List<Expansion> matchExpansions) {
+    private void showChooseExpansionsDialog(boolean[] checkedItems, List<Expansion> gameExpansions) {
         boolean[] initialChecked = checkedItems.clone();
         String[] expansionNames = gameExpansions.stream().map(p -> p.name).toArray(String[]::new);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
-        builder.setTitle("Wybierz dodatki")
+        builder.setTitle(R.string.choose_expansions)
                 .setMultiChoiceItems(expansionNames, checkedItems, (dialogInterface, i, b) -> {})
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     for(int j = 0; j < initialChecked.length; j++){
-                        if(initialChecked[j] != checkedItems[j])
-                            Log.d("Database",gameExpansions.get(j).name);
+                        if(initialChecked[j] != checkedItems[j]){
+                            Expansion expansion = gameExpansions.get(j);
+                            if(checkedItems[j])
+                                addExpansion(expansion);
+                            else
+                                deleteMatchExpansion(expansion);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel,null)
                 .show();
+    }
+
+    private void addExpansion(Expansion expansion) {
+        matchExpansions.add(expansion);
+        addMatchExpansion(expansion);
+        addMatchTextView(expansion);
+    }
+
+    private void addMatchExpansion(Expansion expansion) {
+        MatchExpansion mE = new MatchExpansion();
+        mE.expansion_id = expansion.id;
+        mE.match_id = mMatch.id;
+        MainActivity.mBoardGameDao.insertMatchExpansion(mE);
+    }
+
+    private void addMatchTextView(Expansion expansion) {
+        TextView textView = new TextView(getContext());
+        textView.setTextAppearance(R.style.PrimaryText);
+        textView.setText(expansion.name);
+        for(int i = 0; i < expansionsView.getChildCount(); i++){
+            TextView child = (TextView) expansionsView.getChildAt(i);
+            if(child.getText().toString().compareTo(expansion.name) > 0){
+                expansionsView.addView(textView,i);
+                return;
+            }
+        }
+        expansionsView.addView(textView);
+    }
+
+    private void deleteMatchExpansion(Expansion expansion) {
+        matchExpansions.remove(expansion);
+        MainActivity.mBoardGameDao.deleteMatchExpansion(mMatch.id,expansion.id);
+        for (int i = 0; i < expansionsView.getChildCount(); i++) {
+            TextView textView = (TextView) expansionsView.getChildAt(i);
+            if (textView.getText().equals(expansion.name)){
+                expansionsView.removeView(textView);
+                break;
+            }
+        }
     }
 
     private boolean[] createContainsBoolArr(List<Expansion> values, List<Expansion> items) {
