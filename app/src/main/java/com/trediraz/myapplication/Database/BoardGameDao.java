@@ -134,7 +134,10 @@ public interface BoardGameDao {
     void  updateExpansion(Expansion expansion);
 
     @Update
-    void  updateScenario (Scenario scenario);
+    void updateScenario(Scenario scenario);
+
+    @Update
+    void  updateMatch(Match match);
 
     @Delete
     void deleteMatch(Match match);

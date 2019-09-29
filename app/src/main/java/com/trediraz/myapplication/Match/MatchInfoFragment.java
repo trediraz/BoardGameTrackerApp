@@ -1,24 +1,21 @@
 package com.trediraz.myapplication.Match;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
@@ -29,6 +26,7 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -114,19 +112,25 @@ public class MatchInfoFragment extends Fragment {
 
         View dataChangeButton = getView().findViewById(R.id.date_layout);
         dataChangeButton.setOnClickListener(view -> {
-            DatePicker picker = new DatePicker(getContext());
+            DatePicker picker = createDatePicker();
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
             builder.setNegativeButton(R.string.cancel,null)
                     .setPositiveButton("OK", (dialogInterface, i) -> {
-                        updateDate(date);
+                        mMatch.date = getDateFromDatePicker(picker);
+                        date.setText(mMatch.date);
+                        MainActivity.mBoardGameDao.updateMatch(mMatch);
                     })
                     .setView(picker)
                     .show();
         });
     }
 
-    private void updateDate(TextView date) {
-        Toast.makeText(getContext(),"Updating...", Toast.LENGTH_SHORT).show();
+    private DatePicker createDatePicker() {
+        DatePicker picker = new DatePicker(getContext());
+        String[] values = mMatch.date.split("-");
+        picker.updateDate(Integer.parseInt(values[0]),Integer.parseInt(values[1])-1,Integer.parseInt(values[2]));
+        picker.setMaxDate(new Date().getTime());
+        return picker;
     }
 
     private void showChooseExpansionsDialog(boolean[] checkedItems, List<Expansion> gameExpansions) {
@@ -275,7 +279,7 @@ public class MatchInfoFragment extends Fragment {
         }
     }
 
-    private Date getDateFromDatePicker(DatePicker datePicker) {
+    private String getDateFromDatePicker(DatePicker datePicker) {
         int day = datePicker.getDayOfMonth();
         int month = datePicker.getMonth();
         int year =  datePicker.getYear();
@@ -283,6 +287,7 @@ public class MatchInfoFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
-        return calendar.getTime();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(calendar.getTime());
     }
 }
