@@ -96,7 +96,10 @@ public class PlayersFragment extends Fragment {
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     String newPlayerName = editText.getText().toString().trim();
-                    if(isNameAlreadyUsed(newPlayerName))
+                    if(newPlayerName.equals(playerName)){
+                        return;
+                    }
+                    if(isNameAlreadyUsed(newPlayerName) || newPlayerName.equals(""))
                         return;
 
                     Player player = MainActivity.mBoardGameDao.getPlayerByName(playerName);

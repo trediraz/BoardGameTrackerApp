@@ -76,7 +76,7 @@ public class MatchDialog extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
             mListener = (MatchDialogListener) getParentFragment();
@@ -105,7 +105,6 @@ public class MatchDialog extends DialogFragment {
         getDialog().setOnKeyListener((dialogInterface, i, keyEvent) -> {
             if(i == KeyEvent.KEYCODE_BACK){
                 if(KeyEvent.ACTION_DOWN == keyEvent.getAction()){
-
                     handlePreviousAction();
                 }
                 return true;

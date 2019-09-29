@@ -2,18 +2,23 @@ package com.trediraz.myapplication.Match;
 
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
@@ -24,8 +29,10 @@ import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,6 +111,22 @@ public class MatchInfoFragment extends Fragment {
         setItemListVisibilityListener(R.id.players_title,R.id.players_list,R.id.players_divider);
         setVisibilityListenerWithCondition(R.id.comments_title,R.id.comments,R.id.comments_divider, mMatch.comments.trim().equals(""));
         setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,matchExpansions.size() == 0);
+
+        View dataChangeButton = getView().findViewById(R.id.date_layout);
+        dataChangeButton.setOnClickListener(view -> {
+            DatePicker picker = new DatePicker(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+            builder.setNegativeButton(R.string.cancel,null)
+                    .setPositiveButton("OK", (dialogInterface, i) -> {
+                        updateDate(date);
+                    })
+                    .setView(picker)
+                    .show();
+        });
+    }
+
+    private void updateDate(TextView date) {
+        Toast.makeText(getContext(),"Updating...", Toast.LENGTH_SHORT).show();
     }
 
     private void showChooseExpansionsDialog(boolean[] checkedItems, List<Expansion> gameExpansions) {
@@ -252,4 +275,14 @@ public class MatchInfoFragment extends Fragment {
         }
     }
 
+    private Date getDateFromDatePicker(DatePicker datePicker) {
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year =  datePicker.getYear();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        return calendar.getTime();
+    }
 }
