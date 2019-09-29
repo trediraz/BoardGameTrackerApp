@@ -143,6 +143,7 @@ public class MatchInfoFragment extends Fragment {
                             mMatch.comments = newComments;
                             MainActivity.mBoardGameDao.updateMatch(mMatch);
                             comment.setText(mMatch.comments);
+                            setVisibilityListenerWithCondition(R.id.comments_title,R.id.comments,R.id.comments_divider,mMatch.comments.isEmpty());
                         }
                     })
                     .setNegativeButton(R.string.cancel,null)
