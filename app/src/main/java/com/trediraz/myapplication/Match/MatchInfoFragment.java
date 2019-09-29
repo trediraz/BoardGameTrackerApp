@@ -3,6 +3,8 @@ package com.trediraz.myapplication.Match;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -121,6 +125,28 @@ public class MatchInfoFragment extends Fragment {
                         MainActivity.mBoardGameDao.updateMatch(mMatch);
                     })
                     .setView(picker)
+                    .show();
+        });
+
+        ImageView editCommentsButton = getView().findViewById(R.id.edit_comments_view);
+        editCommentsButton.setOnClickListener(view -> {
+            EditText textView = (EditText) View.inflate(getContext(),R.layout.comment_edit_text_layout ,null);
+            textView.setText(mMatch.comments);
+            FrameLayout frameLayout = new FrameLayout(Objects.requireNonNull(getContext()));
+            frameLayout.setPadding(dpToPx(20),dpToPx(20),dpToPx(20),dpToPx(20));
+            frameLayout.addView(textView, ViewGroup.LayoutParams.WRAP_CONTENT,dpToPx(200));
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+            builder.setTitle(R.string.comment_title)
+                    .setPositiveButton("OK", (dialogInterface, i) -> {
+                        String newComments = textView.getText().toString().trim();
+                        if(!mMatch.comments.equals(newComments)) {
+                            mMatch.comments = newComments;
+                            MainActivity.mBoardGameDao.updateMatch(mMatch);
+                            comment.setText(mMatch.comments);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel,null)
+                    .setView(frameLayout)
                     .show();
         });
     }
@@ -289,5 +315,10 @@ public class MatchInfoFragment extends Fragment {
 
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(calendar.getTime());
+    }
+
+    private int dpToPx(int dp)
+    {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }
