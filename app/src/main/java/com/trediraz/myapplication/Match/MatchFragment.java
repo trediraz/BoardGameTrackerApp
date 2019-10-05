@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -45,6 +46,9 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        String gameName = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
+        Toast.makeText(getContext(),gameName,Toast.LENGTH_SHORT).show();
+
         List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
@@ -59,6 +63,11 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
             Match match = (Match) adapterView.getItemAtPosition(i);
             showDeleteDialog(match);
             return true;
+        });
+
+        Button filterButton = getView().findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(view -> {
+            Navigation.findNavController(getView()).navigate(R.id.go_to_filters);
         });
 
         FloatingActionButton addNewMatchButton = Objects.requireNonNull(getView()).findViewById(R.id.add_match_button);
