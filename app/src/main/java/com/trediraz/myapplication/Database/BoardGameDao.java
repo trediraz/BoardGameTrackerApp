@@ -103,6 +103,9 @@ public interface BoardGameDao {
     @Query("SELECT COUNT(id) FROM game WHERE name = :name")
     int countGameNameUsages(String name);
 
+    @Query("SELECT COUNT(id) FROM `match` WHERE game_id = :id")
+    int countGameUsages(int id);
+
     @Insert
     long insertMatch(Match match);
 
@@ -150,4 +153,16 @@ public interface BoardGameDao {
 
     @Query("DELETE FROM MatchExpansion WHERE match_id = :mid AND expansion_id = :eid")
     void deleteMatchExpansion(int mid, int eid);
+
+    @Query("DELETE FROM `match` WHERE game_id = :id")
+    void deleteMatchesByGameID(int id);
+
+    @Query("DELETE FROM scenario WHERE game_id = :id")
+    void deleteScenariosByGameID(int id);
+
+    @Query("DELETE FROM expansion WHERE game_id = :id")
+    void deleteExpansionsByGameID(int id);
+
+    @Query("DELETE FROM game WHERE id =:id")
+    void deleteGame(int id);
 }

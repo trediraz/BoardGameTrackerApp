@@ -80,6 +80,8 @@
     <string name="title_most_games">Najwięcej gier w ostatnim roku</string>
     <string name="choose_text">-</string>
     <string name="choose_expansions">Wybierz dodatki</string>
+    <string name="delete">Usunąć %s?</string>
+    <string name="delete_used">Usunąć %s? \n(użycia %d)</string>
 
     <string-array name="game_types">
         <item>Versus</item>
