@@ -10,6 +10,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,9 +67,8 @@ public class GameFragment extends Fragment implements GameDialog.GameDialogInter
                 message = getString(R.string.delete_used, selected, usages);
             else
                 message = getString(R.string.delete, selected);
-
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
-            builder.setMessage(message)
+            builder.setMessage(Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY))
                     .setPositiveButton("OK", (dialogInterface, i1) -> deleteGame(id, selected))
                     .setNegativeButton(R.string.cancel,null)
                     .show();

@@ -26,6 +26,7 @@ import com.trediraz.myapplication.R;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MatchFragment extends Fragment implements MatchDialog.MatchDialogListener {
 
@@ -47,9 +48,13 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         super.onActivityCreated(savedInstanceState);
 
         String gameName = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
-        Toast.makeText(getContext(),gameName,Toast.LENGTH_SHORT).show();
 
         List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
+
+        if(!gameName.equals("_no_game_")){
+            int gameId = MainActivity.mBoardGameDao.getGameIdByName(gameName);
+            mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
+        }
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
         mAdapter = new MatchListAdapter(getActivity(), mMatches);
