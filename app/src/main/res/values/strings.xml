@@ -80,7 +80,7 @@
     <string name="title_most_games">Najwięcej gier w ostatnim roku</string>
     <string name="choose_text">-</string>
     <string name="choose_expansions">Wybierz dodatki</string>
-    <string name="delete">Usunąć %s?</string>
+    <string name="delete">Usunąć &lt;b>%s&lt;/b>?</string>
     <string name="delete_used">Usunąć &lt;b>%s&lt;/b> i powiązane rozgrywki (%d)?</string>
     <string name="filter">Filtruj</string>
     <string name="default_game_name">_no_game_</string>
