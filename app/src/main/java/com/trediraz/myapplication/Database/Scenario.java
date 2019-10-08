@@ -1,5 +1,6 @@
 package com.trediraz.myapplication.Database;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -30,4 +31,11 @@ public class Scenario {
     public String name;
 
     public String type;
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj instanceof Scenario)
+            return this.id == ((Scenario)obj).id;
+        return false;
+    }
 }

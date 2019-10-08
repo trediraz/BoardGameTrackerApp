@@ -74,6 +74,9 @@ public interface BoardGameDao {
     @Query("SELECT * FROM player ORDER BY name ASC")
     List<Player> getAllPlayers();
 
+    @Query("SELECT * FROM expansion WHERE id = :id")
+    Expansion getExpansionId(long id);
+
     @Query("SELECT name FROM player ORDER BY name ASC")
     List<String> getAllPlayerNames();
 
@@ -116,10 +119,10 @@ public interface BoardGameDao {
     void insertPlayer(Player player);
 
     @Insert
-    void insertScenario(Scenario scenario);
+    long insertScenario(Scenario scenario);
 
     @Insert
-    void insertExpansion(Expansion expansion);
+    long insertExpansion(Expansion expansion);
 
     @Insert
     void insertPlayedIn(PlayedIn playedIn);
@@ -150,6 +153,9 @@ public interface BoardGameDao {
 
     @Delete
     void  deleteExpansion(Expansion expansion);
+
+    @Query("DELETE FROM `match` WHERE scenario_id = :id")
+    void deleteMatchesByScenarioId(int id);
 
     @Query("DELETE FROM MatchExpansion WHERE match_id = :mid AND expansion_id = :eid")
     void deleteMatchExpansion(int mid, int eid);

@@ -1,17 +1,15 @@
 package com.trediraz.myapplication.Game;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,7 +24,6 @@ import androidx.fragment.app.Fragment;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
-import com.trediraz.myapplication.Database.Match;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
@@ -233,14 +230,52 @@ public class GameInfoFragment extends Fragment {
         mScenariosView = Objects.requireNonNull(getView()).findViewById(R.id.scenarios);
         for (final Scenario scenario : mScenarios) {
             if(!scenario.name.equals(Scenario.DEFAULT_NAME)) {
-                final ScenarioDisplayView scenarioDisplayView = new ScenarioDisplayView(getContext(),scenario);
-                scenarioDisplayView.setOnClickListener(view -> showEditScenarioDialog(scenario,scenarioDisplayView));
-                mScenariosView.addView(scenarioDisplayView);
+                addScenarioView(scenario);
            }
         }
         if(mScenariosView.getChildCount() > 1) {
-            hideNoScenarioView();
+            setNoScenarioViewVisibility(false);
         }
+    }
+
+    private void addScenarioView(Scenario scenario) {
+        final ScenarioDisplayView scenarioDisplayView = new ScenarioDisplayView(getContext(),scenario);
+        scenarioDisplayView.setOnClickListener(view -> showEditScenarioDialog(scenario,scenarioDisplayView));
+        scenarioDisplayView.setOnLongClickListener(view -> {
+            deleteScenario(scenario, view);
+            return true;
+        });
+        mScenariosView.addView(scenarioDisplayView);
+    }
+
+    private void deleteScenario(Scenario scenario, View view) {
+        if(mGame.requireScenario && mScenarios.size() == 1) {
+            Toast.makeText(getContext(),R.string.requires_scenario,Toast.LENGTH_SHORT).show();
+        }
+        else {
+            int usages = MainActivity.mBoardGameDao.countScenarioUsages(scenario.id);
+            String message;
+            if(usages > 0)
+                message = getString(R.string.delete_used, scenario.name, usages);
+            else
+                message = getString(R.string.delete, scenario.name);
+            showDeleteScenarioDialog(message,scenario,view);
+        }
+    }
+
+    private void showDeleteScenarioDialog(String message, Scenario scenario, View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setMessage(Html.fromHtml(message,Html.FROM_HTML_MODE_LEGACY))
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    MainActivity.mBoardGameDao.deleteMatchesByScenarioId(scenario.id);
+                    MainActivity.mBoardGameDao.deleteScenario(scenario);
+                    mScenariosView.removeView(view);
+                    mScenarios.remove(scenario);
+                    if(mScenariosView.getChildCount() == 1)
+                        setNoScenarioViewVisibility(true);
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
 
@@ -255,9 +290,9 @@ public class GameInfoFragment extends Fragment {
         }
     }
 
-    private void hideNoScenarioView() {
+    private void setNoScenarioViewVisibility(boolean visibility) {
         TextView noScenarioText = Objects.requireNonNull(getView()).findViewById(R.id.no_scenario_text);
-        noScenarioText.setVisibility(View.GONE);
+        noScenarioText.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
 
     private void setNoExpansionViewVisibility(boolean visibility) {
@@ -395,21 +430,19 @@ public class GameInfoFragment extends Fragment {
 
     private void addNewScenario(final Scenario scenario) {
         scenario.game_id = mGame.id;
-        MainActivity.mBoardGameDao.insertScenario(scenario);
-        mScenarios.add(scenario);
-        final ScenarioDisplayView scenarioDisplayView = new ScenarioDisplayView(getContext(),scenario);
-        scenarioDisplayView.setOnClickListener(view -> showEditScenarioDialog(scenario, scenarioDisplayView));
-        mScenariosView.addView(scenarioDisplayView);
-        hideNoScenarioView();
+        int id = (int) MainActivity.mBoardGameDao.insertScenario(scenario);
+        mScenarios.add(MainActivity.mBoardGameDao.getScenarioById(id));
+        addScenarioView(MainActivity.mBoardGameDao.getScenarioById(id));
+        setNoScenarioViewVisibility(false);
     }
 
     private void addNewExpansion(String expansionName) {
-        final Expansion expansion = new Expansion();
+        Expansion expansion = new Expansion();
         expansion.name = expansionName;
         expansion.game_id = mGame.id;
-
+        long id =  MainActivity.mBoardGameDao.insertExpansion(expansion);
+        expansion = MainActivity.mBoardGameDao.getExpansionId(id);
         mExpansions.add(expansion);
-        MainActivity.mBoardGameDao.insertExpansion(expansion);
 
         TextView expansionView = createExpansionTextView(expansion);
         mExpansionViews.addView(expansionView);
