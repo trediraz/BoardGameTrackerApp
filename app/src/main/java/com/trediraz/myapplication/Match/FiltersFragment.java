@@ -39,6 +39,7 @@ public class FiltersFragment extends Fragment {
 
         Spinner gameSpinner = Objects.requireNonNull(getView()).findViewById(R.id.game_spinner);
         List<String> gameNames = MainActivity.mBoardGameDao.getAllGameNames();
+        gameNames.add(0,getString(R.string.all));
         ArrayAdapter<String> gameAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
                 android.R.layout.simple_list_item_1,gameNames);
         gameAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);

@@ -51,7 +51,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
         List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
-        if(!gameName.equals("_no_game_")){
+        if(!gameName.equals("_no_game_") && !gameName.equals(getString(R.string.all))){
             int gameId = MainActivity.mBoardGameDao.getGameIdByName(gameName);
             mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
         }
