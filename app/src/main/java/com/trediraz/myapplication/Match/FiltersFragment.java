@@ -56,5 +56,11 @@ public class FiltersFragment extends Fragment {
             action.setFilters(filters);
             Navigation.findNavController(getView()).navigate(action);
         });
+
+        Button clearButton = Objects.requireNonNull(getView()).findViewById(R.id.clear_button);
+        clearButton.setOnClickListener(v -> {
+            filters.gameName = getString(R.string.all);
+            gameSpinner.setSelection(0);
+        });
     }
 }
