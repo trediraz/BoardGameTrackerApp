@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/match_frament">
+    app:startDestination="@id/match_fragment">
 
     <fragment
         android:id="@+id/games_fragment"
@@ -14,7 +14,7 @@
             app:destination="@id/gameInfoFragment" />
     </fragment>
     <fragment
-        android:id="@+id/match_frament"
+        android:id="@+id/match_fragment"
         android:name="com.trediraz.myapplication.Match.MatchFragment"
         android:label="Rozgrywki"
         tools:layout="@layout/fragment_match">
@@ -25,9 +25,10 @@
             android:id="@+id/go_to_filters"
             app:destination="@id/filters" />
         <argument
-            android:name="gameName"
-            app:argType="string"
-            android:defaultValue="_no_game_" />
+            android:name="filters"
+            app:argType="com.trediraz.myapplication.Match.Filters"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/players_fragment"
@@ -64,11 +65,7 @@
         android:label="Filtry"
         tools:layout="@layout/fragment_filters" >
         <action
-            android:id="@+id/filters_to_matches"
-            app:destination="@id/match_frament">
-            <argument
-                android:name="gameName"
-                app:argType="string"/>
-        </action>
+            android:id="@+id/to_matches"
+            app:destination="@id/match_fragment" />
     </fragment>
 </navigation>

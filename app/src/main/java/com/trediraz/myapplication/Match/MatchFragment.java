@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,13 +48,15 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        String gameName = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getGameName();
+        Filters filters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
 
         List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
-        if(!gameName.equals("_no_game_") && !gameName.equals(getString(R.string.all))){
-            int gameId = MainActivity.mBoardGameDao.getGameIdByName(gameName);
-            mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
+        if(filters != null){
+            if(!filters.gameName.equals(getString(R.string.all))){
+                int gameId = MainActivity.mBoardGameDao.getGameIdByName(filters.gameName);
+                mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
+            }
         }
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);

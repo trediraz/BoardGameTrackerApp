@@ -4,30 +4,34 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Filters implements Parcelable {
-    private int game_id;
-    private int player_id;
-    private int scenario_id;
-    private String dateFloor;
-    private String dateCelling;
-    private int expansion_id;
+    String gameName;
+    String playerName;
+    String scenarioName;
+    String dateFloor;
+    String dateCelling;
+    String expansionName;
+
+    Filters() {
+
+    }
 
     private Filters(Parcel in) {
-        game_id = in.readInt();
-        player_id = in.readInt();
-        scenario_id = in.readInt();
+        gameName = in.readString();
+        playerName = in.readString();
+        scenarioName = in.readString();
         dateFloor = in.readString();
         dateCelling = in.readString();
-        expansion_id = in.readInt();
+        expansionName = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(game_id);
-        dest.writeInt(player_id);
-        dest.writeInt(scenario_id);
+        dest.writeString(gameName);
+        dest.writeString(playerName);
+        dest.writeString(scenarioName);
         dest.writeString(dateFloor);
         dest.writeString(dateCelling);
-        dest.writeInt(expansion_id);
+        dest.writeString(expansionName);
     }
 
     @Override
