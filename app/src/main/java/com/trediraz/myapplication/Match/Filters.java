@@ -11,8 +11,13 @@ public class Filters implements Parcelable {
     String dateCelling;
     String expansionName;
 
-    Filters() {
-
+    Filters(String defaultStr) {
+        gameName = defaultStr;
+        playerName = defaultStr;
+        scenarioName = defaultStr;
+        dateFloor = defaultStr;
+        dateCelling = defaultStr;
+        expansionName = defaultStr;
     }
 
     private Filters(Parcel in) {

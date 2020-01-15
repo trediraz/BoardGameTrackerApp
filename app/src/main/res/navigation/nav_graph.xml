@@ -67,5 +67,8 @@
         <action
             android:id="@+id/to_matches"
             app:destination="@id/match_fragment" />
+        <argument
+            android:name="filters"
+            app:argType="com.trediraz.myapplication.Match.Filters" />
     </fragment>
 </navigation>

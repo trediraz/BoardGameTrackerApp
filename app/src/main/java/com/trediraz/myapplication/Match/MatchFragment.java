@@ -52,11 +52,12 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
         List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
-        if(filters != null){
-            if(!filters.gameName.equals(getString(R.string.all))){
-                int gameId = MainActivity.mBoardGameDao.getGameIdByName(filters.gameName);
-                mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
-            }
+        if(filters == null){
+            filters = new Filters(getString(R.string.all));
+        }
+        if(!filters.gameName.equals(getString(R.string.all))){
+            int gameId = MainActivity.mBoardGameDao.getGameIdByName(filters.gameName);
+            mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
         }
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
@@ -74,8 +75,10 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         });
 
         Button filterButton = getView().findViewById(R.id.filter_button);
+        Filters finalFilters = filters;
         filterButton.setOnClickListener(view -> {
-            Navigation.findNavController(getView()).navigate(R.id.go_to_filters);
+            MatchFragmentDirections.GoToFilters action = MatchFragmentDirections.goToFilters(finalFilters);
+            Navigation.findNavController(view).navigate(action);
         });
 
         FloatingActionButton addNewMatchButton = Objects.requireNonNull(getView()).findViewById(R.id.add_match_button);

@@ -37,8 +37,8 @@ public class FiltersFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        Filters filters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
 
-        Filters filters = new Filters();
         Spinner gameSpinner = Objects.requireNonNull(getView()).findViewById(R.id.game_spinner);
         List<String> gameNames = MainActivity.mBoardGameDao.getAllGameNames();
         gameNames.add(0,getString(R.string.all));
@@ -47,9 +47,11 @@ public class FiltersFragment extends Fragment {
         gameAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         gameSpinner.setAdapter(gameAdapter);
 
+        gameSpinner.setSelection(gameNames.indexOf(Objects.requireNonNull(filters).gameName));
+
         Button saveButton = getView().findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
-            filters.gameName =gameSpinner.getSelectedItem().toString();
+            filters.gameName = gameSpinner.getSelectedItem().toString();
             FiltersFragmentDirections.ToMatches action = FiltersFragmentDirections.toMatches();
             action.setFilters(filters);
             Navigation.findNavController(getView()).navigate(action);
