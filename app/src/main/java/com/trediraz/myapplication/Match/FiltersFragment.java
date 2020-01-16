@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,10 @@ import java.util.Objects;
 
 public class FiltersFragment extends Fragment {
 
+    private Filters mFilters;
+    private int mScenarioIndex;
+    private Spinner mGameSpinner;
+    private Spinner mScenarioSpinner;
 
     public FiltersFragment() {
     }
@@ -40,46 +43,47 @@ public class FiltersFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Filters filters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
+        mFilters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
+        if(mFilters == null)
+            mFilters = new Filters();
 
-        Spinner gameSpinner = Objects.requireNonNull(getView()).findViewById(R.id.game_spinner);
+        mGameSpinner = Objects.requireNonNull(getView()).findViewById(R.id.game_spinner);
         List<String> gameNames = MainActivity.mBoardGameDao.getAllGameNames();
-        gameNames.add(0,getString(R.string.all));
+        gameNames.add(0,Filters.ALL);
         ArrayAdapter<String> gameAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
                 android.R.layout.simple_list_item_1,gameNames);
         gameAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        gameSpinner.setAdapter(gameAdapter);
+        mGameSpinner.setAdapter(gameAdapter);
 
-        Spinner scenarioSpinner = getView().findViewById(R.id.scenario_spinner);
+        mScenarioSpinner = getView().findViewById(R.id.scenario_spinner);
         List<String> scenarioNames = new ArrayList<>();
-        scenarioNames.add("-");
         ArrayAdapter<String> scenarioAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,scenarioNames);
         scenarioAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        scenarioSpinner.setAdapter(scenarioAdapter);
-        scenarioSpinner.setEnabled(false);
 
-        gameSpinner.setSelection(gameNames.indexOf(Objects.requireNonNull(filters).gameName));
+        setStartingScenarioIndex();
+
+        mGameSpinner.setSelection(gameNames.indexOf(mFilters.gameName));
 
         Button saveButton = getView().findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
-            filters.gameName = gameSpinner.getSelectedItem().toString();
+            setFilters();
             FiltersFragmentDirections.ToMatches action = FiltersFragmentDirections.toMatches();
-            action.setFilters(filters);
+            action.setFilters(mFilters);
             Navigation.findNavController(getView()).navigate(action);
         });
 
-        gameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mGameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 scenarioNames.clear();
                 String gameName = (String) parent.getItemAtPosition(position);
-                if(gameName.equals(getString(R.string.all))){
+                if(gameName.equals(Filters.ALL)){
                     scenarioNames.add("-");
                 }
                 else{
                     List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
                     if(scenarios.size() > 1){
-                        scenarioNames.add(getString(R.string.all));
+                        scenarioNames.add(Filters.ALL);
                     }
                     for(Scenario s : scenarios){
                         if(s.name.equals(Scenario.DEFAULT_NAME))
@@ -88,10 +92,11 @@ public class FiltersFragment extends Fragment {
                             scenarioNames.add(s.name);
                     }
                 }
-                scenarioSpinner.setEnabled(scenarioNames.size() > 1);
-                scenarioSpinner.setAdapter(null);
-                scenarioSpinner.setAdapter(scenarioAdapter);
-                scenarioSpinner.setSelection(0);
+                mScenarioSpinner.setEnabled(scenarioNames.size() > 1);
+                mScenarioSpinner.setAdapter(null);
+                mScenarioSpinner.setAdapter(scenarioAdapter);
+                mScenarioSpinner.setSelection(mScenarioIndex);
+                mScenarioIndex = 0;
             }
 
             @Override
@@ -102,8 +107,31 @@ public class FiltersFragment extends Fragment {
 
         Button clearButton = Objects.requireNonNull(getView()).findViewById(R.id.clear_button);
         clearButton.setOnClickListener(v -> {
-            filters.gameName = getString(R.string.all);
-            gameSpinner.setSelection(0);
+            clearFilters();
         });
+    }
+
+    private void setFilters() {
+        mFilters.gameName = mGameSpinner.getSelectedItem().toString();
+        String scenarioName = mScenarioSpinner.getSelectedItem().toString();
+        if(scenarioName.equals("Podstawka"))
+            mFilters.scenarioName = Scenario.DEFAULT_NAME;
+        else
+            mFilters.scenarioName = scenarioName;
+    }
+
+    private void clearFilters() {
+        mFilters.gameName = Filters.ALL;
+        mGameSpinner.setSelection(0);
+    }
+
+    private void setStartingScenarioIndex() {
+        List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(mFilters.gameName);
+        mScenarioIndex = 0;
+        if(scenarios.size() > 1)
+            for(int i = 0; i < scenarios.size(); i++){
+                if(scenarios.get(i).name.equals(mFilters.scenarioName))
+                    mScenarioIndex = i+1;
+            }
     }
 }

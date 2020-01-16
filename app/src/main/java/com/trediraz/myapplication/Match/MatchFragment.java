@@ -2,7 +2,6 @@ package com.trediraz.myapplication.Match;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,17 +10,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Match;
+import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 public class MatchFragment extends Fragment implements MatchDialog.MatchDialogListener {
 
     private MatchListAdapter mAdapter;
+    private Filters mFilters;
 
     public MatchFragment() {
        this.setHasOptionsMenu(true);
@@ -48,17 +48,15 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Filters filters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
+        mFilters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
 
         List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
-        if(filters == null){
-            filters = new Filters(getString(R.string.all));
+        if(mFilters == null){
+            mFilters = new Filters();
         }
-        if(!filters.gameName.equals(getString(R.string.all))){
-            int gameId = MainActivity.mBoardGameDao.getGameIdByName(filters.gameName);
-            mMatches = mMatches.stream().filter(x -> x.game_id == gameId).collect(Collectors.toList());
-        }
+
+        mMatches = mMatches.stream().filter(x -> mFilters.isRight(x)).collect(Collectors.toList());
 
         ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
         mAdapter = new MatchListAdapter(getActivity(), mMatches);
@@ -75,7 +73,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         });
 
         Button filterButton = getView().findViewById(R.id.filter_button);
-        Filters finalFilters = filters;
+        Filters finalFilters = mFilters;
         filterButton.setOnClickListener(view -> {
             MatchFragmentDirections.GoToFilters action = MatchFragmentDirections.goToFilters(finalFilters);
             Navigation.findNavController(view).navigate(action);
@@ -111,6 +109,8 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
     @Override
     public void onMatchAdded(Match match) {
-        mAdapter.addMatch(match);
+        if(mFilters.isRight(match)){
+            mAdapter.addMatch(match);
+        }
     }
 }
