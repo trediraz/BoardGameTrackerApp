@@ -441,7 +441,7 @@ public class GameInfoFragment extends Fragment {
         expansion.name = expansionName;
         expansion.game_id = mGame.id;
         long id =  MainActivity.mBoardGameDao.insertExpansion(expansion);
-        expansion = MainActivity.mBoardGameDao.getExpansionId(id);
+        expansion = MainActivity.mBoardGameDao.getExpansionById(id);
         mExpansions.add(expansion);
 
         TextView expansionView = createExpansionTextView(expansion);

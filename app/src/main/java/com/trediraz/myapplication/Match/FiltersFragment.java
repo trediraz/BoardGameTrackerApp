@@ -105,7 +105,7 @@ public class FiltersFragment extends Fragment {
                             scenarioNames.add(s.name);
                     }
                     List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
-                    if(expansions.size() > 1){
+                    if(expansions.size() > 0){
                         expansionNames.add(Filters.ALL);
                     }
                     expansionNames.add("-");
@@ -143,6 +143,7 @@ public class FiltersFragment extends Fragment {
             mFilters.scenarioName = Scenario.DEFAULT_NAME;
         else
             mFilters.scenarioName = scenarioName;
+        mFilters.expansionName = mExpansionSpinner.getSelectedItem().toString();
     }
 
     private void clearFilters() {

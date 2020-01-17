@@ -50,6 +50,9 @@ public interface BoardGameDao {
             "ORDER BY expansion.name ASC")
     List<Expansion> getExpansionsByMatchId(int id);
 
+    @Query("SELECT * FROM expansion WHERE name = :name AND game_id = :game_id LIMIT 1")
+    Expansion getExpansionByNameAndGameId(String name, int game_id);
+
     @Query("SELECT scenario.id, scenario.game_id, scenario.name, scenario.type FROM scenario " +
             "INNER JOIN game ON scenario.game_id = game.id " +
             "WHERE game.name = :name " +
@@ -75,7 +78,7 @@ public interface BoardGameDao {
     List<Player> getAllPlayers();
 
     @Query("SELECT * FROM expansion WHERE id = :id")
-    Expansion getExpansionId(long id);
+    Expansion getExpansionById(long id);
 
     @Query("SELECT name FROM player ORDER BY name ASC")
     List<String> getAllPlayerNames();
