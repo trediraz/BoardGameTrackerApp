@@ -3,7 +3,6 @@ package com.trediraz.myapplication.Match;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -101,7 +100,7 @@ public class MatchInfoFragment extends Fragment {
 
         LinearLayout expansionsView = getView().findViewById(R.id.expansions_layout);
         ImageView expansionsButton = getView().findViewById(R.id.edit_expansion_button);
-        List<Expansion> gameExpansions = MainActivity.mBoardGameDao.getExpansionsNamesGameId(mMatch.game_id);
+        List<Expansion> gameExpansions = MainActivity.mBoardGameDao.getExpansionNamesGameId(mMatch.game_id);
         if(gameExpansions.isEmpty())
             expansionsView.setVisibility(View.GONE);
 
@@ -112,7 +111,7 @@ public class MatchInfoFragment extends Fragment {
         setItemListVisibilityListener(R.id.scenario_title,R.id.scenario,R.id.scenarios_divider);
         setItemListVisibilityListener(R.id.players_title,R.id.players_list,R.id.players_divider);
         setVisibilityListenerWithCondition(R.id.comments_title,R.id.comments,R.id.comments_divider, mMatch.comments.trim().equals(""));
-        setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,matchExpansions.size() == 0);
+        setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.game_divider,matchExpansions.size() == 0);
 
         View dataChangeButton = getView().findViewById(R.id.date_layout);
         dataChangeButton.setOnClickListener(view -> {
@@ -177,7 +176,7 @@ public class MatchInfoFragment extends Fragment {
                                 deleteMatchExpansion(expansion);
                         }
                     }
-                    setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.expansions_divider,matchExpansions.size() == 0);
+                    setVisibilityListenerWithCondition(R.id.expansions_title,R.id.expansions_list,R.id.game_divider,matchExpansions.size() == 0);
                 })
                 .setNegativeButton(R.string.cancel,null)
                 .show();

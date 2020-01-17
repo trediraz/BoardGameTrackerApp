@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
@@ -22,6 +24,7 @@ import com.trediraz.myapplication.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class FiltersFragment extends Fragment {
 
@@ -29,6 +32,7 @@ public class FiltersFragment extends Fragment {
     private int mScenarioIndex;
     private Spinner mGameSpinner;
     private Spinner mScenarioSpinner;
+    private Spinner mExpansionSpinner;
 
     public FiltersFragment() {
     }
@@ -59,6 +63,13 @@ public class FiltersFragment extends Fragment {
         List<String> scenarioNames = new ArrayList<>();
         ArrayAdapter<String> scenarioAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,scenarioNames);
         scenarioAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        mScenarioSpinner.setAdapter(scenarioAdapter);
+
+        mExpansionSpinner = getView().findViewById(R.id.expansion_spinner);
+        List<String> expansionNames = new ArrayList<>();
+        ArrayAdapter<String> expansionAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,expansionNames);
+        expansionAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        mExpansionSpinner.setAdapter(expansionAdapter);
 
         setStartingScenarioIndex();
 
@@ -76,9 +87,11 @@ public class FiltersFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 scenarioNames.clear();
+                expansionNames.clear();
                 String gameName = (String) parent.getItemAtPosition(position);
                 if(gameName.equals(Filters.ALL)){
                     scenarioNames.add("-");
+                    expansionNames.add("-");
                 }
                 else{
                     List<Scenario> scenarios = MainActivity.mBoardGameDao.getScenariosByGameName(gameName);
@@ -91,12 +104,15 @@ public class FiltersFragment extends Fragment {
                         else
                             scenarioNames.add(s.name);
                     }
+                    List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByGameName(gameName);
+                    if(expansions.size() > 1){
+                        expansionNames.add(Filters.ALL);
+                    }
+                    expansionNames.add("-");
+                    expansionNames.addAll(expansions.stream().map(x -> x.name).collect(Collectors.toList()));
                 }
-                mScenarioSpinner.setEnabled(scenarioNames.size() > 1);
-                mScenarioSpinner.setAdapter(null);
-                mScenarioSpinner.setAdapter(scenarioAdapter);
-                mScenarioSpinner.setSelection(mScenarioIndex);
-                mScenarioIndex = 0;
+                setSpinner(mScenarioSpinner, scenarioNames.size() > 1);
+                setSpinner(mExpansionSpinner, expansionNames.size() > 1);
             }
 
             @Override
@@ -109,6 +125,15 @@ public class FiltersFragment extends Fragment {
         clearButton.setOnClickListener(v -> {
             clearFilters();
         });
+    }
+
+    private void setSpinner(Spinner spinner, boolean enabled) {
+        spinner.setEnabled(enabled);
+        ArrayAdapter arrayAdapter = (ArrayAdapter) spinner.getAdapter();
+        spinner.setAdapter(null);
+        spinner.setAdapter(arrayAdapter);
+        spinner.setSelection(mScenarioIndex);
+        mScenarioIndex = 0;
     }
 
     private void setFilters() {

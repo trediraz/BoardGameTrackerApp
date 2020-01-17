@@ -135,7 +135,7 @@ public class GameInfoFragment extends Fragment {
         });
 
         setItemListVisibilityListener(R.id.scenario_title,R.id.scenarios,R.id.scenarios_divider);
-        setItemListVisibilityListener(R.id.expansions_title,R.id.expansions,R.id.expansions_divider);
+        setItemListVisibilityListener(R.id.expansions_title,R.id.expansions,R.id.game_divider);
         setItemListVisibilityListener(R.id.player_title,R.id.number_of_players,R.id.players_divider);
 
     }

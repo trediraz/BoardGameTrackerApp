@@ -30,7 +30,7 @@
                 android:text="@string/game" />
 
             <View
-                android:id="@+id/game_divider"
+                android:id="@+id/filter_game_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"/>
@@ -147,7 +147,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
-                android:id="@+id/expansions_divider"
+                android:id="@+id/game_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"/>

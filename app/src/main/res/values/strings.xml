@@ -85,6 +85,7 @@
     <string name="filter">Filtruj</string>
     <string name="default_game_name">_no_game_</string>
     <string name="clear">Wyczyść</string>
+    <string name="expansion">Dodatek</string>
 
     <string-array name="game_types">
         <item>Versus</item>

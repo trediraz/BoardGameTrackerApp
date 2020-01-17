@@ -42,7 +42,7 @@ public interface BoardGameDao {
     @Query("SELECT * FROM expansion " +
             "WHERE expansion.game_id = :game_id " +
             "ORDER BY expansion.name ASC")
-    List<Expansion> getExpansionsNamesGameId(int game_id);
+    List<Expansion> getExpansionNamesGameId(int game_id);
 
     @Query("SELECT expansion.id,expansion.name,expansion.game_id FROM matchexpansion " +
             "LEFT JOIN expansion on expansion.id = matchexpansion.expansion_id " +

@@ -27,7 +27,7 @@ public class Filters implements Parcelable {
         expansionName = ALL;
     }
 
-    public boolean isRight(Match match){
+    boolean isRight(Match match){
         if(gameName.equals(ALL))
             return true;
         Game game = MainActivity.mBoardGameDao.getGameByName(gameName);
