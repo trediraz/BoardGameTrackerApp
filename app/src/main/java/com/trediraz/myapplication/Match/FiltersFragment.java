@@ -30,6 +30,7 @@ public class FiltersFragment extends Fragment {
 
     private Filters mFilters;
     private int mScenarioIndex;
+    private int mExpansionIndex;
     private Spinner mGameSpinner;
     private Spinner mScenarioSpinner;
     private Spinner mExpansionSpinner;
@@ -72,6 +73,7 @@ public class FiltersFragment extends Fragment {
         mExpansionSpinner.setAdapter(expansionAdapter);
 
         setStartingScenarioIndex();
+        setStartingExpansionIndex();
 
         mGameSpinner.setSelection(gameNames.indexOf(mFilters.gameName));
 
@@ -111,8 +113,10 @@ public class FiltersFragment extends Fragment {
                     expansionNames.add("-");
                     expansionNames.addAll(expansions.stream().map(x -> x.name).collect(Collectors.toList()));
                 }
-                setSpinner(mScenarioSpinner, scenarioNames.size() > 1);
-                setSpinner(mExpansionSpinner, expansionNames.size() > 1);
+                setSpinner(mScenarioSpinner, mScenarioIndex, scenarioNames.size() > 1);
+                setSpinner(mExpansionSpinner, mExpansionIndex, expansionNames.size() > 1);
+                mExpansionIndex = 0;
+                mScenarioIndex = 0;
             }
 
             @Override
@@ -127,13 +131,13 @@ public class FiltersFragment extends Fragment {
         });
     }
 
-    private void setSpinner(Spinner spinner, boolean enabled) {
+    private void setSpinner(Spinner spinner, int index, boolean enabled) {
         spinner.setEnabled(enabled);
         ArrayAdapter arrayAdapter = (ArrayAdapter) spinner.getAdapter();
         spinner.setAdapter(null);
         spinner.setAdapter(arrayAdapter);
-        spinner.setSelection(mScenarioIndex);
-        mScenarioIndex = 0;
+        spinner.setSelection(index);
+
     }
 
     private void setFilters() {
@@ -159,5 +163,18 @@ public class FiltersFragment extends Fragment {
                 if(scenarios.get(i).name.equals(mFilters.scenarioName))
                     mScenarioIndex = i+1;
             }
+    }
+
+    private void setStartingExpansionIndex() {
+        List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByGameName(mFilters.gameName);
+        mExpansionIndex = 0;
+        if(expansions.size() > 0)
+            if(mFilters.expansionName.equals("-"))
+                mExpansionIndex = 1;
+            else
+                for(int i = 0; i < expansions.size(); i++){
+                    if(expansions.get(i).name.equals(mFilters.expansionName))
+                        mExpansionIndex = i + 2;
+                }
     }
 }
