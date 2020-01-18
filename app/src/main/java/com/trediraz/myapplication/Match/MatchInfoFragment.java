@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class MatchInfoFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         TextView gameName = Objects.requireNonNull(getView()).findViewById(R.id.game_name);
         TextView scenarioView = getView().findViewById(R.id.scenario);
         TextView comment = getView().findViewById(R.id.comments);
@@ -80,7 +82,7 @@ public class MatchInfoFragment extends Fragment {
         date.setText(mMatch.date);
 
         LinearLayout players = getView().findViewById(R.id.players_list);
-        List<PlayedIn> playedIns = MainActivity.mBoardGameDao.getAllPlayersInMatchById(mMatch.id);
+        List<PlayedIn> playedIns = MainActivity.mBoardGameDao.getAllPlayedInMatchById(mMatch.id);
         Collections.sort(playedIns,new SortPlayedIns());
         for (PlayedIn playedIn : playedIns) {
             String playerName = MainActivity.mBoardGameDao.getPlayerNameById(playedIn.player_id);

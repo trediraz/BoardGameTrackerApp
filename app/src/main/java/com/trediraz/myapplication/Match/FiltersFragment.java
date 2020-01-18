@@ -34,6 +34,7 @@ public class FiltersFragment extends Fragment {
     private Spinner mGameSpinner;
     private Spinner mScenarioSpinner;
     private Spinner mExpansionSpinner;
+    private Spinner mPlayerSpinner;
 
     public FiltersFragment() {
     }
@@ -74,6 +75,15 @@ public class FiltersFragment extends Fragment {
 
         setStartingScenarioIndex();
         setStartingExpansionIndex();
+
+        mPlayerSpinner = getView().findViewById(R.id.player_spinner);
+        List<String> playerNames = MainActivity.mBoardGameDao.getAllPlayerNames();
+        playerNames.add(0,Filters.ALL_PLAYERS);
+        ArrayAdapter<String> playerAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,playerNames);
+        mPlayerSpinner.setAdapter(playerAdapter);
+
+        if(!mFilters.playerName.equals(Filters.ALL))
+            mPlayerSpinner.setSelection(playerNames.indexOf(mFilters.playerName));
 
         mGameSpinner.setSelection(gameNames.indexOf(mFilters.gameName));
 
@@ -148,11 +158,13 @@ public class FiltersFragment extends Fragment {
         else
             mFilters.scenarioName = scenarioName;
         mFilters.expansionName = mExpansionSpinner.getSelectedItem().toString();
+        mFilters.playerName = mPlayerSpinner.getSelectedItem().toString();
     }
 
     private void clearFilters() {
         mFilters.gameName = Filters.ALL;
         mGameSpinner.setSelection(0);
+        mPlayerSpinner.setSelection(0);
     }
 
     private void setStartingScenarioIndex() {

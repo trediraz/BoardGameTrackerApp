@@ -7,6 +7,7 @@ import android.util.Log;
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Game;
 import com.trediraz.myapplication.Database.Match;
+import com.trediraz.myapplication.Database.PlayedIn;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 
@@ -21,10 +22,11 @@ public class Filters implements Parcelable {
     String expansionName;
 
     static final String ALL = "Wszystkie";
+    static final String ALL_PLAYERS = "Wszyscy";
 
     Filters() {
         gameName = ALL;
-        playerName = ALL;
+        playerName = ALL_PLAYERS;
         scenarioName = ALL;
         dateFloor = ALL;
         dateCelling = ALL;
@@ -52,6 +54,11 @@ public class Filters implements Parcelable {
                         return false;
                 }
             }
+        }
+        if(!playerName.equals(ALL_PLAYERS)){
+            List<String> playerNames = MainActivity.mBoardGameDao.getPlayerNamesFromMatch(match.id);
+            if(!playerNames.contains(playerName))
+                return false;
         }
         return true;
     }

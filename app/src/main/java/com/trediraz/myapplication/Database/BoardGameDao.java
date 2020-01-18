@@ -90,7 +90,10 @@ public interface BoardGameDao {
     Player getPlayerByName(String name);
 
     @Query("SELECT * FROM playedin WHERE match_id = :id")
-    List<PlayedIn> getAllPlayersInMatchById(int id);
+    List<PlayedIn> getAllPlayedInMatchById(int id);
+
+    @Query("SELECT player.name FROM playedin LEFT JOIN player on player.id = player_id WHERE match_id = :id")
+    List<String> getPlayerNamesFromMatch(int id);
 
     @Query("UPDATE `match` " +
             "SET outcome = :newPlayerName " +

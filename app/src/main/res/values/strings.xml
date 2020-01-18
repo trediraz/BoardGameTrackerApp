@@ -86,6 +86,7 @@
     <string name="default_game_name">_no_game_</string>
     <string name="clear">Wyczyść</string>
     <string name="expansion">Dodatek</string>
+    <string name="player">Gracz</string>
 
     <string-array name="game_types">
         <item>Versus</item>
