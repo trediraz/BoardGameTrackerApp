@@ -32,26 +32,25 @@ public class Filters implements Parcelable {
     }
 
     boolean isRight(Match match){
-        if(gameName.equals(ALL))
-            return true;
-        Game game = MainActivity.mBoardGameDao.getGameByName(gameName);
-        if(!(match.game_id == game.id)){
-            return false;
-        } else
-            {
-            if(!scenarioName.equals(ALL)){
-                Scenario scenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(scenarioName,game.id);
-                if(!(match.scenario_id == scenario.id))
-                    return false;
-            }
-            List<Expansion> matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(match.id);
-            if(expansionName.equals("-") && matchExpansions.size() != 0) {
+        if(!gameName.equals(ALL)){
+            Game game = MainActivity.mBoardGameDao.getGameByName(gameName);
+            if(!(match.game_id == game.id)){
                 return false;
-            }
-            else if(!expansionName.equals(ALL) && !expansionName.equals("-")){
-                Expansion expansion = MainActivity.mBoardGameDao.getExpansionByNameAndGameId(expansionName,game.id);
-                if(!matchExpansions.contains(expansion))
+            } else {
+                if(!scenarioName.equals(ALL)){
+                    Scenario scenario = MainActivity.mBoardGameDao.getScenarioByNameAndGameId(scenarioName,game.id);
+                    if(!(match.scenario_id == scenario.id))
+                        return false;
+                }
+                List<Expansion> matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(match.id);
+                if(expansionName.equals("-") && matchExpansions.size() != 0) {
                     return false;
+                }
+                else if(!expansionName.equals(ALL) && !expansionName.equals("-")){
+                    Expansion expansion = MainActivity.mBoardGameDao.getExpansionByNameAndGameId(expansionName,game.id);
+                    if(!matchExpansions.contains(expansion))
+                        return false;
+                }
             }
         }
         return true;
