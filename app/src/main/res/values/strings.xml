@@ -29,7 +29,6 @@
     <string name="duplicate_expansion_name">Nazwa dodatku nie może się powtarzać</string>
     <string name="add_player">Dodaj gracza</string>
     <string name="player_name">Nazwa gracza</string>
-    <string name="new_match">Nowa rozgrywka</string>
     <string name="no_game_chosen">Wybierz grę</string>
     <string name="all">Wszystkie</string>
     <string name="no_scenario_chosen">Wybierz scenariusz</string>
@@ -83,10 +82,14 @@
     <string name="delete">Usunąć &lt;b>%s&lt;/b>?</string>
     <string name="delete_used">Usunąć &lt;b>%s&lt;/b> i powiązane rozgrywki (%d)?</string>
     <string name="filter">Filtruj</string>
-    <string name="default_game_name">_no_game_</string>
     <string name="clear">Wyczyść</string>
     <string name="expansion">Dodatek</string>
     <string name="player">Gracz</string>
+    <string name="from">Od:</string>
+    <string name="to">Do</string>
+    <string name="date_floor_button">Zawsze</string>
+    <string name="date_celling_button">Teraz</string>
+    <string name="ok">OK</string>
 
     <string-array name="game_types">
         <item>Versus</item>

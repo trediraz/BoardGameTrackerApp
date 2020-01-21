@@ -1,6 +1,9 @@
 package com.trediraz.myapplication.Match;
 
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 
 import com.trediraz.myapplication.Database.Expansion;
@@ -87,6 +91,14 @@ public class FiltersFragment extends Fragment {
 
         mGameSpinner.setSelection(gameNames.indexOf(mFilters.gameName));
 
+        Button floorDateButton = getView().findViewById(R.id.floor_date);
+        floorDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDateDialog(v);
+            }
+        });
+
         Button saveButton = getView().findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
             setFilters();
@@ -120,7 +132,7 @@ public class FiltersFragment extends Fragment {
                     if(expansions.size() > 0){
                         expansionNames.add(Filters.ALL);
                     }
-                    expansionNames.add("-");
+                    expansionNames.add(Filters.NO_ITEMS);
                     expansionNames.addAll(expansions.stream().map(x -> x.name).collect(Collectors.toList()));
                 }
                 setSpinner(mScenarioSpinner, mScenarioIndex, scenarioNames.size() > 1);
@@ -139,6 +151,27 @@ public class FiltersFragment extends Fragment {
         clearButton.setOnClickListener(v -> {
             clearFilters();
         });
+    }
+
+    private void showDateDialog(View v) {
+        DatePicker datePicker = new DatePicker(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
+        builder.setView(datePicker)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ((Button)v).setText(datePicker.getYear()+"-"+datePicker.getMonth()+"-"+datePicker.getDayOfMonth());
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .setNeutralButton(R.string.clear, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ((Button)v).setText("Zawsze");
+                    }
+                })
+                .show();
+
     }
 
     private void setSpinner(Spinner spinner, int index, boolean enabled) {
@@ -181,7 +214,7 @@ public class FiltersFragment extends Fragment {
         List<Expansion> expansions = MainActivity.mBoardGameDao.getExpansionsByGameName(mFilters.gameName);
         mExpansionIndex = 0;
         if(expansions.size() > 0)
-            if(mFilters.expansionName.equals("-"))
+            if(mFilters.expansionName.equals(Filters.NO_ITEMS))
                 mExpansionIndex = 1;
             else
                 for(int i = 0; i < expansions.size(); i++){

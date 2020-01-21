@@ -10,6 +10,7 @@ import com.trediraz.myapplication.Database.Match;
 import com.trediraz.myapplication.Database.PlayedIn;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
+import com.trediraz.myapplication.R;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class Filters implements Parcelable {
 
     static final String ALL = "Wszystkie";
     static final String ALL_PLAYERS = "Wszyscy";
+    static final String NO_ITEMS = "Brak";
 
     Filters() {
         gameName = ALL;
@@ -45,10 +47,10 @@ public class Filters implements Parcelable {
                         return false;
                 }
                 List<Expansion> matchExpansions = MainActivity.mBoardGameDao.getExpansionsByMatchId(match.id);
-                if(expansionName.equals("-") && matchExpansions.size() != 0) {
+                if(expansionName.equals(NO_ITEMS) && matchExpansions.size() != 0) {
                     return false;
                 }
-                else if(!expansionName.equals(ALL) && !expansionName.equals("-")){
+                else if(!expansionName.equals(ALL) && !expansionName.equals(NO_ITEMS)){
                     Expansion expansion = MainActivity.mBoardGameDao.getExpansionByNameAndGameId(expansionName,game.id);
                     if(!matchExpansions.contains(expansion))
                         return false;
