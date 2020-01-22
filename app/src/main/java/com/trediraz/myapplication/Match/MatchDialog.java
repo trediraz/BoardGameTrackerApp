@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class MatchDialog extends DialogFragment {
@@ -216,7 +217,7 @@ public class MatchDialog extends DialogFragment {
     private void updateDatabase() {
         DatePicker datePicker = Objects.requireNonNull(getDialog()).findViewById(R.id.date_picker);
         Date date = getDateFromDatePicker(datePicker);
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         String dateString = sdf.format(date);
         EditText commentsView = getDialog().findViewById(R.id.comments);
 

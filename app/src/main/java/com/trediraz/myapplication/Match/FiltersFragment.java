@@ -2,7 +2,7 @@ package com.trediraz.myapplication.Match;
 
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +18,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.trediraz.myapplication.Database.Expansion;
 import com.trediraz.myapplication.Database.Scenario;
 import com.trediraz.myapplication.MainActivity;
 import com.trediraz.myapplication.R;
 
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,6 +46,8 @@ public class FiltersFragment extends Fragment {
     private Spinner mScenarioSpinner;
     private Spinner mExpansionSpinner;
     private Spinner mPlayerSpinner;
+    private Button minDateButton;
+    private Button maxDateButton;
 
     public FiltersFragment() {
     }
@@ -91,13 +100,13 @@ public class FiltersFragment extends Fragment {
 
         mGameSpinner.setSelection(gameNames.indexOf(mFilters.gameName));
 
-        Button floorDateButton = getView().findViewById(R.id.floor_date);
-        floorDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDateDialog(v);
-            }
-        });
+        minDateButton = getView().findViewById(R.id.min_date);
+        minDateButton.setText(mFilters.minDate);
+        minDateButton.setOnClickListener(v -> showDateDialog(v, Filters.DEFAULT_MIN_DATE));
+
+        maxDateButton = getView().findViewById(R.id.max_date);
+        maxDateButton.setText(mFilters.maxDate);
+        maxDateButton.setOnClickListener(v -> showDateDialog(v,Filters.DEFAULT_MAX_DATE));
 
         Button saveButton = getView().findViewById(R.id.save_button);
         saveButton.setOnClickListener(view -> {
@@ -148,30 +157,73 @@ public class FiltersFragment extends Fragment {
         });
 
         Button clearButton = Objects.requireNonNull(getView()).findViewById(R.id.clear_button);
-        clearButton.setOnClickListener(v -> {
-            clearFilters();
-        });
+        clearButton.setOnClickListener(v -> clearFilters());
     }
 
-    private void showDateDialog(View v) {
-        DatePicker datePicker = new DatePicker(getContext());
+    private void showDateDialog(View v, String defaultDate) {
+        Button button = (Button) v;
+
+        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = Objects.requireNonNull(inflater).inflate(R.layout.date_picker,null);
+        DatePicker datePicker = layout.findViewById(R.id.date_picker);
+        datePicker.setMaxDate(new Date().getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String dateText = button.getText().toString();
+        setDatePickerDate(datePicker, dateText);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogStyle);
-        builder.setView(datePicker)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ((Button)v).setText(datePicker.getYear()+"-"+datePicker.getMonth()+"-"+datePicker.getDayOfMonth());
+        builder.setView(layout)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    Date date = getDateFromDatePicker(datePicker);
+                    button.setText(sdf.format(date));
+                    if(!isDateRight()) {
+                        Toast.makeText(getContext(),"Podano nieprawidłową datę.",Toast.LENGTH_LONG).show();
+                        clearDates();
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
-                .setNeutralButton(R.string.clear, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ((Button)v).setText("Zawsze");
-                    }
-                })
+                .setNeutralButton(R.string.clear, (dialog, which) -> button.setText(defaultDate))
                 .show();
 
+    }
+
+    private boolean isDateRight() {
+        String maxDateStr = maxDateButton.getText().toString();
+        String minDateStr = minDateButton.getText().toString();
+        if(maxDateStr.equals(Filters.DEFAULT_MAX_DATE) || minDateStr.equals(Filters.DEFAULT_MIN_DATE))
+            return true;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        try {
+            Date maxDate = sdf.parse(maxDateStr);
+            Date minDate = sdf.parse(minDateStr);
+            return Objects.requireNonNull(maxDate).after(minDate);
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private void setDatePickerDate(DatePicker datePicker ,String dateText) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        if(!dateText.equals(Filters.DEFAULT_MIN_DATE)){
+            Calendar calendar = Calendar.getInstance();
+            try {
+                calendar.setTime(Objects.requireNonNull(sdf.parse(dateText)));
+                datePicker.updateDate(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Date getDateFromDatePicker(DatePicker datePicker) {
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year =  datePicker.getYear();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        return calendar.getTime();
     }
 
     private void setSpinner(Spinner spinner, int index, boolean enabled) {
@@ -192,12 +244,20 @@ public class FiltersFragment extends Fragment {
             mFilters.scenarioName = scenarioName;
         mFilters.expansionName = mExpansionSpinner.getSelectedItem().toString();
         mFilters.playerName = mPlayerSpinner.getSelectedItem().toString();
+        mFilters.minDate = minDateButton.getText().toString();
+        mFilters.maxDate = maxDateButton.getText().toString();
     }
 
     private void clearFilters() {
         mFilters.gameName = Filters.ALL;
         mGameSpinner.setSelection(0);
         mPlayerSpinner.setSelection(0);
+        clearDates();
+    }
+
+    private void clearDates() {
+        maxDateButton.setText(Filters.DEFAULT_MAX_DATE);
+        minDateButton.setText(Filters.DEFAULT_MIN_DATE);
     }
 
     private void setStartingScenarioIndex() {
