@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,6 +33,8 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
     private MatchListAdapter mAdapter;
     private Filters mFilters;
+    private TextView noMatchesText;
+    private ListView matchViews;
 
     public MatchFragment() {
        this.setHasOptionsMenu(true);
@@ -58,7 +61,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
         mMatches = mMatches.stream().filter(x -> mFilters.isRight(x)).collect(Collectors.toList());
 
-        ListView matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
+        matchViews = Objects.requireNonNull(getView()).findViewById(R.id.match_list_view);
         mAdapter = new MatchListAdapter(getActivity(), mMatches);
         matchViews.setAdapter(mAdapter);
         matchViews.setOnItemClickListener((adapterView, view, i, l) -> {
@@ -71,6 +74,12 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
             showDeleteDialog(match);
             return true;
         });
+
+        noMatchesText = getView().findViewById(R.id.no_matches_text);
+        if(mMatches.isEmpty()){
+            matchViews.setVisibility(View.INVISIBLE);
+            noMatchesText.setVisibility(View.VISIBLE);
+        }
 
         Button filterButton = getView().findViewById(R.id.filter_button);
         Filters finalFilters = mFilters;
@@ -111,6 +120,8 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     public void onMatchAdded(Match match) {
         if(mFilters.isRight(match)){
             mAdapter.addMatch(match);
+            matchViews.setVisibility(View.VISIBLE);
+            noMatchesText.setVisibility(View.INVISIBLE);
         }
     }
 }

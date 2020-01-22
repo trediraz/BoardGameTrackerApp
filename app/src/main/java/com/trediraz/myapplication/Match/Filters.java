@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Filters implements Parcelable {
-    String gameName;
+    public String gameName;
     String playerName;
     String scenarioName;
     String minDate;

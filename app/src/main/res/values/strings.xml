@@ -90,6 +90,7 @@
     <string name="date_floor_button">Początku</string>
     <string name="date_celling_button">Teraz</string>
     <string name="ok">OK</string>
+    <string name="no_matches">BRAK ROZGRYWEK</string>
 
     <string-array name="game_types">
         <item>Versus</item>
