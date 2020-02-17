@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,6 +38,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     private Filters mFilters;
     private TextView noMatchesText;
     private ListView matchViews;
+    private List<Match> mMatches;
 
     public MatchFragment() {
        this.setHasOptionsMenu(true);
@@ -53,7 +57,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
 
         mFilters = MatchFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getFilters();
 
-        List<Match> mMatches = MainActivity.mBoardGameDao.getAllMatches();
+        mMatches = MainActivity.mBoardGameDao.getAllMatches();
 
         if(mFilters == null){
             mFilters = new Filters();
@@ -76,10 +80,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         });
 
         noMatchesText = getView().findViewById(R.id.no_matches_text);
-        if(mMatches.isEmpty()){
-            matchViews.setVisibility(View.INVISIBLE);
-            noMatchesText.setVisibility(View.VISIBLE);
-        }
+        setNoMatchesTextVisibility();
 
         Button filterButton = getView().findViewById(R.id.filter_button);
         Filters finalFilters = mFilters;
@@ -98,6 +99,7 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
                 .setPositiveButton("Ok", (dialogInterface, i) -> {
                     MainActivity.mBoardGameDao.deleteMatch(match);
                     mAdapter.deleteMatch(match);
+                    setNoMatchesTextVisibility();
                 })
                 .setNegativeButton(R.string.cancel,null)
                 .show();
@@ -114,6 +116,34 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
             dialogName.setCancelable(false);
             dialogName.show(Objects.requireNonNull(getChildFragmentManager()),"dialog");
         }
+    }
+
+    private void setNoMatchesTextVisibility() {
+        if(mMatches.isEmpty()){
+            matchViews.setVisibility(View.INVISIBLE);
+            noMatchesText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.filter_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.action){
+            Toast.makeText(getContext(),"AAAA",Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
