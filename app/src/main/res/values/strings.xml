@@ -87,7 +87,7 @@
     <string name="player">Gracz</string>
     <string name="from">Od:</string>
     <string name="to">Do</string>
-    <string name="date_floor_button">Początku</string>
+    <string name="date_floor_button">Zawsze</string>
     <string name="date_celling_button">Teraz</string>
     <string name="ok">OK</string>
     <string name="no_matches">BRAK ROZGRYWEK</string>

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -370,7 +371,7 @@ public class GameInfoFragment extends Fragment {
                 Toast.makeText(getContext(),R.string.empty_scenario_name,Toast.LENGTH_LONG).show();
                 return false;
             }
-            if(esv.getScenarioName().equals(scenario.name) && esv.getScenario() != scenario) {
+            if(esv.getScenarioName().equals(scenario.name) && !esv.getScenario().equals(scenario)) {
                 Toast.makeText(getContext(),R.string.duplicate_scenario_name,Toast.LENGTH_SHORT).show();
                 return false;
             }

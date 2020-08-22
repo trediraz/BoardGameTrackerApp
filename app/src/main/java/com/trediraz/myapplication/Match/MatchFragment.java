@@ -82,13 +82,6 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
         noMatchesText = getView().findViewById(R.id.no_matches_text);
         setNoMatchesTextVisibility();
 
-        Button filterButton = getView().findViewById(R.id.filter_button);
-        Filters finalFilters = mFilters;
-        filterButton.setOnClickListener(view -> {
-            MatchFragmentDirections.GoToFilters action = MatchFragmentDirections.goToFilters(finalFilters);
-            Navigation.findNavController(view).navigate(action);
-        });
-
         FloatingActionButton addNewMatchButton = Objects.requireNonNull(getView()).findViewById(R.id.add_match_button);
         addNewMatchButton.setOnClickListener(view -> showAddDialog());
     }
@@ -140,7 +133,8 @@ public class MatchFragment extends Fragment implements MatchDialog.MatchDialogLi
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.action){
-            Toast.makeText(getContext(),"AAAA",Toast.LENGTH_LONG).show();
+            MatchFragmentDirections.GoToFilters action = MatchFragmentDirections.goToFilters(mFilters);
+            Navigation.findNavController(getView()).navigate(action);
             return true;
         }
         return super.onOptionsItemSelected(item);
