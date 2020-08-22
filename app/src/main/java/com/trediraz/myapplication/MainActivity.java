@@ -9,6 +9,8 @@ import androidx.room.Room;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.trediraz.myapplication.Database.AppDatabase;
@@ -29,7 +31,13 @@ public class MainActivity extends AppCompatActivity {
 
         appBarConfiguration = new AppBarConfiguration.Builder(R.id.games_fragment, R.id.match_fragment, R.id.players_fragment, R.id.stats_fragment)
                 .build();
-
+        TextView textView = findViewById(R.id.textView2);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"WORKS",Toast.LENGTH_LONG).show();
+            }
+        });
         NavigationUI.setupWithNavController(bottomNavigationView,navController);
         NavigationUI.setupActionBarWithNavController(this,navController, appBarConfiguration);
 
